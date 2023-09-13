@@ -98,11 +98,11 @@ describe('ServiceContainer', function () {
           }
         }
         const container = new ServiceContainer();
-        const myService1 = container.get(MyService);
-        const myService2 = container.get(MyService);
-        expect(myService1).to.be.instanceof(MyService);
-        expect(myService2).to.be.instanceof(MyService);
-        expect(myService1).to.be.eq(myService2);
+        const service1 = container.get(MyService);
+        const service2 = container.get(MyService);
+        expect(service1).to.be.instanceof(MyService);
+        expect(service2).to.be.instanceof(MyService);
+        expect(service1).to.be.eq(service2);
         expect(executed).to.be.eq(1);
       });
 
@@ -117,17 +117,17 @@ describe('ServiceContainer', function () {
           }
         }
         const container = new ServiceContainer();
-        const myService1 = container.get(MyService, 'foo');
-        const myService2 = container.get(MyService);
-        const myService3 = container.get(MyService, 'bar');
-        const myService4 = container.get(MyService);
-        expect(myService1).to.be.instanceof(MyService);
-        expect(myService2).to.be.instanceof(MyService);
-        expect(myService3).to.be.instanceof(MyService);
-        expect(myService4).to.be.instanceof(MyService);
-        expect(myService1).to.be.eq(myService2);
-        expect(myService2).to.be.not.eq(myService3);
-        expect(myService3).to.be.eq(myService4);
+        const service1 = container.get(MyService, 'foo');
+        const service2 = container.get(MyService);
+        const service3 = container.get(MyService, 'bar');
+        const service4 = container.get(MyService);
+        expect(service1).to.be.instanceof(MyService);
+        expect(service2).to.be.instanceof(MyService);
+        expect(service3).to.be.instanceof(MyService);
+        expect(service4).to.be.instanceof(MyService);
+        expect(service1).to.be.eq(service2);
+        expect(service2).to.be.not.eq(service3);
+        expect(service3).to.be.eq(service4);
         expect(executed).to.be.eq(2);
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
@@ -194,11 +194,11 @@ describe('ServiceContainer', function () {
           }
         }
         const container = new ServiceContainer();
-        const myService1 = container.get(MyService);
-        const myService2 = container.get(MyService);
-        expect(myService1).to.be.instanceof(MyService);
-        expect(myService2).to.be.instanceof(MyService);
-        expect(myService1).to.be.eq(myService2);
+        const service1 = container.get(MyService);
+        const service2 = container.get(MyService);
+        expect(service1).to.be.instanceof(MyService);
+        expect(service2).to.be.instanceof(MyService);
+        expect(service1).to.be.eq(service2);
         expect(executed).to.be.eq(1);
       });
 
@@ -212,17 +212,17 @@ describe('ServiceContainer', function () {
           }
         }
         const container = new ServiceContainer();
-        const myService1 = container.get(MyService, 'foo');
-        const myService2 = container.get(MyService);
-        const myService3 = container.get(MyService, 'bar');
-        const myService4 = container.get(MyService);
-        expect(myService1).to.be.instanceof(MyService);
-        expect(myService2).to.be.instanceof(MyService);
-        expect(myService3).to.be.instanceof(MyService);
-        expect(myService4).to.be.instanceof(MyService);
-        expect(myService1).to.be.eq(myService2);
-        expect(myService2).to.be.not.eq(myService3);
-        expect(myService3).to.be.eq(myService4);
+        const service1 = container.get(MyService, 'foo');
+        const service2 = container.get(MyService);
+        const service3 = container.get(MyService, 'bar');
+        const service4 = container.get(MyService);
+        expect(service1).to.be.instanceof(MyService);
+        expect(service2).to.be.instanceof(MyService);
+        expect(service3).to.be.instanceof(MyService);
+        expect(service4).to.be.instanceof(MyService);
+        expect(service1).to.be.eq(service2);
+        expect(service2).to.be.not.eq(service3);
+        expect(service3).to.be.eq(service4);
         expect(executed).to.be.eq(2);
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
@@ -288,6 +288,13 @@ describe('ServiceContainer', function () {
     });
 
     describe('Service', function () {
+      it('returns itself', function () {
+        class MyService extends Service {}
+        const container = new ServiceContainer();
+        const res = container.add(MyService);
+        expect(res).to.be.eq(container);
+      });
+
       it('provides given arguments to the factory function', function () {
         let executed = 0;
         let givenContainer;
@@ -348,6 +355,13 @@ describe('ServiceContainer', function () {
     });
 
     describe('non-Service', function () {
+      it('returns itself', function () {
+        class MyService {}
+        const container = new ServiceContainer();
+        const res = container.add(MyService);
+        expect(res).to.be.eq(container);
+      });
+
       it('provides given arguments to the factory function', function () {
         let executed = 0;
         let givenArgs;
@@ -396,6 +410,203 @@ describe('ServiceContainer', function () {
         expect(service).to.be.instanceof(MyService);
         expect(executed).to.be.eq(1);
         expect(givenArgs).to.be.eql(['baz', 'qux']);
+      });
+    });
+  });
+
+  describe('use', function () {
+    it('throws an error if no constructor given', function () {
+      const container = new ServiceContainer();
+      const throwable = v => () => container.use(v);
+      const error = v =>
+        format(
+          'The first argument of ServicesContainer.use must be ' +
+            'a class constructor, but %s given.',
+          v,
+        );
+      expect(throwable()).to.throw(error('undefined'));
+      expect(throwable('str')).to.throw(error('"str"'));
+      expect(throwable(10)).to.throw(error('10'));
+      expect(throwable(true)).to.throw(error('true'));
+      expect(throwable(false)).to.throw(error('false'));
+      expect(throwable(null)).to.throw(error('null'));
+      expect(throwable([])).to.throw(error('Array'));
+      expect(throwable({})).to.throw(error('Object'));
+    });
+
+    describe('Service', function () {
+      it('returns itself', function () {
+        class MyService extends Service {}
+        const container = new ServiceContainer();
+        const res = container.use(MyService);
+        expect(res).to.be.eq(container);
+      });
+
+      it('passes itself and given arguments to the given constructor', function () {
+        let executed = 0;
+        let givenContainer;
+        let givenArgs;
+        class MyService extends Service {
+          constructor(container, ...args) {
+            super(container);
+            executed++;
+            givenContainer = container;
+            givenArgs = args;
+          }
+        }
+        const container = new ServiceContainer();
+        container.use(MyService, 'foo', 'bar');
+        expect(executed).to.be.eq(1);
+        expect(givenContainer).to.be.eq(container);
+        expect(givenArgs).to.be.eql(['foo', 'bar']);
+      });
+
+      it('overrides an existing factory function', function () {
+        let executed = 0;
+        let givenContainer;
+        let givenArgs;
+        class MyService extends Service {
+          constructor(container, ...args) {
+            super(container);
+            executed++;
+            givenContainer = container;
+            givenArgs = args;
+          }
+        }
+        const container = new ServiceContainer();
+        container.add(MyService, 'foo', 'bar');
+        expect(executed).to.be.eq(0);
+        container.use(MyService, 'baz', 'qux');
+        expect(executed).to.be.eq(1);
+        expect(givenContainer).to.be.eq(container);
+        expect(givenArgs).to.be.eql(['baz', 'qux']);
+      });
+
+      it('caches a new instance', function () {
+        let executed = 0;
+        let service;
+        class MyService extends Service {
+          constructor(container) {
+            super(container);
+            ++executed;
+            service = this;
+          }
+        }
+        const container = new ServiceContainer();
+        container.use(MyService);
+        const cachedService = container.get(MyService);
+        expect(cachedService).to.be.instanceof(MyService);
+        expect(cachedService).to.be.eq(service);
+        expect(executed).to.be.eq(1);
+      });
+
+      it('overrides the cached instance', function () {
+        let executed = 0;
+        let service;
+        let givenArgs;
+        class MyService extends Service {
+          constructor(container, ...args) {
+            super(container);
+            ++executed;
+            service = this;
+            givenArgs = args;
+          }
+        }
+        const container = new ServiceContainer();
+        container.use(MyService, 'foo');
+        expect(executed).to.be.eq(1);
+        expect(service).to.be.instanceof(MyService);
+        expect(givenArgs).to.be.eql(['foo']);
+        const service1 = service;
+        container.use(MyService, 'bar');
+        expect(executed).to.be.eq(2);
+        expect(service).to.be.instanceof(MyService);
+        expect(givenArgs).to.be.eql(['bar']);
+        const service2 = service;
+        expect(service2).to.be.not.eq(service1);
+      });
+    });
+
+    describe('non-Service', function () {
+      it('returns itself', function () {
+        class MyService {}
+        const container = new ServiceContainer();
+        const res = container.use(MyService);
+        expect(res).to.be.eq(container);
+      });
+
+      it('passes given arguments to the given constructor', function () {
+        let executed = 0;
+        let givenArgs;
+        class MyService {
+          constructor(...args) {
+            executed++;
+            givenArgs = args;
+          }
+        }
+        const container = new ServiceContainer();
+        container.use(MyService, 'foo', 'bar');
+        expect(executed).to.be.eq(1);
+        expect(givenArgs).to.be.eql(['foo', 'bar']);
+      });
+
+      it('overrides an existing factory function', function () {
+        let executed = 0;
+        let givenArgs;
+        class MyService {
+          constructor(...args) {
+            executed++;
+            givenArgs = args;
+          }
+        }
+        const container = new ServiceContainer();
+        container.add(MyService, 'foo', 'bar');
+        expect(executed).to.be.eq(0);
+        container.use(MyService, 'baz', 'qux');
+        expect(executed).to.be.eq(1);
+        expect(givenArgs).to.be.eql(['baz', 'qux']);
+      });
+
+      it('caches a new instance', function () {
+        let executed = 0;
+        let service;
+        class MyService {
+          constructor() {
+            ++executed;
+            service = this;
+          }
+        }
+        const container = new ServiceContainer();
+        container.use(MyService);
+        const cachedService = container.get(MyService);
+        expect(cachedService).to.be.instanceof(MyService);
+        expect(cachedService).to.be.eq(service);
+        expect(executed).to.be.eq(1);
+      });
+
+      it('overrides the cached instance', function () {
+        let executed = 0;
+        let service;
+        let givenArgs;
+        class MyService {
+          constructor(...args) {
+            ++executed;
+            service = this;
+            givenArgs = args;
+          }
+        }
+        const container = new ServiceContainer();
+        container.use(MyService, 'foo');
+        expect(executed).to.be.eq(1);
+        expect(service).to.be.instanceof(MyService);
+        expect(givenArgs).to.be.eql(['foo']);
+        const service1 = service;
+        container.use(MyService, 'bar');
+        expect(executed).to.be.eq(2);
+        expect(service).to.be.instanceof(MyService);
+        expect(givenArgs).to.be.eql(['bar']);
+        const service2 = service;
+        expect(service2).to.be.not.eq(service1);
       });
     });
   });

@@ -54,4 +54,16 @@ describe('Service', function () {
       expect(res).to.be.eq(service);
     });
   });
+
+  describe('useService', function () {
+    it('calls the container "use" method', function () {
+      const service = new Service();
+      spy.on(service.container, 'use', (ctor, ...args) => {
+        expect(ctor).to.be.eq(Date);
+        expect(args).to.be.eql(['foo', 'bar', 'baz']);
+      });
+      const res = service.addService(Date, 'foo', 'bar', 'baz');
+      expect(res).to.be.eq(service);
+    });
+  });
 });

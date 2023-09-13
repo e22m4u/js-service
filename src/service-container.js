@@ -8,7 +8,7 @@ export class ServiceContainer {
   /**
    * Services map.
    *
-   * @type {Map<Function, any>}
+   * @type {Map<any, any>}
    * @private
    */
   _services = new Map();
@@ -16,7 +16,7 @@ export class ServiceContainer {
   /**
    * Get.
    *
-   * @param {Function} ctor
+   * @param {any} ctor
    * @param {any} args
    * @return {any}
    */
@@ -46,7 +46,7 @@ export class ServiceContainer {
   /**
    * Has.
    *
-   * @param {Function} ctor
+   * @param {any} ctor
    * @return {boolean}
    */
   has(ctor) {
@@ -56,7 +56,7 @@ export class ServiceContainer {
   /**
    * Add.
    *
-   * @param {Function} ctor
+   * @param {any} ctor
    * @param {any} args
    * @return {this}
    */
@@ -72,6 +72,28 @@ export class ServiceContainer {
         ? new ctor(this, ...args)
         : new ctor(...args);
     this._services.set(ctor, factory);
+    return this;
+  }
+
+  /**
+   * Use.
+   *
+   * @param {any} ctor
+   * @param {any} args
+   * @return {this}
+   */
+  use(ctor, ...args) {
+    if (!ctor || typeof ctor !== 'function')
+      throw new InvalidArgumentError(
+        'The first argument of ServicesContainer.use must be ' +
+          'a class constructor, but %v given.',
+        ctor,
+      );
+    const service =
+      ctor.prototype instanceof Service
+        ? new ctor(this, ...args)
+        : new ctor(...args);
+    this._services.set(ctor, service);
     return this;
   }
 }

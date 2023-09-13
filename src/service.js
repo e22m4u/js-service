@@ -55,4 +55,16 @@ export class Service {
     this.container.add(ctor, ...args);
     return this;
   }
+
+  /**
+   * Use service.
+   *
+   * @param {any} ctor
+   * @param {any} args
+   * @return {this}
+   */
+  useService(ctor, ...args) {
+    this.container.use(ctor, ...args);
+    return this;
+  }
 }
