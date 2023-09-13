@@ -14,9 +14,9 @@ export class Service {
   /**
    * Constructor.
    *
-   * @param container
+   * @param {ServiceContainer|undefined} container
    */
-  constructor(container) {
+  constructor(container = undefined) {
     this.container =
       container instanceof ServiceContainer
         ? container
