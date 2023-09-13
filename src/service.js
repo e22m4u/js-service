@@ -55,14 +55,4 @@ export class Service {
     this.container.add(ctor, ...args);
     return this;
   }
-
-  /**
-   * Find services.
-   *
-   * @param {any} ctor
-   * @return {any[]}
-   */
-  findServices(ctor) {
-    return this.container.find(ctor);
-  }
 }

@@ -74,24 +74,4 @@ export class ServiceContainer {
     this._services.set(ctor, factory);
     return this;
   }
-
-  /**
-   * Find.
-   *
-   * @param {Function} ctor
-   * @return {any[]}
-   */
-  find(ctor) {
-    if (!ctor || typeof ctor !== 'function')
-      throw new InvalidArgumentError(
-        'The first argument of ServicesContainer.find must be ' +
-          'a class constructor, but %v given.',
-        ctor,
-      );
-    const keys = Array.from(this._services.keys());
-    const ctors = keys.filter(
-      key => typeof key === 'function' && key.prototype instanceof ctor,
-    );
-    return ctors.map(c => this.get(c));
-  }
 }

@@ -54,16 +54,4 @@ describe('Service', function () {
       expect(res).to.be.eq(service);
     });
   });
-
-  describe('findServices', function () {
-    it('calls the container "find" method', function () {
-      const service = new Service();
-      spy.on(service.container, 'find', ctor => {
-        expect(ctor).to.be.eq(Date);
-        return 'OK';
-      });
-      const res = service.findServices(Date);
-      expect(res).to.be.eq('OK');
-    });
-  });
 });
