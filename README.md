@@ -102,6 +102,9 @@ const app = new App();
 ```js
 // вызов с аргументами конструктора
 const foo = this.getService(Foo, 'arg1', 'arg2');
+
+// проверка существования экзепляра
+console.log(this.hasService(Foo)); // true
 ```
 
 ## Тесты
