@@ -61,6 +61,7 @@ import {Service} from '@e22m4u/service';
 
 class Foo extends Service {
   method() {
+    // доступ к сервису Bar
     const bar = this.getService(Bar);
     // ...
   }
@@ -68,6 +69,7 @@ class Foo extends Service {
 
 class Bar extends Service {
   method() {
+    // доступ к сервису Foo
     const foo = this.getService(Foo);
     // ...
   }
@@ -75,6 +77,7 @@ class Bar extends Service {
 
 class App extends Service {
   method() {
+    // доступ к сервисам
     const foo = this.getService(Foo);
     const bar = this.getService(Bar);
     // ...
