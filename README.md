@@ -24,8 +24,8 @@ import {ServiceContainer} from '@e22m4u/service';
 const container = new ServiceContainer();
 
 // в качестве сервиса используем класс Date
-const myDate1 = container.get(Date);
-const myDate2 = container.get(Date);
+const myDate1 = container.get(Date); // создание экземпляра
+const myDate2 = container.get(Date); // возврат существующего
 
 console.log(myDate1); // Tue Sep 12 2023 19:50:16
 console.log(myDate2); // Tue Sep 12 2023 19:50:16
