@@ -102,20 +102,13 @@ const app = new App();
 Пример:
 
 ```js
-// проверка существования экзепляра Foo
-console.log(this.hasService(Foo)); // false
+const foo1 = this.getService(Foo); // создание экземпляра
+const foo2 = this.getService(Foo); // возврат существующего
+console.log(foo1 === foo2);        // true
 
-// создание несуществующего сервиса Foo
-const foo1 = this.getService(Foo);
-console.log(this.hasService(Foo)); // true
-
-// повторное обращение возвращает тот же экземпляр Foo
-const foo2 = this.getService(Foo);
-console.log(foo1 === foo2); // true
-
-// вызов с аргументами конструктора пересоздает экземпляр Foo
-const foo3 = this.getService(Foo, 'arg1', 'arg2');
-console.log(foo2 === foo3); // false
+const foo3 = this.getService(Foo, 'arg1'); // пересоздание экземпляра
+const foo4 = this.getService(Foo);         // возврат пересозданного
+console.log(foo3 === foo4);                // true
 ```
 
 ## Тесты
