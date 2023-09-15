@@ -57,41 +57,43 @@ console.log(myDate3); // Sun May 05 2030 03:00:00
 Пример:
 
 ```js
-// создадим сервис сообщений Messenger
-class Messenger {
-  // и метод выводящий полученное сообщение
-  send(message) {
-    console.log(`[Messenger] ${message}`);
+import {Service} from '@e22m4u/service';
+
+class Foo extends Service {
+  method() {
+    const bar = this.getService(Bar);
+    // ...
   }
 }
 
-// создадим сервис приветствия Greeter
-// наследуя поведение класса Service
-class Greeter extends Service {
-  // и приветствующий метод hello
-  hello(name) {
-    // в котором получим сервис Messenger,
-    // используя унаследованный метод getService
-    const messenger = this.getService(Messenger);
-    // и отправим наше приветствие методом send
-    messenger.send(`Hello ${name}!`);
+class Bar extends Service {
+  method() {
+    const foo = this.getService(Foo);
+    // ...
   }
 }
 
-// создадим экземпляр сервиса Greeter
-const greeter = new Greeter();
+class App extends Service {
+  method() {
+    const foo = this.getService(Foo);
+    const bar = this.getService(Bar);
+    // ...
+  }
+}
 
-greeter.hello('Peter');
-// [Messenger] Hello Peter!
-
-greeter.hello('Jesse');
-// [Messenger] Hello Jesse!
+const app = new App();
 ```
 
 В примере выше мы не заботились о создании экземпляра
 сервис-контейнера и его передачу между сервисами, так как
 эта логика инкапсулирована в классе `Service` и его методе
 `getService`
+
+Метод `getService` обеспечивает существование единственного
+экземпляра запрашиваемого сервиса, а не создает каждый раз
+новый. Тем не менее при передаче дополнительных аргументов,
+сервис будет пересоздан с передачей этих аргументов
+конструктору.
 
 ## Тесты
 
