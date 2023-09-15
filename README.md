@@ -107,7 +107,7 @@ const foo2 = this.getService(Foo); // возврат существующего
 console.log(foo1 === foo2);        // true
 
 const foo3 = this.getService(Foo, 'arg1'); // пересоздание экземпляра
-const foo4 = this.getService(Foo);         // возврат пересозданного
+const foo4 = this.getService(Foo);         // возврат уже пересозданного
 console.log(foo3 === foo4);                // true
 ```
 
