@@ -100,11 +100,20 @@ const app = new App();
 Пример:
 
 ```js
-// вызов с аргументами конструктора
-const foo = this.getService(Foo, 'arg1', 'arg2');
+// проверка существования экзепляра Foo
+console.log(this.hasService(Foo)); // false
 
-// проверка существования экзепляра
+// создание несуществующего сервиса Foo
+const foo1 = this.getService(Foo);
 console.log(this.hasService(Foo)); // true
+
+// повторное обращение возвращает тот же экземпляр Foo
+const foo2 = this.getService(Foo);
+console.log(foo1 === foo2); // true
+
+// вызов с аргументами конструктора пересоздает экземпляр Foo
+const foo3 = this.getService(Foo, 'arg1', 'arg2');
+console.log(foo2 === foo3); // false
 ```
 
 ## Тесты
