@@ -39,9 +39,9 @@ console.log(myDate1 === myDate2); // true
 Пример:
 
 ```js
-const myDate1 = container.get(Date, '2025-01-01');
-const myDate2 = container.get(Date);
-const myDate3 = container.get(Date, '2025-05-05');
+const myDate1 = container.get(Date, '2025-01-01'); // создание экземпляра
+const myDate2 = container.get(Date);               // возврат существующего
+const myDate3 = container.get(Date, '2025-05-05'); // пересоздание
 console.log(myDate1); // Wed Jan 01 2025 03:00:00
 console.log(myDate2); // Wed Jan 01 2025 03:00:00
 console.log(myDate3); // Sun May 05 2030 03:00:00
