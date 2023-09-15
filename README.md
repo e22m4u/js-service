@@ -77,7 +77,7 @@ class Bar extends Service {
 
 class App extends Service {
   method() {
-    // доступ к сервисам
+    // доступ к сервисам Foo и Bar
     const foo = this.getService(Foo);
     const bar = this.getService(Bar);
     // ...
@@ -97,6 +97,13 @@ const app = new App();
 новый. Тем не менее при передаче дополнительных аргументов,
 сервис будет пересоздан с передачей этих аргументов
 конструктору.
+
+Пример:
+
+```js
+// вызов с аргументами конструктора
+const foo = this.getService(Foo, 'arg1', 'arg2');
+```
 
 ## Тесты
 
