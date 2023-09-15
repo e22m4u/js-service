@@ -59,6 +59,7 @@ console.log(myDate3); // Sun May 05 2030 03:00:00
 ```js
 import {Service} from '@e22m4u/service';
 
+// сервис Foo
 class Foo extends Service {
   method() {
     // доступ к сервису Bar
@@ -67,6 +68,7 @@ class Foo extends Service {
   }
 }
 
+// сервис Bar
 class Bar extends Service {
   method() {
     // доступ к сервису Foo
@@ -75,6 +77,7 @@ class Bar extends Service {
   }
 }
 
+// сервис App (точка входа)
 class App extends Service {
   method() {
     // доступ к сервисам Foo и Bar
