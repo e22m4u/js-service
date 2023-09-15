@@ -105,13 +105,13 @@ const app = new App();
 Пример:
 
 ```js
-const foo1 = this.getService(Foo); // создание экземпляра
-const foo2 = this.getService(Foo); // возврат существующего
-console.log(foo1 === foo2);        // true
+const foo1 = this.getService(Foo, 'arg'); // создание экземпляра
+const foo2 = this.getService(Foo);        // возврат существующего
+console.log(foo1 === foo2);               // true
 
-const foo3 = this.getService(Foo, 'arg1'); // пересоздание экземпляра
-const foo4 = this.getService(Foo);         // возврат уже пересозданного
-console.log(foo3 === foo4);                // true
+const foo3 = this.getService(Foo, 'arg'); // пересоздание экземпляра
+const foo4 = this.getService(Foo);        // возврат уже пересозданного
+console.log(foo3 === foo4);               // true
 ```
 
 ## Тесты
