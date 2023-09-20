@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {Service} from './service.js';
-import {format} from '@e22m4u/format';
+import {format} from '@e22m4u/util-format';
 import {ServiceContainer} from './service-container.js';
 
 describe('ServiceContainer', function () {
