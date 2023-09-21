@@ -26,9 +26,9 @@ export class Service {
   /**
    * Get service.
    *
-   * @param {any} ctor
-   * @param {any} args
-   * @return {any}
+   * @param {*} ctor
+   * @param {*} args
+   * @return {*}
    */
   getService(ctor, ...args) {
     return this.container.get(ctor, ...args);
@@ -37,7 +37,7 @@ export class Service {
   /**
    * Has service.
    *
-   * @param {any} ctor
+   * @param {*} ctor
    * @return {boolean}
    */
   hasService(ctor) {
@@ -47,8 +47,8 @@ export class Service {
   /**
    * Add service.
    *
-   * @param {any} ctor
-   * @param {any} args
+   * @param {*} ctor
+   * @param {*} args
    * @return {this}
    */
   addService(ctor, ...args) {
@@ -59,8 +59,8 @@ export class Service {
   /**
    * Use service.
    *
-   * @param {any} ctor
-   * @param {any} args
+   * @param {*} ctor
+   * @param {*} args
    * @return {this}
    */
   useService(ctor, ...args) {

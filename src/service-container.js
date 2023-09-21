@@ -16,9 +16,9 @@ export class ServiceContainer {
   /**
    * Get.
    *
-   * @param {any} ctor
-   * @param {any} args
-   * @return {any}
+   * @param {*} ctor
+   * @param {*} args
+   * @return {*}
    */
   get(ctor, ...args) {
     if (!ctor || typeof ctor !== 'function')
@@ -46,7 +46,7 @@ export class ServiceContainer {
   /**
    * Has.
    *
-   * @param {any} ctor
+   * @param {*} ctor
    * @return {boolean}
    */
   has(ctor) {
@@ -56,8 +56,8 @@ export class ServiceContainer {
   /**
    * Add.
    *
-   * @param {any} ctor
-   * @param {any} args
+   * @param {*} ctor
+   * @param {*} args
    * @return {this}
    */
   add(ctor, ...args) {
@@ -78,8 +78,8 @@ export class ServiceContainer {
   /**
    * Use.
    *
-   * @param {any} ctor
-   * @param {any} args
+   * @param {*} ctor
+   * @param {*} args
    * @return {this}
    */
   use(ctor, ...args) {
