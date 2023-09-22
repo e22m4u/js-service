@@ -1,4 +1,4 @@
-import {Errorf} from '@e22m4u/util-format';
+import {Errorf} from '@e22m4u/js-format';
 
 /**
  * Invalid argument error.

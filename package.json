@@ -1,5 +1,5 @@
 {
-  "name": "@e22m4u/service",
+  "name": "@e22m4u/js-service",
   "version": "0.0.6",
   "description": "Разновидность сервис-локатора",
   "type": "module",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/e22m4u/service.git"
+    "url": "https://github.com/e22m4u/js-service.git"
   },
   "keywords": [
     "DI",
@@ -24,9 +24,9 @@
   ],
   "author": "e22m4u <e22m4u@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/e22m4u/service",
+  "homepage": "https://github.com/e22m4u/js-service",
   "dependencies": {
-    "@e22m4u/util-format": "0.0.6"
+    "@e22m4u/js-format": "0.0.7"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.7.1",

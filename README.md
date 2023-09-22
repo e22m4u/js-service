@@ -1,4 +1,4 @@
-## @e22m4u/service
+## @e22m4u/js-service
 
 Разновидность сервис-локатора для инкапсуляции процесса разрешения
 зависимостей.
@@ -6,7 +6,7 @@
 ## Установка
 
 ```bash
-npm install @e22m4u/service
+npm install @e22m4u/js-service
 ```
 
 ## Назначение
@@ -47,7 +47,7 @@ npm install @e22m4u/service
 Пример:
 
 ```js
-import {ServiceContainer} from '@e22m4u/service';
+import {ServiceContainer} from '@e22m4u/js-service';
 
 // создание контейнера
 const container = new ServiceContainer();
@@ -92,7 +92,7 @@ console.log(myDate3); // Sun May 05 2030 03:00:00
 Пример:
 
 ```js
-import {Service} from '@e22m4u/service';
+import {Service} from '@e22m4u/js-service';
 
 // сервис Foo
 class Foo extends Service {
