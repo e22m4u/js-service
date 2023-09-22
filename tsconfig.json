@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "noEmit": true,
+    "target": "es2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
+  }
+}

@@ -1,1 +1,1 @@
-export * from './invalid-argument-error';
+export * from './invalid-argument-error.js';

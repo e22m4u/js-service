@@ -5,11 +5,11 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "tsc && eslint .",
+    "lint:fix": "tsc && eslint . --fix",
     "format": "prettier --write \"./src/**/*.js\"",
-    "test": "eslint . && c8 --reporter=text-summary mocha",
-    "test:coverage": "eslint . && c8 --reporter=text mocha",
+    "test": "npm run lint && c8 --reporter=text-summary mocha",
+    "test:coverage": "npm run lint && c8 --reporter=text mocha",
     "prepare": "npx husky install"
   },
   "repository": {
@@ -42,6 +42,7 @@
     "eslint-plugin-mocha": "^10.1.0",
     "husky": "^8.0.3",
     "mocha": "^10.2.0",
-    "prettier": "^3.0.1"
+    "prettier": "^3.0.1",
+    "typescript": "^5.2.2"
   }
 }

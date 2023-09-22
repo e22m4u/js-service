@@ -1,5 +1,5 @@
-import {Constructor} from './types';
-import {ServiceContainer} from './service-container';
+import {Constructor} from './types.js';
+import {ServiceContainer} from './service-container.js';
 
 /**
  * Service.
