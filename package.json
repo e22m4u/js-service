@@ -26,11 +26,11 @@
   "license": "MIT",
   "homepage": "https://gitflic.ru/project/e22m4u/js-service",
   "dependencies": {
-    "@e22m4u/js-format": "0.0.8"
+    "@e22m4u/js-format": "0.0.9"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.6.0",
-    "@commitlint/config-conventional": "^18.6.0",
+    "@commitlint/cli": "^18.6.1",
+    "@commitlint/config-conventional": "^18.6.1",
     "c8": "^9.1.0",
     "chai": "^4.4.1",
     "chai-as-promised": "^7.1.1",
@@ -41,7 +41,7 @@
     "eslint-plugin-chai-expect": "^3.0.0",
     "eslint-plugin-mocha": "^10.2.0",
     "husky": "^9.0.10",
-    "mocha": "^10.2.0",
+    "mocha": "^10.3.0",
     "prettier": "^3.2.5",
     "typescript": "^5.3.3"
   }
