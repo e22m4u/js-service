@@ -18,7 +18,7 @@ export declare class Service {
   constructor(container?: ServiceContainer);
 
   /**
-   * Get service.
+   * Получить существующий или новый экземпляр.
    *
    * @param ctor
    * @param args
@@ -29,7 +29,7 @@ export declare class Service {
   ): T;
 
   /**
-   * Has service.
+   * Проверка существования конструктора в контейнере.
    *
    * @param ctor
    */
@@ -38,7 +38,7 @@ export declare class Service {
   ): boolean;
 
   /**
-   * Add service.
+   * Добавить конструктор в контейнер.
    *
    * @param ctor
    * @param args
@@ -49,7 +49,7 @@ export declare class Service {
   ): this;
 
   /**
-   * Use service.
+   * Добавить конструктор и создать экземпляр.
    *
    * @param ctor
    * @param args
@@ -57,5 +57,16 @@ export declare class Service {
   useService<T extends object>(
     ctor: Constructor<T>,
     ...args: any[],
+  ): this;
+
+  /**
+   * Добавить конструктор и связанный экземпляр.
+   *
+   * @param ctor
+   * @param service
+   */
+  setService<T extends object>(
+    ctor: Constructor<T>,
+    service: T,
   ): this;
 }

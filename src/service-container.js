@@ -14,7 +14,7 @@ export class ServiceContainer {
   _services = new Map();
 
   /**
-   * Get.
+   * Получить существующий или новый экземпляр.
    *
    * @param {*} ctor
    * @param {*} args
@@ -44,7 +44,7 @@ export class ServiceContainer {
   }
 
   /**
-   * Has.
+   * Проверка существования конструктора в контейнере.
    *
    * @param {*} ctor
    * @return {boolean}
@@ -54,7 +54,7 @@ export class ServiceContainer {
   }
 
   /**
-   * Add.
+   * Добавить конструктор в контейнер.
    *
    * @param {*} ctor
    * @param {*} args
@@ -76,7 +76,7 @@ export class ServiceContainer {
   }
 
   /**
-   * Use.
+   * Добавить конструктор и создать экземпляр.
    *
    * @param {*} ctor
    * @param {*} args
@@ -93,6 +93,30 @@ export class ServiceContainer {
       ctor.prototype instanceof Service
         ? new ctor(this, ...args)
         : new ctor(...args);
+    this._services.set(ctor, service);
+    return this;
+  }
+
+  /**
+   * Добавить конструктор и связанный экземпляр.
+   *
+   * @param {*} ctor
+   * @param {*} service
+   * @return {this}
+   */
+  set(ctor, service) {
+    if (!ctor || typeof ctor !== 'function')
+      throw new InvalidArgumentError(
+        'The first argument of ServicesContainer.set must be ' +
+          'a class constructor, but %v given.',
+        ctor,
+      );
+    if (!service || typeof service !== 'object' || Array.isArray(service))
+      throw new InvalidArgumentError(
+        'The second argument of ServicesContainer.set must be ' +
+          'an Object, but %v given.',
+        service,
+      );
     this._services.set(ctor, service);
     return this;
   }

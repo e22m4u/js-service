@@ -66,4 +66,17 @@ describe('Service', function () {
       expect(res).to.be.eq(service);
     });
   });
+
+  describe('setService', function () {
+    it('calls the container "set" method', function () {
+      const service = new Service();
+      const date = new Date();
+      spy.on(service.container, 'set', (ctor, input) => {
+        expect(ctor).to.be.eq(Date);
+        expect(input).to.be.eq(date);
+      });
+      const res = service.addService(Date, date);
+      expect(res).to.be.eq(service);
+    });
+  });
 });

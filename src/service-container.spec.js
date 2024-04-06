@@ -610,4 +610,103 @@ describe('ServiceContainer', function () {
       });
     });
   });
+
+  describe('set', function () {
+    it('requires the "ctor" argument to be a class constructor', function () {
+      const container = new ServiceContainer();
+      const throwable = v => () => container.set(v, {});
+      const error = v =>
+        format(
+          'The first argument of ServicesContainer.set must be ' +
+            'a class constructor, but %s given.',
+          v,
+        );
+      expect(throwable()).to.throw(error('undefined'));
+      expect(throwable('str')).to.throw(error('"str"'));
+      expect(throwable(10)).to.throw(error('10'));
+      expect(throwable(true)).to.throw(error('true'));
+      expect(throwable(false)).to.throw(error('false'));
+      expect(throwable(null)).to.throw(error('null'));
+      expect(throwable([])).to.throw(error('Array'));
+      expect(throwable({})).to.throw(error('Object'));
+      throwable(String)();
+    });
+
+    it('requires the "service" argument to be an Object', function () {
+      const container = new ServiceContainer();
+      const throwable = v => () => container.set(String, v);
+      const error = v =>
+        format(
+          'The second argument of ServicesContainer.set must be ' +
+            'an Object, but %s given.',
+          v,
+        );
+      expect(throwable()).to.throw(error('undefined'));
+      expect(throwable('str')).to.throw(error('"str"'));
+      expect(throwable(10)).to.throw(error('10'));
+      expect(throwable(true)).to.throw(error('true'));
+      expect(throwable(false)).to.throw(error('false'));
+      expect(throwable(null)).to.throw(error('null'));
+      expect(throwable([])).to.throw(error('Array'));
+      throwable({})();
+    });
+
+    describe('Service', function () {
+      it('returns itself', function () {
+        class MyService extends Service {}
+        const container = new ServiceContainer();
+        const res = container.set(MyService, {});
+        expect(res).to.be.eq(container);
+      });
+
+      it('sets the given service', function () {
+        class MyService extends Service {}
+        const container = new ServiceContainer();
+        const service = {};
+        container.set(MyService, service);
+        const res = container.get(MyService);
+        expect(res).to.be.eq(service);
+      });
+
+      it('overrides by the given service', function () {
+        class MyService extends Service {}
+        const container = new ServiceContainer();
+        const service1 = {foo: 'bar'};
+        const service2 = {bar: 'baz'};
+        container.set(MyService, service1);
+        container.set(MyService, service2);
+        const res = container.get(MyService);
+        expect(res).to.be.eq(service2);
+      });
+    });
+
+    describe('non-Service', function () {
+      it('returns itself', function () {
+        class MyService {}
+        const container = new ServiceContainer();
+        const res = container.set(MyService, {});
+        expect(res).to.be.eq(container);
+      });
+
+      it('sets the given service', function () {
+        class MyService {}
+        const container = new ServiceContainer();
+        const service = {};
+        container.set(MyService, service);
+        const res = container.get(MyService);
+        expect(res).to.be.eq(service);
+      });
+
+      it('overrides by the given service', function () {
+        class MyService {}
+        const container = new ServiceContainer();
+        const service1 = {foo: 'bar'};
+        const service2 = {bar: 'baz'};
+        container.set(MyService, service1);
+        container.set(MyService, service2);
+        const res = container.get(MyService);
+        expect(res).to.be.eq(service2);
+      });
+    });
+  });
 });

@@ -5,7 +5,7 @@ import {Constructor} from './types.js';
  */
 export declare class ServiceContainer {
   /**
-   * Get.
+   * Получить существующий или новый экземпляр.
    *
    * @param ctor
    * @param args
@@ -16,7 +16,7 @@ export declare class ServiceContainer {
   ): T;
 
   /**
-   * Has.
+   * Проверка существования конструктора в контейнере.
    *
    * @param ctor
    */
@@ -25,7 +25,7 @@ export declare class ServiceContainer {
   ): boolean;
 
   /**
-   * Add.
+   * Добавить конструктор в контейнер.
    *
    * @param ctor
    * @param args
@@ -36,7 +36,7 @@ export declare class ServiceContainer {
   ): this;
 
   /**
-   * Use.
+   * Добавить конструктор и создать экземпляр.
    *
    * @param ctor
    * @param args
@@ -44,5 +44,16 @@ export declare class ServiceContainer {
   use<T extends object>(
     ctor: Constructor<T>,
     ...args: any[],
+  ): this;
+
+  /**
+   * Добавить конструктор и связанный экземпляр.
+   *
+   * @param ctor
+   * @param service
+   */
+  set<T extends object>(
+    ctor: Constructor<T>,
+    service: T,
   ): this;
 }

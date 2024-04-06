@@ -24,7 +24,7 @@ export class Service {
   }
 
   /**
-   * Get service.
+   * Получить существующий или новый экземпляр.
    *
    * @param {*} ctor
    * @param {*} args
@@ -35,7 +35,7 @@ export class Service {
   }
 
   /**
-   * Has service.
+   * Проверка существования конструктора в контейнере.
    *
    * @param {*} ctor
    * @return {boolean}
@@ -45,7 +45,7 @@ export class Service {
   }
 
   /**
-   * Add service.
+   * Добавить конструктор в контейнер.
    *
    * @param {*} ctor
    * @param {*} args
@@ -57,7 +57,7 @@ export class Service {
   }
 
   /**
-   * Use service.
+   * Добавить конструктор и создать экземпляр.
    *
    * @param {*} ctor
    * @param {*} args
@@ -65,6 +65,18 @@ export class Service {
    */
   useService(ctor, ...args) {
     this.container.use(ctor, ...args);
+    return this;
+  }
+
+  /**
+   * Добавить конструктор и связанный экземпляр.
+   *
+   * @param {*} ctor
+   * @param {*} service
+   * @return {this}
+   */
+  setService(ctor, service) {
+    this.container.set(ctor, service);
     return this;
   }
 }
