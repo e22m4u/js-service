@@ -5,6 +5,13 @@ import {Constructor} from './types.js';
  */
 export declare class ServiceContainer {
   /**
+   * Constructor.
+   *
+   * @param parent
+   */
+  constructor(parent?: ServiceContainer);
+
+  /**
    * Получить существующий или новый экземпляр.
    *
    * @param ctor

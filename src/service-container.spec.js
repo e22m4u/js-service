@@ -4,6 +4,41 @@ import {format} from '@e22m4u/js-format';
 import {ServiceContainer} from './service-container.js';
 
 describe('ServiceContainer', function () {
+  describe('constructor', function () {
+    it('does not require any arguments', function () {
+      const res = new ServiceContainer();
+      expect(res).to.be.instanceof(ServiceContainer);
+    });
+
+    it('sets the first argument as the parent container', function () {
+      const parent = new ServiceContainer();
+      const container = new ServiceContainer(parent);
+      const res = container['_parent'];
+      expect(res).to.be.eq(parent);
+    });
+
+    it('requires the first argument to be an instance of ServiceContainer', function () {
+      const throwable = v => () => new ServiceContainer(v);
+      const error = v =>
+        format(
+          'The provided parameter "parent" of ServicesContainer.constructor ' +
+            'must be an instance ServiceContainer, but %s given.',
+          v,
+        );
+      expect(throwable('str')).to.throw(error('"str"'));
+      expect(throwable('')).to.throw(error('""'));
+      expect(throwable(10)).to.throw(error('10'));
+      expect(throwable(0)).to.throw(error('0'));
+      expect(throwable(true)).to.throw(error('true'));
+      expect(throwable(false)).to.throw(error('false'));
+      expect(throwable([])).to.throw(error('Array'));
+      expect(throwable({})).to.throw(error('Object'));
+      throwable(undefined)();
+      throwable(null)();
+      throwable(new ServiceContainer())();
+    });
+  });
+
   describe('get', function () {
     it('throws an error if no constructor given', function () {
       const container = new ServiceContainer();
@@ -131,6 +166,25 @@ describe('ServiceContainer', function () {
         expect(executed).to.be.eq(2);
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
+
+      it('instantiates from the parent container', function () {
+        class MyService extends Service {}
+        const parent = new ServiceContainer();
+        parent.add(MyService);
+        const child = new ServiceContainer(parent);
+        const res = child.get(MyService);
+        expect(res).to.be.instanceof(MyService);
+      });
+
+      it('returns an instance from the parent container', function () {
+        class MyService extends Service {}
+        const parent = new ServiceContainer();
+        const service = new MyService();
+        parent.set(MyService, service);
+        const child = new ServiceContainer(parent);
+        const res = child.get(MyService);
+        expect(res).to.be.eq(service);
+      });
     });
 
     describe('non-Service', function () {
@@ -226,6 +280,25 @@ describe('ServiceContainer', function () {
         expect(executed).to.be.eq(2);
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
+
+      it('instantiates from the parent container', function () {
+        class MyService {}
+        const parent = new ServiceContainer();
+        parent.add(MyService);
+        const child = new ServiceContainer(parent);
+        const res = child.get(MyService);
+        expect(res).to.be.instanceof(MyService);
+      });
+
+      it('returns an instance from the parent container', function () {
+        class MyService {}
+        const parent = new ServiceContainer();
+        const service = new MyService();
+        parent.set(MyService, service);
+        const child = new ServiceContainer(parent);
+        const res = child.get(MyService);
+        expect(res).to.be.eq(service);
+      });
     });
   });
 
@@ -246,6 +319,15 @@ describe('ServiceContainer', function () {
         container.add(MyService);
         expect(container.has(MyService)).to.be.true;
       });
+
+      it('returns true if the parent container has the given constructor', function () {
+        class MyService extends Service {}
+        const parent = new ServiceContainer();
+        parent.add(MyService);
+        const child = new ServiceContainer(parent);
+        const res = child.has(MyService);
+        expect(res).to.be.true;
+      });
     });
 
     describe('non-Service', function () {
@@ -263,6 +345,15 @@ describe('ServiceContainer', function () {
         expect(container.has(MyService)).to.be.false;
         container.add(MyService);
         expect(container.has(MyService)).to.be.true;
+      });
+
+      it('returns true if the parent container has the given constructor', function () {
+        class MyService {}
+        const parent = new ServiceContainer();
+        parent.add(MyService);
+        const child = new ServiceContainer(parent);
+        const res = child.has(MyService);
+        expect(res).to.be.true;
       });
     });
   });

@@ -14,6 +14,31 @@ export class ServiceContainer {
   _services = new Map();
 
   /**
+   * Parent container.
+   *
+   * @type {ServiceContainer}
+   * @private
+   */
+  _parent;
+
+  /**
+   * Constructor.
+   *
+   * @param {ServiceContainer|undefined} parent
+   */
+  constructor(parent = undefined) {
+    if (parent != null) {
+      if (!(parent instanceof ServiceContainer))
+        throw new InvalidArgumentError(
+          'The provided parameter "parent" of ServicesContainer.constructor ' +
+            'must be an instance ServiceContainer, but %v given.',
+          parent,
+        );
+      this._parent = parent;
+    }
+  }
+
+  /**
    * Получить существующий или новый экземпляр.
    *
    * @param {*} ctor
@@ -27,8 +52,15 @@ export class ServiceContainer {
           'a class constructor, but %v given.',
         ctor,
       );
+    // если конструктор отсутствует в текущем
+    // контейнере, то пытаемся получить сервис
+    // из родительского контейнера
+    if (!this._services.has(ctor) && this._parent)
+      return this._parent.get(ctor);
     let service = this._services.get(ctor);
-    // instantiates if no service or args given
+    // если экземпляр сервиса не найден
+    // или переданы аргументы, то создаем
+    // новый экземпляр
     if (!service || args.length) {
       service =
         'prototype' in ctor && ctor.prototype instanceof Service
@@ -50,7 +82,9 @@ export class ServiceContainer {
    * @return {boolean}
    */
   has(ctor) {
-    return this._services.has(ctor);
+    if (this._services.has(ctor)) return true;
+    if (this._parent) return this._parent.has(ctor);
+    return false;
   }
 
   /**
