@@ -53,10 +53,11 @@ export class ServiceContainer {
         ctor,
       );
     // если конструктор отсутствует в текущем
-    // контейнере, то пытаемся получить сервис
-    // из родительского контейнера
-    if (!this._services.has(ctor) && this._parent)
+    // контейнере, но имеется в родительском,
+    // то запрашиваем сервис именно из него
+    if (!this._services.has(ctor) && this._parent && this._parent.has(ctor)) {
       return this._parent.get(ctor);
+    }
     let service = this._services.get(ctor);
     // если экземпляр сервиса не найден
     // или переданы аргументы, то создаем

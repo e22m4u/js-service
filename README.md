@@ -77,6 +77,27 @@ console.log(myDate2); // Wed Jan 01 2025 03:00:00
 console.log(myDate3); // Sun May 05 2030 03:00:00
 ```
 
+### Наследование
+
+Конструктор `ServiceContainer` первым параметром принимает родительский
+контейнер, который используется как альтернативный, если конструктор
+запрашиваемого сервиса не зарегистрирован в текущем.
+
+```js
+class MyService {}
+
+// создание контейнера и регистрация
+// в нем сервиса MyService
+const parentContainer = new ServiceContainer();
+parentContainer.add(MyService);
+
+// использование предыдущего контейнера в качестве родителя,
+// и проверка доступности сервиса MyService
+const childContainer = new ServiceContainer(parentContainer);
+const hasService = childContainer.has(MyService);
+console.log(hasService); // true
+```
+
 ## Service
 
 Методы:

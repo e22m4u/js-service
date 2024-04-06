@@ -167,23 +167,36 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
 
-      it('instantiates from the parent container', function () {
-        class MyService extends Service {}
-        const parent = new ServiceContainer();
-        parent.add(MyService);
-        const child = new ServiceContainer(parent);
-        const res = child.get(MyService);
-        expect(res).to.be.instanceof(MyService);
-      });
+      describe('in case of the parent container', function () {
+        it('instantiates in the parent container', function () {
+          class MyService extends Service {}
+          const parent = new ServiceContainer();
+          parent.add(MyService);
+          const child = new ServiceContainer(parent);
+          const res = child.get(MyService);
+          expect(res).to.be.instanceof(MyService);
+        });
 
-      it('returns an instance from the parent container', function () {
-        class MyService extends Service {}
-        const parent = new ServiceContainer();
-        const service = new MyService();
-        parent.set(MyService, service);
-        const child = new ServiceContainer(parent);
-        const res = child.get(MyService);
-        expect(res).to.be.eq(service);
+        it('returns an instance from the parent container', function () {
+          class MyService extends Service {}
+          const parent = new ServiceContainer();
+          const service = parent.get(MyService);
+          const child = new ServiceContainer(parent);
+          const res = child.get(MyService);
+          expect(res).to.be.eq(service);
+        });
+
+        it('does not adds the given constructor to the parent container', function () {
+          class MyService extends Service {}
+          const parent = new ServiceContainer();
+          const child = new ServiceContainer(parent);
+          const service = child.get(MyService);
+          expect(service).to.be.instanceof(MyService);
+          const res1 = child.has(MyService);
+          const res2 = parent.has(MyService);
+          expect(res1).to.be.true;
+          expect(res2).to.be.false;
+        });
       });
     });
 
@@ -281,23 +294,36 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
 
-      it('instantiates from the parent container', function () {
-        class MyService {}
-        const parent = new ServiceContainer();
-        parent.add(MyService);
-        const child = new ServiceContainer(parent);
-        const res = child.get(MyService);
-        expect(res).to.be.instanceof(MyService);
-      });
+      describe('in case of the parent container', function () {
+        it('instantiates in the parent container', function () {
+          class MyService {}
+          const parent = new ServiceContainer();
+          parent.add(MyService);
+          const child = new ServiceContainer(parent);
+          const res = child.get(MyService);
+          expect(res).to.be.instanceof(MyService);
+        });
 
-      it('returns an instance from the parent container', function () {
-        class MyService {}
-        const parent = new ServiceContainer();
-        const service = new MyService();
-        parent.set(MyService, service);
-        const child = new ServiceContainer(parent);
-        const res = child.get(MyService);
-        expect(res).to.be.eq(service);
+        it('returns an instance from the parent container', function () {
+          class MyService {}
+          const parent = new ServiceContainer();
+          const service = parent.get(MyService);
+          const child = new ServiceContainer(parent);
+          const res = child.get(MyService);
+          expect(res).to.be.eq(service);
+        });
+
+        it('does not adds the given constructor to the parent container', function () {
+          class MyService {}
+          const parent = new ServiceContainer();
+          const child = new ServiceContainer(parent);
+          const service = child.get(MyService);
+          expect(service).to.be.instanceof(MyService);
+          const res1 = child.has(MyService);
+          const res2 = parent.has(MyService);
+          expect(res1).to.be.true;
+          expect(res2).to.be.false;
+        });
       });
     });
   });
