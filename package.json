@@ -1,7 +1,7 @@
 {
   "name": "@e22m4u/js-service",
   "version": "0.1.0",
-  "description": "Разновидность сервис-локатора",
+  "description": "Реализация сервис-локатора",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
