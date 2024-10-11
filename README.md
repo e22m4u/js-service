@@ -128,7 +128,7 @@ import {Service} from '@e22m4u/js-service';
 // the Foo service
 class Foo extends Service {
   method() {
-    // access to the Bar service
+    // access to the Bar
     const bar = this.getService(Bar);
     // ...
   }
@@ -137,7 +137,7 @@ class Foo extends Service {
 // the Bar service
 class Bar extends Service {
   method() {
-    // access to the Foo service
+    // access to the Foo
     const foo = this.getService(Foo);
     // ...
   }
