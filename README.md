@@ -2,8 +2,8 @@
 
 *English | [Русский](README-ru.md)*
 
-Implementation of the «Service Locator» pattern using
-the Dependency Injection approach.
+The «Service Locator» implementation with the Dependency Injection
+approach.
 
 ## Installation
 
