@@ -37,11 +37,11 @@ as if we were passing the service container between them.
 
 Methods:
 
-- `get(ctor, ...args)` returns an existing or new instance
-- `has(ctor)` checks if a constructor exists in the container
-- `add(ctor, ...args)` adds a constructor to the container
-- `use(ctor, ...args)` adds a constructor and creates its instance
-- `set(ctor, service)` adds a constructor and its instance
+- `get(ctor, ...args)` returns an existing or new service instance
+- `has(ctor)` checks if a service constructor exists in the container
+- `add(ctor, ...args)` adds a service constructor to the container
+- `use(ctor, ...args)` adds a service constructor and creates its instance
+- `set(ctor, service)` adds a service constructor and its instance
 
 ### get
 
@@ -109,11 +109,11 @@ console.log(hasService); // true
 
 Methods:
 
-- `getService(ctor, ...args)` returns an existing or new instance
-- `hasService(ctor)` checks if a constructor exists in the container
-- `addService(ctor, ...args)` adds a constructor to the container
-- `useService(ctor, ...args)` adds a constructor and creates its instance
-- `setService(ctor, service)` adds a constructor and its instance
+- `getService(ctor, ...args)` returns an existing or new service instance
+- `hasService(ctor)` checks if a service constructor exists in the container
+- `addService(ctor, ...args)` adds a service constructor to the container
+- `useService(ctor, ...args)` adds a service constructor and creates its instance
+- `setService(ctor, service)` adds a service constructor and its instance
 
 A service is just an instance of a class. However, if a service
 inherits the `Service` class, such a service allows encapsulating
