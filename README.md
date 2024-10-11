@@ -22,12 +22,11 @@ which can be used separately or together.
 - `ServiceContainer` - classic version of the service locator
 - `Service` - hides the creation of the container and its distribution
 
-The `Service` class is convenient when the application has
-a single entry point created by the `new` operator. For example,
-if such a point is the `Application` class, we could inherit
-it from the `Service` class and access other services using
-the `getService` method without worrying about creating and
-storing their instances.
+The `Service` class is convenient when the application has a single
+entry point created by the `new` operator. For example, if such
+a point is the `App` class, we could inherit it from the `Service`
+class and access other services using the `getService` method
+without worrying about creating and storing their instances.
 
 Moreover, if other services also inherit from the `Service` class,
 they can refer to each other using the `getService` method,
