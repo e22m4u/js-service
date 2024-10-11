@@ -175,7 +175,7 @@ const foo2 = this.getService(Foo);        // returns existing instance
 console.log(foo1 === foo2);               // true
 
 const foo3 = this.getService(Foo, 'arg'); // recreates instance
-const foo4 = this.getService(Foo);        // returns already recreated instance
+const foo4 = this.getService(Foo);        // returns recreated instance
 console.log(foo3 === foo4);               // true
 ```
 
