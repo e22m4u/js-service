@@ -46,7 +46,7 @@ Methods:
 
 The `get` method of the `ServiceContainer` class creates
 an instance of the given constructor and saves it for next
-requests following the "singleton" principle.
+access following the "singleton" principle.
 
 Example:
 
@@ -114,10 +114,9 @@ Methods:
 - `useService(ctor, ...args)` adds a constructor and creates its instance
 - `setService(ctor, service)` adds a constructor and its instance
 
-A service is just an instance of a class. However, if a service
-inherits the `Service` class, such a service allows encapsulating
-the creation of the service container, its storage, and transfer
-to other services.
+A service is just a class instance. However, if a service inherits
+the `Service` class, such a service encapsulating the creation
+of the service container, its storage, and transfer to other services.
 
 Example:
 
