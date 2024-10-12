@@ -2,7 +2,7 @@
 
 *English | [Русский](README-ru.md)*
 
-The «Service Locator» implementation.
+The «Service Locator» implementation for JavaScript.
 
 ## Installation
 
