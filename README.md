@@ -10,10 +10,23 @@ The «Service Locator» implementation for JavaScript.
 npm install @e22m4u/js-service
 ```
 
-To load the ES-module, you need to set `"type": "module"`
-in the `package.json` file, or use the `.mjs` extension.
+## Overview
 
-## Purpose
+The module supports ESM and CommonJS standards.
+
+*ESM*
+
+```js
+import {Service} from '@e22m4u/js-service';
+```
+
+*CommonJS*
+
+```js
+const {Service} = require('@e22m4u/js-service');
+```
+
+### Purpose
 
 The module offers `ServiceContainer` and `Service` classes,
 which can be used separately or together.

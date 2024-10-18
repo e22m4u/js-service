@@ -10,10 +10,23 @@
 npm install @e22m4u/js-service
 ```
 
-Для загрузки ES-модуля требуется установить `"type": "module"` в файле
-`package.json`, или использовать `.mjs` расширение.
+## Обзор
 
-## Назначение
+Модуль поддерживает ESM и CommonJS стандарты.
+
+*ESM*
+
+```js
+import {Service} from '@e22m4u/js-service';
+```
+
+*CommonJS*
+
+```js
+const {Service} = require('@e22m4u/js-service');
+```
+
+### Назначение
 
 Модуль предлагает классы `ServiceContainer` и `Service`,
 которые можно использовать как по отдельности, так и вместе.
