@@ -10,8 +10,6 @@
 npm install @e22m4u/js-service
 ```
 
-## Обзор
-
 Модуль поддерживает ESM и CommonJS стандарты.
 
 *ESM*
@@ -26,7 +24,7 @@ import {Service} from '@e22m4u/js-service';
 const {Service} = require('@e22m4u/js-service');
 ```
 
-### Назначение
+## Назначение
 
 Модуль предлагает классы `ServiceContainer` и `Service`,
 которые можно использовать как по отдельности, так и вместе.
@@ -45,7 +43,7 @@ const {Service} = require('@e22m4u/js-service');
 тот же метод `getService`, как если бы мы передавали
 сервис-контейнер между ними.
 
-### ServiceContainer
+## `ServiceContainer` class
 
 Методы:
 
@@ -55,7 +53,7 @@ const {Service} = require('@e22m4u/js-service');
 - `use(ctor, ...args)` добавить конструктор и создать экземпляр
 - `set(ctor, service)` добавить конструктор и его экземпляр
 
-#### get
+### get
 
 Метод `get` класса `ServiceContainer` создает экземпляр
 полученного конструктора и сохраняет его для последующих
@@ -93,7 +91,7 @@ console.log(myDate2); // Wed Jan 01 2025 03:00:00
 console.log(myDate3); // Sun May 05 2030 03:00:00
 ```
 
-#### Наследование
+### Наследование
 
 Конструктор `ServiceContainer` первым параметром принимает родительский
 контейнер, который используется как альтернативный, если конструктор
@@ -114,7 +112,7 @@ const hasService = childContainer.has(MyService);
 console.log(hasService); // true
 ```
 
-### Service
+## `Service` class
 
 Методы:
 
@@ -168,7 +166,7 @@ const app = new App();
 и его передачу между сервисами, так как эта логика
 инкапсулирована в классе `Service` и его методе `getService`
 
-#### getService
+### getService
 
 Метод `getService` обеспечивает существование единственного
 экземпляра запрашиваемого сервиса, а не создает каждый раз
