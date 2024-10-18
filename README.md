@@ -44,7 +44,7 @@ Moreover, if other services also inherit from the `Service` class,
 they can refer to each other using the `getService` method,
 as if we were passing the service container between them.
 
-## ServiceContainer
+### ServiceContainer
 
 Methods:
 
@@ -54,7 +54,7 @@ Methods:
 - `use(ctor, ...args)` adds a constructor and creates its instance
 - `set(ctor, service)` adds a constructor and its instance
 
-### get
+#### get
 
 The `get` method of the `ServiceContainer` class creates
 an instance of the given constructor and saves it for next
@@ -116,7 +116,7 @@ const hasService = childContainer.has(MyService);
 console.log(hasService); // true
 ```
 
-## Service
+### Service
 
 Methods:
 
@@ -171,7 +171,7 @@ a service container and passing it between services,
 because this logic is encapsulated in the `Service`
 class and its `getService` method.
 
-### getService
+#### getService
 
 The `getService` method ensures the existence of a single
 instance of the requested service, rather than creating
