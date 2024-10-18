@@ -43,7 +43,7 @@ const {Service} = require('@e22m4u/js-service');
 тот же метод `getService`, как если бы мы передавали
 сервис-контейнер между ними.
 
-## `ServiceContainer` class
+## `ServiceContainer`
 
 Методы:
 
@@ -53,7 +53,7 @@ const {Service} = require('@e22m4u/js-service');
 - `use(ctor, ...args)` добавить конструктор и создать экземпляр
 - `set(ctor, service)` добавить конструктор и его экземпляр
 
-### get
+### `get`
 
 Метод `get` класса `ServiceContainer` создает экземпляр
 полученного конструктора и сохраняет его для последующих
@@ -112,7 +112,7 @@ const hasService = childContainer.has(MyService);
 console.log(hasService); // true
 ```
 
-## `Service` class
+## `Service`
 
 Методы:
 
@@ -166,7 +166,7 @@ const app = new App();
 и его передачу между сервисами, так как эта логика
 инкапсулирована в классе `Service` и его методе `getService`
 
-### getService
+### `getService`
 
 Метод `getService` обеспечивает существование единственного
 экземпляра запрашиваемого сервиса, а не создает каждый раз
