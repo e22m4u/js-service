@@ -41,18 +41,18 @@
   "devDependencies": {
     "@commitlint/cli": "~19.5.0",
     "@commitlint/config-conventional": "~19.5.0",
-    "@eslint/js": "~9.12.0",
+    "@eslint/js": "~9.14.0",
     "c8": "~10.1.2",
-    "chai": "~5.1.1",
+    "chai": "~5.1.2",
     "esbuild": "~0.24.0",
-    "eslint": "~9.12.0",
+    "eslint": "~9.14.0",
     "eslint-config-prettier": "~9.1.0",
     "eslint-plugin-chai-expect": "~3.1.0",
     "eslint-plugin-mocha": "~10.5.0",
-    "globals": "~15.10.0",
+    "globals": "~15.12.0",
     "husky": "~9.1.6",
-    "mocha": "~10.7.3",
+    "mocha": "~10.8.2",
     "prettier": "~3.3.3",
-    "typescript": "~5.6.2"
+    "typescript": "~5.6.3"
   }
 }
