@@ -2,6 +2,8 @@ var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
@@ -15,6 +17,7 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // src/index.js
 var src_exports = {};
@@ -29,6 +32,7 @@ function isClass(value) {
   if (!value) return false;
   return typeof value === "function" && /^class\s/.test(Function.prototype.toString.call(value));
 }
+__name(isClass, "isClass");
 
 // node_modules/@e22m4u/js-format/src/value-to-string.js
 var BASE_CTOR_NAMES = [
@@ -54,6 +58,7 @@ function valueToString(input) {
   if (typeof input === "object" && input.constructor == null) return "Object";
   return String(input);
 }
+__name(valueToString, "valueToString");
 
 // node_modules/@e22m4u/js-format/src/array-to-list.js
 var SEPARATOR = ", ";
@@ -62,6 +67,7 @@ function arrayToList(input) {
     return input.map(valueToString).join(SEPARATOR);
   return valueToString(input);
 }
+__name(arrayToList, "arrayToList");
 
 // node_modules/@e22m4u/js-format/src/format.js
 function format(pattern) {
@@ -101,9 +107,10 @@ function format(pattern) {
   pattern = pattern.replace(/%{2}/g, "%");
   return "" + pattern;
 }
+__name(format, "format");
 
 // node_modules/@e22m4u/js-format/src/errorf.js
-var Errorf = class extends Error {
+var _Errorf = class _Errorf extends Error {
   /**
    * Constructor.
    *
@@ -115,13 +122,17 @@ var Errorf = class extends Error {
     super(message);
   }
 };
+__name(_Errorf, "Errorf");
+var Errorf = _Errorf;
 
 // src/errors/invalid-argument-error.js
-var InvalidArgumentError = class extends Errorf {
+var _InvalidArgumentError = class _InvalidArgumentError extends Errorf {
 };
+__name(_InvalidArgumentError, "InvalidArgumentError");
+var InvalidArgumentError = _InvalidArgumentError;
 
 // src/service-container.js
-var ServiceContainer = class _ServiceContainer {
+var _ServiceContainer = class _ServiceContainer {
   /**
    * Services map.
    *
@@ -201,7 +212,7 @@ var ServiceContainer = class _ServiceContainer {
         "The first argument of ServicesContainer.add must be a class constructor, but %v given.",
         ctor
       );
-    const factory = () => ctor.kind === "Service" ? new ctor(this, ...args) : new ctor(...args);
+    const factory = /* @__PURE__ */ __name(() => ctor.kind === "Service" ? new ctor(this, ...args) : new ctor(...args), "factory");
     this._services.set(ctor, factory);
     return this;
   }
@@ -244,15 +255,11 @@ var ServiceContainer = class _ServiceContainer {
     return this;
   }
 };
+__name(_ServiceContainer, "ServiceContainer");
+var ServiceContainer = _ServiceContainer;
 
 // src/service.js
-var Service = class {
-  /**
-   * Kind.
-   *
-   * @type {string}
-   */
-  static kind = "Service";
+var _Service = class _Service {
   /**
    * Container.
    *
@@ -320,6 +327,14 @@ var Service = class {
     return this;
   }
 };
+__name(_Service, "Service");
+/**
+ * Kind.
+ *
+ * @type {string}
+ */
+__publicField(_Service, "kind", "Service");
+var Service = _Service;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   Service,
