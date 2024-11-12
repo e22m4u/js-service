@@ -6,6 +6,5 @@ await esbuild.build({
   format: 'cjs',
   platform: 'node',
   target: ['node12'],
-  bundle: true,
   keepNames: true,
 });
