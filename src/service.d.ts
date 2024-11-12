@@ -6,6 +6,11 @@ import {ServiceContainer} from './service-container.js';
  */
 export declare class Service {
   /**
+   * Kind.
+   */
+  get kind(): string;
+
+  /**
    * Container.
    */
   container: ServiceContainer;

@@ -64,7 +64,7 @@ export class ServiceContainer {
     // новый экземпляр
     if (!service || args.length) {
       service =
-        'prototype' in ctor && ctor.prototype instanceof Service
+        'prototype' in ctor && ctor.prototype.kind === Service.name
           ? new ctor(this, ...args)
           : new ctor(...args);
       this._services.set(ctor, service);
@@ -103,7 +103,7 @@ export class ServiceContainer {
         ctor,
       );
     const factory = () =>
-      ctor.prototype instanceof Service
+      ctor.prototype.kind === Service.name
         ? new ctor(this, ...args)
         : new ctor(...args);
     this._services.set(ctor, factory);
@@ -125,7 +125,7 @@ export class ServiceContainer {
         ctor,
       );
     const service =
-      ctor.prototype instanceof Service
+      ctor.prototype.kind === Service.name
         ? new ctor(this, ...args)
         : new ctor(...args);
     this._services.set(ctor, service);

@@ -3,6 +3,12 @@ import {Service} from './service.js';
 import {ServiceContainer} from './service-container.js';
 
 describe('Service', function () {
+  it('exposes kind getter', function () {
+    const service = new Service();
+    expect(service.kind).to.be.eq('Service');
+    expect(Service.prototype.kind).to.be.eq('Service');
+  });
+
   describe('constructor', function () {
     it('instantiates with a services container', function () {
       const service = new Service();

@@ -5,6 +5,15 @@ import {ServiceContainer} from './service-container.js';
  */
 export class Service {
   /**
+   * Kind.
+   *
+   * @type {string}
+   */
+  get kind() {
+    return Service.name;
+  }
+
+  /**
    * Container.
    *
    * @type {ServiceContainer}
