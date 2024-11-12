@@ -169,7 +169,7 @@ var ServiceContainer = class _ServiceContainer {
     }
     let service = this._services.get(ctor);
     if (!service || args.length) {
-      service = "prototype" in ctor && ctor.prototype.kind === Service.name ? new ctor(this, ...args) : new ctor(...args);
+      service = ctor.kind === Service.name ? new ctor(this, ...args) : new ctor(...args);
       this._services.set(ctor, service);
     } else if (typeof service === "function") {
       service = service();
@@ -201,7 +201,7 @@ var ServiceContainer = class _ServiceContainer {
         "The first argument of ServicesContainer.add must be a class constructor, but %v given.",
         ctor
       );
-    const factory = () => ctor.prototype.kind === Service.name ? new ctor(this, ...args) : new ctor(...args);
+    const factory = () => ctor.kind === Service.name ? new ctor(this, ...args) : new ctor(...args);
     this._services.set(ctor, factory);
     return this;
   }
@@ -218,7 +218,7 @@ var ServiceContainer = class _ServiceContainer {
         "The first argument of ServicesContainer.use must be a class constructor, but %v given.",
         ctor
       );
-    const service = ctor.prototype.kind === Service.name ? new ctor(this, ...args) : new ctor(...args);
+    const service = ctor.kind === Service.name ? new ctor(this, ...args) : new ctor(...args);
     this._services.set(ctor, service);
     return this;
   }
@@ -252,9 +252,7 @@ var Service = class _Service {
    *
    * @type {string}
    */
-  get kind() {
-    return _Service.name;
-  }
+  static kind = _Service.name;
   /**
    * Container.
    *

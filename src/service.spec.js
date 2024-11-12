@@ -3,10 +3,12 @@ import {Service} from './service.js';
 import {ServiceContainer} from './service-container.js';
 
 describe('Service', function () {
-  it('exposes kind getter', function () {
-    const service = new Service();
-    expect(service.kind).to.be.eq('Service');
-    expect(Service.prototype.kind).to.be.eq('Service');
+  it('exposes static property "kind"', function () {
+    expect(Service.kind).to.be.eq(Service.name);
+    const MyService1 = class extends Service {};
+    expect(MyService1.kind).to.be.eq(Service.name);
+    class MyService2 extends Service {}
+    expect(MyService2.kind).to.be.eq(Service.name);
   });
 
   describe('constructor', function () {
