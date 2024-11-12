@@ -9,7 +9,7 @@ export class Service {
    *
    * @type {string}
    */
-  static kind = Service.name;
+  static kind = 'Service';
 
   /**
    * Container.

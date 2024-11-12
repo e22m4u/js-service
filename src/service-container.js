@@ -1,4 +1,3 @@
-import {Service} from './service.js';
 import {InvalidArgumentError} from './errors/index.js';
 
 /**
@@ -64,9 +63,7 @@ export class ServiceContainer {
     // новый экземпляр
     if (!service || args.length) {
       service =
-        ctor.kind === Service.name
-          ? new ctor(this, ...args)
-          : new ctor(...args);
+        ctor.kind === 'Service' ? new ctor(this, ...args) : new ctor(...args);
       this._services.set(ctor, service);
       // instantiates from a factory function
     } else if (typeof service === 'function') {
@@ -103,7 +100,7 @@ export class ServiceContainer {
         ctor,
       );
     const factory = () =>
-      ctor.kind === Service.name ? new ctor(this, ...args) : new ctor(...args);
+      ctor.kind === 'Service' ? new ctor(this, ...args) : new ctor(...args);
     this._services.set(ctor, factory);
     return this;
   }
@@ -123,7 +120,7 @@ export class ServiceContainer {
         ctor,
       );
     const service =
-      ctor.kind === Service.name ? new ctor(this, ...args) : new ctor(...args);
+      ctor.kind === 'Service' ? new ctor(this, ...args) : new ctor(...args);
     this._services.set(ctor, service);
     return this;
   }

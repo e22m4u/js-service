@@ -8,7 +8,7 @@ export declare class Service {
   /**
    * Kind.
    */
-  get kind(): string;
+  static kind: string;
 
   /**
    * Container.
