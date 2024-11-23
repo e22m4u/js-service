@@ -22,6 +22,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
 // src/index.js
 var src_exports = {};
 __export(src_exports, {
+  SERVICE_CLASS_NAME: () => SERVICE_CLASS_NAME,
   Service: () => Service,
   ServiceContainer: () => ServiceContainer
 });
@@ -83,7 +84,7 @@ var _ServiceContainer = class _ServiceContainer {
     }
     let service = this._services.get(ctor);
     if (!service || args.length) {
-      service = ctor.kind === Service.kind ? new ctor(this, ...args) : new ctor(...args);
+      service = Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args);
       this._services.set(ctor, service);
     } else if (typeof service === "function") {
       service = service();
@@ -115,7 +116,7 @@ var _ServiceContainer = class _ServiceContainer {
         "The first argument of ServicesContainer.add must be a class constructor, but %v given.",
         ctor
       );
-    const factory = /* @__PURE__ */ __name(() => ctor.kind === Service.kind ? new ctor(this, ...args) : new ctor(...args), "factory");
+    const factory = /* @__PURE__ */ __name(() => Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args), "factory");
     this._services.set(ctor, factory);
     return this;
   }
@@ -132,7 +133,7 @@ var _ServiceContainer = class _ServiceContainer {
         "The first argument of ServicesContainer.use must be a class constructor, but %v given.",
         ctor
       );
-    const service = ctor.kind === Service.kind ? new ctor(this, ...args) : new ctor(...args);
+    const service = Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args);
     this._services.set(ctor, service);
     return this;
   }
@@ -162,6 +163,7 @@ __name(_ServiceContainer, "ServiceContainer");
 var ServiceContainer = _ServiceContainer;
 
 // src/service.js
+var SERVICE_CLASS_NAME = "Service";
 var _Service = class _Service {
   /**
    * Container.
@@ -232,14 +234,15 @@ var _Service = class _Service {
 };
 __name(_Service, "Service");
 /**
- * Kind.
+ * Kinds.
  *
- * @type {string}
+ * @type {string[]}
  */
-__publicField(_Service, "kind", "Service");
+__publicField(_Service, "kinds", [SERVICE_CLASS_NAME]);
 var Service = _Service;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  SERVICE_CLASS_NAME,
   Service,
   ServiceContainer
 });

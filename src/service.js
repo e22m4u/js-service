@@ -1,15 +1,22 @@
 import {ServiceContainer} from './service-container.js';
 
 /**
+ * Service class name.
+ *
+ * @type {string}
+ */
+export const SERVICE_CLASS_NAME = 'Service';
+
+/**
  * Service.
  */
 export class Service {
   /**
-   * Kind.
+   * Kinds.
    *
-   * @type {string}
+   * @type {string[]}
    */
-  static kind = 'Service';
+  static kinds = [SERVICE_CLASS_NAME];
 
   /**
    * Container.

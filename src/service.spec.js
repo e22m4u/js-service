@@ -1,14 +1,12 @@
 import {expect} from 'chai';
-import {Service} from './service.js';
+import {Service, SERVICE_CLASS_NAME} from './service.js';
 import {ServiceContainer} from './service-container.js';
 
 describe('Service', function () {
-  it('exposes static property "kind"', function () {
-    expect(Service.kind).to.be.eq(Service.name);
-    const MyService1 = class extends Service {};
-    expect(MyService1.kind).to.be.eq(Service.name);
-    class MyService2 extends Service {}
-    expect(MyService2.kind).to.be.eq(Service.name);
+  it('exposes static property "kinds"', function () {
+    expect(Service.kinds).to.be.eql([SERVICE_CLASS_NAME]);
+    const MyService = class extends Service {};
+    expect(MyService.kinds).to.be.eql([SERVICE_CLASS_NAME]);
   });
 
   describe('constructor', function () {

@@ -2,13 +2,18 @@ import {Constructor} from './types.js';
 import {ServiceContainer} from './service-container.js';
 
 /**
+ * Service class name.
+ */
+export const SERVICE_CLASS_NAME: 'Service';
+
+/**
  * Service.
  */
 export declare class Service {
   /**
    * Kind.
    */
-  static kind: string;
+  static readonly kinds: string[];
 
   /**
    * Container.
