@@ -1,6 +1,6 @@
 {
   "name": "@e22m4u/js-service",
-  "version": "0.1.11",
+  "version": "0.2.0",
   "description": "The Service Locator implementation for JavaScript",
   "type": "module",
   "types": "./src/index.d.ts",
