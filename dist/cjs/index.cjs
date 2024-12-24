@@ -20,13 +20,13 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // src/index.js
-var src_exports = {};
-__export(src_exports, {
+var index_exports = {};
+__export(index_exports, {
   SERVICE_CLASS_NAME: () => SERVICE_CLASS_NAME,
   Service: () => Service,
   ServiceContainer: () => ServiceContainer
 });
-module.exports = __toCommonJS(src_exports);
+module.exports = __toCommonJS(index_exports);
 
 // src/errors/invalid-argument-error.js
 var import_js_format = require("@e22m4u/js-format");
