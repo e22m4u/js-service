@@ -2,6 +2,19 @@
   "name": "@e22m4u/js-service",
   "version": "0.2.0",
   "description": "The Service Locator implementation for JavaScript",
+  "author": "e22m4u <e22m4u@yandex.ru>",
+  "license": "MIT",
+  "keywords": [
+    "DI",
+    "Service",
+    "Locator",
+    "Container"
+  ],
+  "homepage": "https://github.com/e22m4u/js-service",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/e22m4u/js-service.git"
+  },
   "type": "module",
   "types": "./src/index.d.ts",
   "module": "./src/index.js",
@@ -23,19 +36,6 @@
     "build:cjs": "rimraf ./dist/cjs && node --no-warnings=ExperimentalWarning build-cjs.js",
     "prepare": "husky"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/e22m4u/js-service.git"
-  },
-  "keywords": [
-    "DI",
-    "Service",
-    "Locator",
-    "Container"
-  ],
-  "author": "e22m4u <e22m4u@yandex.ru>",
-  "license": "MIT",
-  "homepage": "https://github.com/e22m4u/js-service",
   "dependencies": {
     "@e22m4u/js-format": "~0.1.0"
   },
