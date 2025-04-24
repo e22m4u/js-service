@@ -1,7 +1,7 @@
 {
   "name": "@e22m4u/js-service",
   "version": "0.2.0",
-  "description": "The Service Locator implementation for JavaScript",
+  "description": "Реализация сервис-локатора для JavaScript",
   "author": "e22m4u <e22m4u@yandex.ru>",
   "license": "MIT",
   "keywords": [

@@ -1,16 +1,14 @@
 ## @e22m4u/js-service
 
-*English | [Русский](README-ru.md)*
+Реализация паттерна «Сервис-локатор» для JavaScript.
 
-The «Service Locator» implementation for JavaScript.
-
-## Installation
+## Установка
 
 ```bash
 npm install @e22m4u/js-service
 ```
 
-The module supports ESM and CommonJS standards.
+Модуль поддерживает ESM и CommonJS стандарты.
 
 *ESM*
 
@@ -24,91 +22,89 @@ import {Service} from '@e22m4u/js-service';
 const {Service} = require('@e22m4u/js-service');
 ```
 
-## Purpose
+## Назначение
 
-The module offers `ServiceContainer` and `Service` classes,
-which can be used separately or together.
+Модуль предлагает классы `ServiceContainer` и `Service`,
+которые можно использовать как по отдельности, так и вместе.
 
-- `ServiceContainer` - classic version of the service locator
-- `Service` - hides the creation of the container and its distribution
+- `ServiceContainer` - классическая версия сервис-локатора  
+- `Service` - скрывает создание контейнера и его распространение
 
-The `Service` class is convenient when the application has a single
-entry point created by the `new` operator. For example, if such a point
-is the `Application` class, we could inherit it from the `Service` class
-and access other services using the `getService` method without worrying
-about creating and storing their instances.
+Класс `Service` удобен, когда приложение имеет единственную точку
+входа, которая создается оператором `new`. Например, если такой
+точкой является класс `Application`, то мы могли бы унаследовать
+его от класса `Service`, и обращаться к другим сервисам методом
+`getService` не заботясь о создании и хранении их экземпляров.
 
-Moreover, if other services also inherit from the `Service` class,
-they can refer to each other using the `getService` method,
-as if we were passing the service container between them.
+Кроме того, если другие сервисы так же наследуют от класса
+`Service`, то они могут обращаться друг к другу используя
+тот же метод `getService`, как если бы мы передавали
+сервис-контейнер между ними.
 
 ## `ServiceContainer`
 
-Methods:
+Методы:
 
-- `get(ctor, ...args)` returns an existing or new instance
-- `has(ctor)` checks if a constructor exists in the container
-- `add(ctor, ...args)` adds a constructor to the container
-- `use(ctor, ...args)` adds a constructor and creates its instance
-- `set(ctor, service)` adds a constructor and its instance
+- `get(ctor, ...args)` получить существующий или новый экземпляр
+- `has(ctor)` проверка существования конструктора в контейнере
+- `add(ctor, ...args)` добавить конструктор в контейнер
+- `use(ctor, ...args)` добавить конструктор и создать экземпляр
+- `set(ctor, service)` добавить конструктор и его экземпляр
 
 ### get
 
-The `get` method of the `ServiceContainer` class creates
-an instance of the given constructor and saves it for next
-access following the "singleton" principle.
+Метод `get` класса `ServiceContainer` создает экземпляр
+полученного конструктора и сохраняет его для последующих
+обращений по принципу "одиночки".
 
-Example:
+Пример:
 
 ```js
 import {ServiceContainer} from '@e22m4u/js-service';
 
-// create a new container
+// создание контейнера
 const container = new ServiceContainer();
 
-// pass a constructor to the "get" method
-// (the Date class is used as an example)
-const myDate1 = container.get(Date); // creates an instance
-const myDate2 = container.get(Date); // returns existing instance
+// в качестве сервиса используем класс Date
+const myDate1 = container.get(Date); // создание экземпляра
+const myDate2 = container.get(Date); // возврат существующего
 
 console.log(myDate1); // Tue Sep 12 2023 19:50:16
 console.log(myDate2); // Tue Sep 12 2023 19:50:16
 console.log(myDate1 === myDate2); // true
 ```
 
-The `get` method can accept constructor arguments.
-If the container already has an instance of this
-constructor, it will be recreated with new arguments.
+Метод `get` может принимать аргументы конструктора. При этом,
+если контейнер уже имеет экземпляр данного конструктора, то
+он будет пересоздан с новыми аргументами.
 
-Example:
+Пример:
 
 ```js
-const myDate1 = container.get(Date, '2025-01-01'); // creates an instance
-const myDate2 = container.get(Date);               // returns existing instance
-const myDate3 = container.get(Date, '2025-05-05'); // recreates
+const myDate1 = container.get(Date, '2025-01-01'); // создание экземпляра
+const myDate2 = container.get(Date);               // возврат существующего
+const myDate3 = container.get(Date, '2025-05-05'); // пересоздание
 console.log(myDate1); // Wed Jan 01 2025 03:00:00
 console.log(myDate2); // Wed Jan 01 2025 03:00:00
 console.log(myDate3); // Sun May 05 2030 03:00:00
 ```
 
-### Inheritance
+### Наследование
 
-The `ServiceContainer` constructor takes a parent container
-as its first parameter, which is used as an alternative
-if the constructor of the requested instance (service)
-is not registered in the current one.
+Конструктор `ServiceContainer` первым параметром принимает родительский
+контейнер, который используется как альтернативный, если конструктор
+запрашиваемого экземпляра (сервиса) не зарегистрирован в текущем.
 
 ```js
 class MyService {}
 
-// create the ServiceContainer instance
-// and register a new service (MyService)
+// создание контейнера и регистрация
+// в нем сервиса MyService
 const parentContainer = new ServiceContainer();
 parentContainer.add(MyService);
 
-// provide the previous container as a parent
-// for a new one, and check the service existence
-// in a child container
+// использование предыдущего контейнера в качестве родителя,
+// и проверка доступности сервиса MyService
 const childContainer = new ServiceContainer(parentContainer);
 const hasService = childContainer.has(MyService);
 console.log(hasService); // true
@@ -116,45 +112,45 @@ console.log(hasService); // true
 
 ## `Service`
 
-Methods:
+Методы:
 
-- `getService(ctor, ...args)` returns an existing or new instance
-- `hasService(ctor)` checks if a constructor exists in the container
-- `addService(ctor, ...args)` adds a constructor to the container
-- `useService(ctor, ...args)` adds a constructor and creates its instance
-- `setService(ctor, service)` adds a constructor and its instance
+- `getService(ctor, ...args)` получить существующий или новый экземпляр
+- `hasService(ctor)` проверка существования конструктора в контейнере
+- `addService(ctor, ...args)` добавить конструктор в контейнер
+- `useService(ctor, ...args)` добавить конструктор и создать экземпляр
+- `setService(ctor, service)` добавить конструктор и его экземпляр
 
-A service is just a class instance. However, if a service inherits
-the `Service` class, such a service encapsulating the creation
-of the service container, its storage, and transfer to other services.
+Сервисом может являться совершенно любой класс. Однако, если это
+наследник класса `Service`, то такой сервис позволяет инкапсулировать
+создание сервис-контейнера, его хранение и передачу другим сервисам.
 
-Example:
+Пример:
 
 ```js
 import {Service} from '@e22m4u/js-service';
 
-// the Foo service
+// сервис Foo
 class Foo extends Service {
   method() {
-    // access to the Bar
+    // доступ к сервису Bar
     const bar = this.getService(Bar);
     // ...
   }
 }
 
-// the Bar service
+// сервис Bar
 class Bar extends Service {
   method() {
-    // access to the Foo
+    // доступ к сервису Foo
     const foo = this.getService(Foo);
     // ...
   }
 }
 
-// the App service (entry point)
+// сервис App (точка входа)
 class App extends Service {
   method() {
-    // access to Foo and Bar services
+    // доступ к сервисам Foo и Bar
     const foo = this.getService(Foo);
     const bar = this.getService(Bar);
     // ...
@@ -164,37 +160,36 @@ class App extends Service {
 const app = new App();
 ```
 
-In the example above, we didn't worry about creating
-a service container and passing it between services,
-because this logic is encapsulated in the `Service`
-class and its `getService` method.
+В примере выше мы не заботились о создании сервис-контейнера
+и его передачу между сервисами, так как эта логика
+инкапсулирована в классе `Service` и его методе `getService`
 
 ### getService
 
-The `getService` method ensures the existence of a single
-instance of the requested service, rather than creating
-a new one each time. However, when passing additional
-arguments, the service will be recreated with these
-arguments passed to the constructor.
+Метод `getService` обеспечивает существование единственного
+экземпляра запрашиваемого сервиса, а не создает каждый раз
+новый. Тем не менее при передаче дополнительных аргументов,
+сервис будет пересоздан с передачей этих аргументов
+конструктору.
 
-Example:
+Пример:
 
 ```js
-const foo1 = this.getService(Foo, 'arg'); // creates an instance
-const foo2 = this.getService(Foo);        // returns existing instance
+const foo1 = this.getService(Foo, 'arg'); // создание экземпляра
+const foo2 = this.getService(Foo);        // возврат существующего
 console.log(foo1 === foo2);               // true
 
-const foo3 = this.getService(Foo, 'arg'); // recreates instance
-const foo4 = this.getService(Foo);        // returns recreated instance
+const foo3 = this.getService(Foo, 'arg'); // пересоздание экземпляра
+const foo4 = this.getService(Foo);        // возврат уже пересозданного
 console.log(foo3 === foo4);               // true
 ```
 
-## Tests
+## Тесты
 
 ```bash
 npm run test
 ```
 
-## License
+## Лицензия
 
 MIT
