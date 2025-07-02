@@ -59,6 +59,19 @@ export class ServiceContainer {
       return this._parent.get(ctor);
     }
     let service = this._services.get(ctor);
+    // если экземпляр сервиса не найден,
+    // то пытаемся найти его наследников
+    if (!service) {
+      const ctors = this._services.keys();
+      const inheritedCtor = ctors.find(v => v.prototype instanceof ctor);
+      if (inheritedCtor) {
+        service = this._services.get(inheritedCtor);
+        // если наследник найден, но экземпляр отсутствует,
+        // то подменяем конструктор наследником, чтобы
+        // экземпляр создавался с помощью него
+        ctor = inheritedCtor;
+      }
+    }
     // если экземпляр сервиса не найден
     // или переданы аргументы, то создаем
     // новый экземпляр
@@ -85,6 +98,11 @@ export class ServiceContainer {
   has(ctor) {
     if (this._services.has(ctor)) return true;
     if (this._parent) return this._parent.has(ctor);
+    // если не удалось найти указанный конструктор,
+    // то пытаемся найти его наследника
+    const ctors = this._services.keys();
+    const inheritedCtor = ctors.find(v => v.prototype instanceof ctor);
+    if (inheritedCtor) return true;
     return false;
   }
 
