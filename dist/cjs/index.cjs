@@ -25,7 +25,8 @@ __export(index_exports, {
   SERVICE_CLASS_NAME: () => SERVICE_CLASS_NAME,
   SERVICE_CONTAINER_CLASS_NAME: () => SERVICE_CONTAINER_CLASS_NAME,
   Service: () => Service,
-  ServiceContainer: () => ServiceContainer
+  ServiceContainer: () => ServiceContainer,
+  isServiceContainer: () => isServiceContainer
 });
 module.exports = __toCommonJS(index_exports);
 
@@ -181,6 +182,14 @@ __name(_ServiceContainer, "ServiceContainer");
 __publicField(_ServiceContainer, "kinds", [SERVICE_CONTAINER_CLASS_NAME]);
 var ServiceContainer = _ServiceContainer;
 
+// src/utils/is-service-container.js
+function isServiceContainer(container) {
+  return Boolean(
+    container && typeof container === "object" && typeof container.constructor === "function" && Array.isArray(container.constructor.kinds) && container.constructor.kinds.includes(SERVICE_CONTAINER_CLASS_NAME)
+  );
+}
+__name(isServiceContainer, "isServiceContainer");
+
 // src/service.js
 var SERVICE_CLASS_NAME = "Service";
 var _Service = class _Service {
@@ -196,7 +205,7 @@ var _Service = class _Service {
    * @param {ServiceContainer|undefined} container
    */
   constructor(container = void 0) {
-    this.container = container && typeof container === "object" && typeof container.constructor === "function" && Array.isArray(container.constructor.kinds) && container.constructor.kinds.includes(SERVICE_CONTAINER_CLASS_NAME) ? container : new ServiceContainer();
+    this.container = isServiceContainer(container) ? container : new ServiceContainer();
   }
   /**
    * Получить существующий или новый экземпляр.
@@ -264,5 +273,6 @@ var Service = _Service;
   SERVICE_CLASS_NAME,
   SERVICE_CONTAINER_CLASS_NAME,
   Service,
-  ServiceContainer
+  ServiceContainer,
+  isServiceContainer
 });

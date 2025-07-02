@@ -1,5 +1,5 @@
+import {isServiceContainer} from './utils/index.js';
 import {ServiceContainer} from './service-container.js';
-import {SERVICE_CONTAINER_CLASS_NAME} from './service-container.js';
 
 /**
  * Service class name.
@@ -32,14 +32,9 @@ export class Service {
    * @param {ServiceContainer|undefined} container
    */
   constructor(container = undefined) {
-    this.container =
-      container &&
-      typeof container === 'object' &&
-      typeof container.constructor === 'function' &&
-      Array.isArray(container.constructor.kinds) &&
-      container.constructor.kinds.includes(SERVICE_CONTAINER_CLASS_NAME)
-        ? container
-        : new ServiceContainer();
+    this.container = isServiceContainer(container)
+      ? container
+      : new ServiceContainer();
   }
 
   /**
