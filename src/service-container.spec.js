@@ -2,8 +2,15 @@ import {expect} from 'chai';
 import {Service} from './service.js';
 import {format} from '@e22m4u/js-format';
 import {ServiceContainer} from './service-container.js';
+import {SERVICE_CONTAINER_CLASS_NAME} from './service-container.js';
 
 describe('ServiceContainer', function () {
+  it('exposes static property "kinds"', function () {
+    expect(ServiceContainer.kinds).to.be.eql([SERVICE_CONTAINER_CLASS_NAME]);
+    const MyContainer = class extends ServiceContainer {};
+    expect(MyContainer.kinds).to.be.eql([SERVICE_CONTAINER_CLASS_NAME]);
+  });
+
   describe('constructor', function () {
     it('does not require any arguments', function () {
       const res = new ServiceContainer();

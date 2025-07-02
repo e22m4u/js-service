@@ -2,9 +2,23 @@ import {SERVICE_CLASS_NAME} from './service.js';
 import {InvalidArgumentError} from './errors/index.js';
 
 /**
+ * Service class name.
+ *
+ * @type {string}
+ */
+export const SERVICE_CONTAINER_CLASS_NAME = 'ServiceContainer';
+
+/**
  * Service container.
  */
 export class ServiceContainer {
+  /**
+   * Kinds.
+   *
+   * @type {string[]}
+   */
+  static kinds = [SERVICE_CONTAINER_CLASS_NAME];
+
   /**
    * Services map.
    *

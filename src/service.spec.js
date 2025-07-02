@@ -1,6 +1,8 @@
 import {expect} from 'chai';
-import {Service, SERVICE_CLASS_NAME} from './service.js';
+import {Service} from './service.js';
+import {SERVICE_CLASS_NAME} from './service.js';
 import {ServiceContainer} from './service-container.js';
+import {SERVICE_CONTAINER_CLASS_NAME} from './service-container.js';
 
 describe('Service', function () {
   it('exposes static property "kinds"', function () {
@@ -17,6 +19,15 @@ describe('Service', function () {
 
     it('sets a given service container', function () {
       const container = new ServiceContainer();
+      const service = new Service(container);
+      expect(service.container).to.be.eq(container);
+    });
+
+    it('sets a given object as service container by the kinds property', function () {
+      class MyServiceContainer {
+        static kinds = [SERVICE_CONTAINER_CLASS_NAME];
+      }
+      const container = new MyServiceContainer();
       const service = new Service(container);
       expect(service.container).to.be.eq(container);
     });

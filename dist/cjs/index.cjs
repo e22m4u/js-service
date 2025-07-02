@@ -23,6 +23,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
 var index_exports = {};
 __export(index_exports, {
   SERVICE_CLASS_NAME: () => SERVICE_CLASS_NAME,
+  SERVICE_CONTAINER_CLASS_NAME: () => SERVICE_CONTAINER_CLASS_NAME,
   Service: () => Service,
   ServiceContainer: () => ServiceContainer
 });
@@ -36,6 +37,7 @@ __name(_InvalidArgumentError, "InvalidArgumentError");
 var InvalidArgumentError = _InvalidArgumentError;
 
 // src/service-container.js
+var SERVICE_CONTAINER_CLASS_NAME = "ServiceContainer";
 var _ServiceContainer = class _ServiceContainer {
   /**
    * Services map.
@@ -171,6 +173,12 @@ var _ServiceContainer = class _ServiceContainer {
   }
 };
 __name(_ServiceContainer, "ServiceContainer");
+/**
+ * Kinds.
+ *
+ * @type {string[]}
+ */
+__publicField(_ServiceContainer, "kinds", [SERVICE_CONTAINER_CLASS_NAME]);
 var ServiceContainer = _ServiceContainer;
 
 // src/service.js
@@ -188,7 +196,7 @@ var _Service = class _Service {
    * @param {ServiceContainer|undefined} container
    */
   constructor(container = void 0) {
-    this.container = container instanceof ServiceContainer ? container : new ServiceContainer();
+    this.container = container && typeof container === "object" && typeof container.constructor === "function" && Array.isArray(container.constructor.kinds) && container.constructor.kinds.includes(SERVICE_CONTAINER_CLASS_NAME) ? container : new ServiceContainer();
   }
   /**
    * Получить существующий или новый экземпляр.
@@ -254,6 +262,7 @@ var Service = _Service;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   SERVICE_CLASS_NAME,
+  SERVICE_CONTAINER_CLASS_NAME,
   Service,
   ServiceContainer
 });
