@@ -2,7 +2,7 @@
   "name": "@e22m4u/js-service",
   "version": "0.3.2",
   "description": "Реализация сервис-локатора для JavaScript",
-  "author": "e22m4u <e22m4u@yandex.ru>",
+  "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
   "keywords": [
     "DI",
@@ -37,7 +37,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@e22m4u/js-format": "~0.1.0"
+    "@e22m4u/js-format": "~0.1.8"
   },
   "devDependencies": {
     "@commitlint/cli": "~19.8.1",
