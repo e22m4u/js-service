@@ -42,7 +42,7 @@ export class Service {
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {*}
+   * @returns {*}
    */
   getService(ctor, ...args) {
     return this.container.get(ctor, ...args);
@@ -52,7 +52,7 @@ export class Service {
    * Проверка существования конструктора в контейнере.
    *
    * @param {*} ctor
-   * @return {boolean}
+   * @returns {boolean}
    */
   hasService(ctor) {
     return this.container.has(ctor);
@@ -63,7 +63,7 @@ export class Service {
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {this}
+   * @returns {this}
    */
   addService(ctor, ...args) {
     this.container.add(ctor, ...args);
@@ -75,7 +75,7 @@ export class Service {
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {this}
+   * @returns {this}
    */
   useService(ctor, ...args) {
     this.container.use(ctor, ...args);
@@ -87,7 +87,7 @@ export class Service {
    *
    * @param {*} ctor
    * @param {*} service
-   * @return {this}
+   * @returns {this}
    */
   setService(ctor, service) {
     this.container.set(ctor, service);

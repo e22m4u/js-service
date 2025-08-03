@@ -53,11 +53,31 @@ export class ServiceContainer {
   }
 
   /**
+   * Получить родительский сервис-контейнер или выбросить ошибку.
+   *
+   * @returns {ServiceContainer}
+   */
+  getParent() {
+    if (!this._parent)
+      throw new InvalidArgumentError('The service container has no parent.');
+    return this._parent;
+  }
+
+  /**
+   * Проверить наличие родительского сервис-контейнера.
+   *
+   * @returns {boolean}
+   */
+  hasParent() {
+    return Boolean(this._parent);
+  }
+
+  /**
    * Получить существующий или новый экземпляр.
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {*}
+   * @returns {*}
    */
   get(ctor, ...args) {
     if (!ctor || typeof ctor !== 'function')
@@ -104,10 +124,10 @@ export class ServiceContainer {
   }
 
   /**
-   * Проверка существования конструктора в контейнере.
+   * Проверить существование конструктора в контейнере.
    *
    * @param {*} ctor
-   * @return {boolean}
+   * @returns {boolean}
    */
   has(ctor) {
     if (this._services.has(ctor)) return true;
@@ -125,7 +145,7 @@ export class ServiceContainer {
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {this}
+   * @returns {this}
    */
   add(ctor, ...args) {
     if (!ctor || typeof ctor !== 'function')
@@ -147,7 +167,7 @@ export class ServiceContainer {
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {this}
+   * @returns {this}
    */
   use(ctor, ...args) {
     if (!ctor || typeof ctor !== 'function')
@@ -169,7 +189,7 @@ export class ServiceContainer {
    *
    * @param {*} ctor
    * @param {*} service
-   * @return {this}
+   * @returns {this}
    */
   set(ctor, service) {
     if (!ctor || typeof ctor !== 'function')

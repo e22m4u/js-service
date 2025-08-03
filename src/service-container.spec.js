@@ -46,6 +46,31 @@ describe('ServiceContainer', function () {
     });
   });
 
+  describe('getParent', function () {
+    it('throws an error if no parent container', function () {
+      const container = new ServiceContainer();
+      const throwable = () => container.getParent();
+      expect(throwable).to.throw('The service container has no parent.');
+    });
+
+    it('returns parent container', function () {
+      const parent = new ServiceContainer();
+      const container = new ServiceContainer(parent);
+      const res = container.getParent();
+      expect(res).to.be.eq(parent);
+    });
+  });
+
+  describe('hasParent', function () {
+    it('returns true if a parent container exists and false otherwise', function () {
+      const container1 = new ServiceContainer();
+      const parent = new ServiceContainer();
+      const container2 = new ServiceContainer(parent);
+      expect(container1.hasParent()).to.be.false;
+      expect(container2.hasParent()).to.be.true;
+    });
+  });
+
   describe('get', function () {
     it('throws an error if no constructor given', function () {
       const container = new ServiceContainer();

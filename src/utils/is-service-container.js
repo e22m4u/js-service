@@ -3,7 +3,8 @@ import {SERVICE_CONTAINER_CLASS_NAME} from '../service-container.js';
 /**
  * Определяет, является ли аргумент сервис-контейнером.
  *
- * @param container
+ * @param {*} container
+ *
  * @returns {false|*}
  */
 export function isServiceContainer(container) {

@@ -12,6 +12,16 @@ export declare class ServiceContainer {
   constructor(parent?: ServiceContainer);
 
   /**
+   * Получить родительский сервис-контейнер или выбросить ошибку.
+   */
+  getParent(): ServiceContainer;
+
+  /**
+   * Проверить наличие родительского сервис-контейнера.
+   */
+  hasParent(): boolean;
+
+  /**
    * Получить существующий или новый экземпляр.
    *
    * @param ctor
@@ -23,7 +33,7 @@ export declare class ServiceContainer {
   ): T;
 
   /**
-   * Проверка существования конструктора в контейнере.
+   * Проверить существование конструктора в контейнере.
    *
    * @param ctor
    */
