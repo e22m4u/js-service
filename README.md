@@ -2,6 +2,17 @@
 
 Реализация паттерна «Сервис-локатор» для JavaScript.
 
+## Оглавление
+
+- [Установка](#Установка)
+- [Назначение](#Назначение)
+- [ServiceContainer](#ServiceContainer)
+- [Наследование](#Наследование)
+- [Service](#Service)
+- [DebuggableService](#DebuggableService)
+- [Тесты](#Тесты)
+- [Лицензия](#Лицензия)
+
 ## Установка
 
 ```bash
@@ -41,7 +52,7 @@ const {Service} = require('@e22m4u/js-service');
 тот же метод `getService`, как если бы мы передавали
 сервис-контейнер между ними.
 
-## `ServiceContainer`
+## ServiceContainer
 
 Методы:
 
@@ -113,7 +124,7 @@ const hasService = childContainer.has(MyService);
 console.log(hasService); // true
 ```
 
-## `Service`
+## Service
 
 Методы:
 
@@ -191,7 +202,8 @@ console.log(foo3 === foo4);               // true
 
 Данный класс расширяет базовый класс [Service](#service)
 возможностями по отладке, предоставляемые модулем 
-[@e22m4u/js-debug](https://www.npmjs.com/package/@e22m4u/js-debug#класс-debuggable) (см. раздел *Класс Debuggable*).
+[@e22m4u/js-debug](https://www.npmjs.com/package/@e22m4u/js-debug#класс-debuggable)
+(см. раздел *Класс Debuggable*).
 
 ```js
 import {apiClient} from './path/to/apiClient';
@@ -202,7 +214,8 @@ process.env['DEBUG'] = 'myApp*';
 
 class UserService extends DebuggableService {
   async getUserById(userId) {
-    // получение отладчика для данного метода и вызова
+    // получение отладчика для данного метода
+    // (для текущего вызова генерируется хэш)
     const debug = this.getDebuggerFor(this.getUserById);
     debug('Fetching user with ID %v...', userId);
     try {
