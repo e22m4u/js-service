@@ -215,7 +215,7 @@ process.env['DEBUG'] = 'myApp*';
 class UserService extends DebuggableService {
   async getUserById(userId) {
     // получение отладчика для данного метода
-    // (для текущего вызова генерируется хэш)
+    // (для каждого вызова генерируется хэш)
     const debug = this.getDebuggerFor(this.getUserById);
     debug('Fetching user with ID %v...', userId);
     try {
