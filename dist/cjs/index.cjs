@@ -22,6 +22,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
 // src/index.js
 var index_exports = {};
 __export(index_exports, {
+  DebuggableService: () => DebuggableService,
   SERVICE_CLASS_NAME: () => SERVICE_CLASS_NAME,
   SERVICE_CONTAINER_CLASS_NAME: () => SERVICE_CONTAINER_CLASS_NAME,
   Service: () => Service,
@@ -286,8 +287,86 @@ __name(_Service, "Service");
  */
 __publicField(_Service, "kinds", [SERVICE_CLASS_NAME]);
 var Service = _Service;
+
+// src/debuggable-service.js
+var import_js_debug = require("@e22m4u/js-debug");
+var _DebuggableService = class _DebuggableService extends import_js_debug.Debuggable {
+  /**
+   * Service.
+   *
+   * @type {Service}
+   */
+  _service;
+  /**
+   * Container.
+   *
+   * @type {ServiceContainer}
+   */
+  get container() {
+    return this._service.container;
+  }
+  /**
+   * Get service.
+   *
+   * @type {Service['getService']}
+   */
+  get getService() {
+    return this._service.getService;
+  }
+  /**
+   * Has service.
+   *
+   * @type {Service['hasService']}
+   */
+  get hasService() {
+    return this._service.hasService;
+  }
+  /**
+   * Add service.
+   *
+   * @type {Service['addService']}
+   */
+  get addService() {
+    return this._service.addService;
+  }
+  /**
+   * Use service.
+   *
+   * @type {Service['useService']}
+   */
+  get useService() {
+    return this._service.useService;
+  }
+  /**
+   * Set service.
+   *
+   * @type {Service['setService']}
+   */
+  get setService() {
+    return this._service.setService;
+  }
+  /**
+   * Constructor.
+   *
+   * @param {ServiceContainer|undefined} container
+   * @param {import('@e22m4u/js-debug').DebuggableOptions|undefined} options
+   */
+  constructor(container = void 0, options = void 0) {
+    super(options);
+    this._service = new Service(container);
+  }
+};
+__name(_DebuggableService, "DebuggableService");
+/**
+ * Kinds.
+ *
+ * @type {string[]}
+ */
+__publicField(_DebuggableService, "kinds", Service.kinds);
+var DebuggableService = _DebuggableService;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  DebuggableService,
   SERVICE_CLASS_NAME,
   SERVICE_CONTAINER_CLASS_NAME,
   Service,

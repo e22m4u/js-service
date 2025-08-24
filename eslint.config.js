@@ -10,6 +10,7 @@ export default [{
     globals: {
       ...globals.es2021,
       ...globals.mocha,
+      ...globals.node,
     },
   },
   plugins: {

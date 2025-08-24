@@ -187,6 +187,47 @@ const foo4 = this.getService(Foo);        // возврат уже пересо�
 console.log(foo3 === foo4);               // true
 ```
 
+## DebuggableService
+
+Данный класс расширяет базовый класс [Service](#service)
+возможностями по отладке, предоставляемые модулем 
+[@e22m4u/js-debug](https://www.npmjs.com/package/@e22m4u/js-debug#класс-debuggable) (см. раздел *Класс Debuggable*).
+
+```js
+import {apiClient} from './path/to/apiClient';
+import {DebuggableService} from '@e22m4u/js-service';
+
+process.env['DEBUGGER_NAMESPACE'] = 'myApp';
+process.env['DEBUG'] = 'myApp*';
+
+class UserService extends DebuggableService {
+  async getUserById(userId) {
+    // получение отладчика для данного метода и вызова
+    const debug = this.getDebuggerFor(this.getUserById);
+    debug('Fetching user with ID %v...', userId);
+    try {
+      const user = await apiClient.get(`/users/${userId}`);
+      debug.inspect('User data received:', user);
+      return user;
+    } catch (error) {
+      debug('Failed to fetch user. Error: %s', error.message);
+      throw error;
+    }
+  }
+}
+
+const userService = new UserService();
+await userService.getUserById(123);
+// myApp:userService:constructor:a4f1 Instantiated.
+// myApp:userService:getUserById:b9c2 Fetching user with ID 123...
+// myApp:userService:getUserById:b9c2 User data received:
+// myApp:userService:getUserById:b9c2   {
+// myApp:userService:getUserById:b9c2     id: 123,
+// myApp:userService:getUserById:b9c2     name: 'John Doe',
+// myApp:userService:getUserById:b9c2     email: 'john.doe@example.com'
+// myApp:userService:getUserById:b9c2   }
+```
+
 ## Тесты
 
 ```bash

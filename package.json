@@ -37,6 +37,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@e22m4u/js-debug": "~0.2.2",
     "@e22m4u/js-format": "~0.1.8"
   },
   "devDependencies": {

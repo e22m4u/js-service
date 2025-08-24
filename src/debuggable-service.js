@@ -1,0 +1,87 @@
+import {Service} from './service.js';
+import {Debuggable} from '@e22m4u/js-debug';
+import {ServiceContainer} from './service-container.js';
+
+/**
+ * Debuggable service.
+ */
+export class DebuggableService extends Debuggable {
+  /**
+   * Kinds.
+   *
+   * @type {string[]}
+   */
+  static kinds = Service.kinds;
+
+  /**
+   * Service.
+   *
+   * @type {Service}
+   */
+  _service;
+
+  /**
+   * Container.
+   *
+   * @type {ServiceContainer}
+   */
+  get container() {
+    return this._service.container;
+  }
+
+  /**
+   * Get service.
+   *
+   * @type {Service['getService']}
+   */
+  get getService() {
+    return this._service.getService;
+  }
+
+  /**
+   * Has service.
+   *
+   * @type {Service['hasService']}
+   */
+  get hasService() {
+    return this._service.hasService;
+  }
+
+  /**
+   * Add service.
+   *
+   * @type {Service['addService']}
+   */
+  get addService() {
+    return this._service.addService;
+  }
+
+  /**
+   * Use service.
+   *
+   * @type {Service['useService']}
+   */
+  get useService() {
+    return this._service.useService;
+  }
+
+  /**
+   * Set service.
+   *
+   * @type {Service['setService']}
+   */
+  get setService() {
+    return this._service.setService;
+  }
+
+  /**
+   * Constructor.
+   *
+   * @param {ServiceContainer|undefined} container
+   * @param {import('@e22m4u/js-debug').DebuggableOptions|undefined} options
+   */
+  constructor(container = undefined, options = undefined) {
+    super(options);
+    this._service = new Service(container);
+  }
+}
