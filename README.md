@@ -200,10 +200,8 @@ console.log(foo3 === foo4);               // true
 
 ## DebuggableService
 
-Данный класс расширяет базовый класс [Service](#service)
-возможностями по отладке. Подробнее в разделе
-[Debuggable](https://www.npmjs.com/package/@e22m4u/js-debug#класс-debuggable#класс-debuggable)
-модуля [@e22m4u/js-debug](https://www.npmjs.com/package/@e22m4u/js-debug#класс-debuggable).
+Класс-сервис расширенный возможностями по отладке.  
+*(см. подробнее [@e22m4u/js-debug](https://www.npmjs.com/package/@e22m4u/js-debug#класс-debuggable#класс-debuggable) раздел «Класс Debuggable»)*
 
 ```js
 import {apiClient} from './path/to/apiClient';
