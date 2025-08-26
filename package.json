@@ -1,6 +1,6 @@
 {
   "name": "@e22m4u/js-service",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Реализация сервис-локатора для JavaScript",
   "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
