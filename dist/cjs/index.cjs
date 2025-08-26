@@ -306,7 +306,7 @@ var _DebuggableService = class _DebuggableService extends import_js_debug.Debugg
     return this._service.container;
   }
   /**
-   * Get service.
+   * Получить существующий или новый экземпляр.
    *
    * @type {Service['getService']}
    */
@@ -314,7 +314,7 @@ var _DebuggableService = class _DebuggableService extends import_js_debug.Debugg
     return this._service.getService;
   }
   /**
-   * Has service.
+   * Проверка существования конструктора в контейнере.
    *
    * @type {Service['hasService']}
    */
@@ -322,7 +322,7 @@ var _DebuggableService = class _DebuggableService extends import_js_debug.Debugg
     return this._service.hasService;
   }
   /**
-   * Add service.
+   * Добавить конструктор в контейнер.
    *
    * @type {Service['addService']}
    */
@@ -330,7 +330,7 @@ var _DebuggableService = class _DebuggableService extends import_js_debug.Debugg
     return this._service.addService;
   }
   /**
-   * Use service.
+   * Добавить конструктор и создать экземпляр.
    *
    * @type {Service['useService']}
    */
@@ -338,7 +338,7 @@ var _DebuggableService = class _DebuggableService extends import_js_debug.Debugg
     return this._service.useService;
   }
   /**
-   * Set service.
+   * Добавить конструктор и связанный экземпляр.
    *
    * @type {Service['setService']}
    */

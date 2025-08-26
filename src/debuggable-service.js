@@ -30,7 +30,7 @@ export class DebuggableService extends Debuggable {
   }
 
   /**
-   * Get service.
+   * Получить существующий или новый экземпляр.
    *
    * @type {Service['getService']}
    */
@@ -39,7 +39,7 @@ export class DebuggableService extends Debuggable {
   }
 
   /**
-   * Has service.
+   * Проверка существования конструктора в контейнере.
    *
    * @type {Service['hasService']}
    */
@@ -48,7 +48,7 @@ export class DebuggableService extends Debuggable {
   }
 
   /**
-   * Add service.
+   * Добавить конструктор в контейнер.
    *
    * @type {Service['addService']}
    */
@@ -57,7 +57,7 @@ export class DebuggableService extends Debuggable {
   }
 
   /**
-   * Use service.
+   * Добавить конструктор и создать экземпляр.
    *
    * @type {Service['useService']}
    */
@@ -66,7 +66,7 @@ export class DebuggableService extends Debuggable {
   }
 
   /**
-   * Set service.
+   * Добавить конструктор и связанный экземпляр.
    *
    * @type {Service['setService']}
    */
