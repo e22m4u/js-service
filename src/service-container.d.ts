@@ -33,6 +33,18 @@ export declare class ServiceContainer {
   ): T;
 
   /**
+   * Получить существующий или новый экземпляр,
+   * только если конструктор зарегистрирован.
+   *
+   * @param ctor
+   * @param args
+   */
+  getRegistered<T extends object>(
+    ctor: Constructor<T>,
+    ...args: any[],
+  ): T;
+
+  /**
    * Проверить существование конструктора в контейнере.
    *
    * @param ctor

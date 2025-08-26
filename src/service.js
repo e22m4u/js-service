@@ -49,6 +49,18 @@ export class Service {
   }
 
   /**
+   * Получить существующий или новый экземпляр,
+   * только если конструктор зарегистрирован.
+   *
+   * @param {*} ctor
+   * @param {*} args
+   * @returns {*}
+   */
+  getRegisteredService(ctor, ...args) {
+    return this.container.getRegistered(ctor, ...args);
+  }
+
+  /**
    * Проверка существования конструктора в контейнере.
    *
    * @param {*} ctor

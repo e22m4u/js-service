@@ -124,6 +124,23 @@ export class ServiceContainer {
   }
 
   /**
+   * Получить существующий или новый экземпляр,
+   * только если конструктор зарегистрирован.
+   *
+   * @param {*} ctor
+   * @param {*} args
+   * @returns {*}
+   */
+  getRegistered(ctor, ...args) {
+    if (!this.has(ctor))
+      throw new InvalidArgumentError(
+        'The constructor %v is not registered.',
+        ctor,
+      );
+    return this.get(ctor, ...args);
+  }
+
+  /**
    * Проверить существование конструктора в контейнере.
    *
    * @param {*} ctor

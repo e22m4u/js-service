@@ -46,6 +46,19 @@ describe('Service', function () {
     });
   });
 
+  describe('getRegisteredService', function () {
+    it('calls the container "getRegisteredService" method', function () {
+      const service = new Service();
+      service.container.getRegistered = function (ctor, ...args) {
+        expect(ctor).to.be.eq(Date);
+        expect(args).to.be.eql(['foo', 'bar', 'baz']);
+        return 'OK';
+      };
+      const res = service.getRegisteredService(Date, 'foo', 'bar', 'baz');
+      expect(res).to.be.eq('OK');
+    });
+  });
+
   describe('hasService', function () {
     it('calls the container "has" method', function () {
       const service = new Service();

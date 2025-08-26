@@ -123,6 +123,22 @@ var _ServiceContainer = class _ServiceContainer {
     return service;
   }
   /**
+   * Получить существующий или новый экземпляр,
+   * только если конструктор зарегистрирован.
+   *
+   * @param {*} ctor
+   * @param {*} args
+   * @returns {*}
+   */
+  getRegistered(ctor, ...args) {
+    if (!this.has(ctor))
+      throw new InvalidArgumentError(
+        "The constructor %v is not registered.",
+        ctor
+      );
+    return this.get(ctor, ...args);
+  }
+  /**
    * Проверить существование конструктора в контейнере.
    *
    * @param {*} ctor
@@ -237,6 +253,17 @@ var _Service = class _Service {
     return this.container.get(ctor, ...args);
   }
   /**
+   * Получить существующий или новый экземпляр,
+   * только если конструктор зарегистрирован.
+   *
+   * @param {*} ctor
+   * @param {*} args
+   * @returns {*}
+   */
+  getRegisteredService(ctor, ...args) {
+    return this.container.getRegistered(ctor, ...args);
+  }
+  /**
    * Проверка существования конструктора в контейнере.
    *
    * @param {*} ctor
@@ -312,6 +339,15 @@ var _DebuggableService = class _DebuggableService extends import_js_debug.Debugg
    */
   get getService() {
     return this._service.getService;
+  }
+  /**
+   * Получить существующий или новый экземпляр,
+   * только если конструктор зарегистрирован.
+   *
+   * @type {Service['getRegisteredService']}
+   */
+  get getRegisteredService() {
+    return this._service.getRegisteredService;
   }
   /**
    * Проверка существования конструктора в контейнере.

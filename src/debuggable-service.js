@@ -39,6 +39,16 @@ export class DebuggableService extends Debuggable {
   }
 
   /**
+   * Получить существующий или новый экземпляр,
+   * только если конструктор зарегистрирован.
+   *
+   * @type {Service['getRegisteredService']}
+   */
+  get getRegisteredService() {
+    return this._service.getRegisteredService;
+  }
+
+  /**
    * Проверка существования конструктора в контейнере.
    *
    * @type {Service['hasService']}

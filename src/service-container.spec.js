@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 import {Service} from './service.js';
 import {format} from '@e22m4u/js-format';
+import {createSpy} from '@e22m4u/js-spy';
 import {ServiceContainer} from './service-container.js';
 import {SERVICE_CONTAINER_CLASS_NAME} from './service-container.js';
 
@@ -533,6 +534,28 @@ describe('ServiceContainer', function () {
           });
         });
       });
+    });
+  });
+
+  describe('getRegistered', function () {
+    it('throws Error if the given constructor is not registered', function () {
+      const container = new ServiceContainer();
+      class MyService extends Service {}
+      const throwable = () => container.getRegistered(MyService);
+      expect(throwable).to.throw(
+        'The constructor MyService is not registered.',
+      );
+    });
+
+    it('should pass arguments to the "get" method and return a result', function () {
+      const container = new ServiceContainer();
+      class MyService extends Service {}
+      const spy = createSpy(container, 'get', () => 'result');
+      container.add(MyService);
+      const res = container.getRegistered(MyService, 'arg1', 'arg2');
+      expect(spy.callCount).to.be.eq(1);
+      expect(spy.getCall(0).args).to.be.eql([MyService, 'arg1', 'arg2']);
+      expect(res).to.be.eql('result');
     });
   });
 

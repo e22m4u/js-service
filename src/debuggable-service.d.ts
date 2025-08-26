@@ -34,6 +34,18 @@ export class DebuggableService extends Debuggable implements Service {
     ctor: Constructor<T>,
     ...args: any[],
   ): T;
+  
+  /**
+   * Получить существующий или новый экземпляр,
+   * только если конструктор зарегистрирован.
+   *
+   * @param ctor
+   * @param args
+   */
+  getRegisteredService<T extends object>(
+    ctor: Constructor<T>,
+    ...args: any[],
+  ): T;
 
   /**
    * Проверка существования конструктора в контейнере.
