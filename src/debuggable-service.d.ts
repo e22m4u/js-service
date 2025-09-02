@@ -1,6 +1,7 @@
 import {Service} from './service.js';
 import {Constructor} from './types.js';
 import {Debuggable} from '@e22m4u/js-debug';
+import {DebuggableOptions} from '@e22m4u/js-debug';
 import {ServiceContainer} from './service-container.js';
 
 /**
@@ -21,8 +22,12 @@ export class DebuggableService extends Debuggable implements Service {
    * Constructor.
    *
    * @param container
+   * @param options
    */
-  constructor(container?: ServiceContainer);
+  constructor(
+    container?: ServiceContainer,
+    options?: DebuggableOptions,
+  );
 
   /**
    * Получить существующий или новый экземпляр.
