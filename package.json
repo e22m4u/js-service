@@ -51,13 +51,13 @@
     "eslint": "~9.36.0",
     "eslint-config-prettier": "~10.1.8",
     "eslint-plugin-chai-expect": "~3.1.0",
-    "eslint-plugin-jsdoc": "~60.5.0",
+    "eslint-plugin-jsdoc": "~60.6.0",
     "eslint-plugin-mocha": "~11.1.0",
     "globals": "~16.4.0",
     "husky": "~9.1.7",
     "mocha": "~11.7.3",
     "prettier": "~3.6.2",
     "rimraf": "~6.0.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.3"
   }
 }
