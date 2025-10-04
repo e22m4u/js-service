@@ -101,17 +101,19 @@ var _ServiceContainer = class _ServiceContainer {
         "The first argument of ServicesContainer.get must be a class constructor, but %v given.",
         ctor
       );
-    if (!this._services.has(ctor) && this._parent && this._parent.has(ctor)) {
-      return this._parent.get(ctor);
-    }
+    const isCtorRegistered = this._services.has(ctor);
     let service = this._services.get(ctor);
+    let inheritedCtor = void 0;
     if (!service) {
       const ctors = this._services.keys();
-      const inheritedCtor = ctors.find((v) => v.prototype instanceof ctor);
-      if (inheritedCtor) {
-        service = this._services.get(inheritedCtor);
-        ctor = inheritedCtor;
-      }
+      const inheritedCtor2 = ctors.find((v) => v.prototype instanceof ctor);
+      if (inheritedCtor2) service = this._services.get(inheritedCtor2);
+    }
+    if (!service && !isCtorRegistered && !inheritedCtor && this._parent && this._parent.has(ctor)) {
+      return this._parent.get(ctor, ...args);
+    }
+    if (!service && !isCtorRegistered && inheritedCtor) {
+      ctor = inheritedCtor;
     }
     if (!service || args.length) {
       service = Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args);

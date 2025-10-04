@@ -86,29 +86,43 @@ export class ServiceContainer {
           'a class constructor, but %v given.',
         ctor,
       );
-    // если конструктор отсутствует в текущем
-    // контейнере, но имеется в родительском,
-    // то запрашиваем сервис именно из него
-    if (!this._services.has(ctor) && this._parent && this._parent.has(ctor)) {
-      return this._parent.get(ctor);
-    }
+    const isCtorRegistered = this._services.has(ctor);
     let service = this._services.get(ctor);
+    let inheritedCtor = undefined;
     // если экземпляр сервиса не найден,
-    // то пытаемся найти его наследников
+    // то выполняется поиск его наследника
     if (!service) {
       const ctors = this._services.keys();
       const inheritedCtor = ctors.find(v => v.prototype instanceof ctor);
-      if (inheritedCtor) {
-        service = this._services.get(inheritedCtor);
-        // если наследник найден, но экземпляр отсутствует,
-        // то подменяем конструктор наследником, чтобы
-        // экземпляр создавался с помощью него
-        ctor = inheritedCtor;
-      }
+      if (inheritedCtor) service = this._services.get(inheritedCtor);
     }
-    // если экземпляр сервиса не найден
-    // или переданы аргументы, то создаем
-    // новый экземпляр
+    // если
+    //   ни экземпляр сервиса (или экземпляр наследника),
+    //   ни указанный конструктор,
+    //   ни конструктор наследника
+    // не зарегистрированы в текущем контейнере, но определен родительский
+    // контейнер, где зарегистрирован конструктор запрашиваемого сервиса,
+    // то поиск передается родителю
+    if (
+      !service &&
+      !isCtorRegistered &&
+      !inheritedCtor &&
+      this._parent &&
+      this._parent.has(ctor)
+    ) {
+      return this._parent.get(ctor, ...args);
+    }
+    // если
+    //   ни экземпляр сервиса (или экземпляр наследника),
+    //   ни указанный конструктор
+    // не зарегистрированы, но найден конструктор наследника,
+    // то для создания экземпляра будет использован найденный
+    // конструктор наследника
+    if (!service && !isCtorRegistered && inheritedCtor) {
+      ctor = inheritedCtor;
+    }
+    // если экземпляр сервиса не найден или переданы
+    // аргументы, то создается новый экземпляр
     if (!service || args.length) {
       service =
         Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME)
