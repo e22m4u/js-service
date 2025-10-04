@@ -146,10 +146,10 @@ var _ServiceContainer = class _ServiceContainer {
    */
   has(ctor) {
     if (this._services.has(ctor)) return true;
-    if (this._parent) return this._parent.has(ctor);
     const ctors = this._services.keys();
     const inheritedCtor = ctors.find((v) => v.prototype instanceof ctor);
     if (inheritedCtor) return true;
+    if (this._parent) return this._parent.has(ctor);
     return false;
   }
   /**

@@ -595,6 +595,46 @@ describe('ServiceContainer', function () {
           const res = container.has(ChildService);
           expect(res).to.be.false;
         });
+
+        it('returns true for the child container if the child class is registered in the parent container', function () {
+          class ParentService extends Service {}
+          class ChildService extends ParentService {}
+          const parentContainer = new ServiceContainer();
+          const childContainer = new ServiceContainer(parentContainer);
+          parentContainer.add(ChildService);
+          const res = childContainer.has(ParentService);
+          expect(res).to.be.true;
+        });
+
+        it('returns false for the child container if the parent class is registered in the parent container', function () {
+          class ParentService extends Service {}
+          class ChildService extends ParentService {}
+          const parentContainer = new ServiceContainer();
+          const childContainer = new ServiceContainer(parentContainer);
+          parentContainer.add(ParentService);
+          const res = childContainer.has(ChildService);
+          expect(res).to.be.false;
+        });
+
+        it('returns true for the child container if the child class is registered in the child container', function () {
+          class ParentService extends Service {}
+          class ChildService extends ParentService {}
+          const parentContainer = new ServiceContainer();
+          const childContainer = new ServiceContainer(parentContainer);
+          childContainer.add(ChildService);
+          const res = childContainer.has(ParentService);
+          expect(res).to.be.true;
+        });
+
+        it('returns false for the child container if the parent class is registered in the child container', function () {
+          class ParentService extends Service {}
+          class ChildService extends ParentService {}
+          const parentContainer = new ServiceContainer();
+          const childContainer = new ServiceContainer(parentContainer);
+          childContainer.add(ParentService);
+          const res = childContainer.has(ChildService);
+          expect(res).to.be.false;
+        });
       });
 
       describe('in case of a parent container', function () {
