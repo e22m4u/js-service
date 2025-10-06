@@ -254,7 +254,7 @@ describe('ServiceContainer', function () {
           expect(res1).to.be.not.eq(res2);
         });
 
-        describe('when the container has a parent', function () {
+        describe('when a container has a parent', function () {
           describe('when a parent container has a registered constructor', function () {
             it('should prioritize its own existing instance when available', function () {
               class ParentService extends Service {}
@@ -549,7 +549,7 @@ describe('ServiceContainer', function () {
           expect(res1).to.be.not.eq(res2);
         });
 
-        describe('when the container has a parent', function () {
+        describe('when a container has a parent', function () {
           describe('when a parent container has a registered constructor', function () {
             it('should prioritize its own existing instance when available', function () {
               class ParentService {}
@@ -754,7 +754,7 @@ describe('ServiceContainer', function () {
           expect(res).to.be.false;
         });
 
-        describe('when the container has a parent', function () {
+        describe('when a container has a parent', function () {
           it('returns true for the child container if the child class is registered in the parent container', function () {
             class ParentService extends Service {}
             class ChildService extends ParentService {}
@@ -845,7 +845,7 @@ describe('ServiceContainer', function () {
           expect(res).to.be.false;
         });
 
-        describe('when the container has a parent', function () {
+        describe('when a container has a parent', function () {
           it('returns true for the child container if the child class is registered in the parent container', function () {
             class ParentService {}
             class ChildService extends ParentService {}
