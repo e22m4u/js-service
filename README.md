@@ -166,10 +166,9 @@ app.start();
 //   app.start();
 ```
 
-Подмена сервиса в контейнере (тестирование).
+Подмена сервиса в контейнере.
 
 ```js
-// в тестах легко подменить реальный сервис на мок
 import {ApiService} from './api-service';
 import {MockApiService} from './mock-api-service';
 import {ServiceContainer} from '@e22m4u/js-service';
