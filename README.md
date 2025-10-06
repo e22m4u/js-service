@@ -129,7 +129,7 @@ class LoggerService {
   }
 }
 
-// сервис-интегратор, для работы которого нужны другие сервисы
+// сервис, для работы которого нужны другие сервисы
 // (наследует класс Service для доступа к getService)
 class UserService extends Service {
   findUserById(id) {
