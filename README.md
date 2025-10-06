@@ -124,7 +124,7 @@ class App extends Service { // <= наследование Service
 const app = new App();
 app.start();
 
-// альтернативный способ (явное определение контейнера)
+// альтернативный способ (явное создание контейнера)
 //   const sc = new ServiceContainer();
 //   const app = sc.get(App);
 //   app.start();
