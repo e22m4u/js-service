@@ -51,12 +51,12 @@ class LoggerService {
 const sc = new ServiceContainer();
 
 const logger1 = sc.get(LoggerService); // создание и кэширование экземпляра
-const logger2 = sc.get(LoggerService); // возврат существующего сервиса
+const logger2 = sc.get(LoggerService); // возврат существующего экземпляра
 
 console.log(logger1 === logger2); // true
 ```
 
-Распространение контейнера между сервисами.
+Использование зависимости внутри сервиса.
 
 ```js
 import {Service} from '@e22m4u/js-service';
