@@ -129,9 +129,8 @@ class LoggerService {
   }
 }
 
-// сервис UserService использует LoggerService как зависимость,
-// потому нуждается в наследовании класса Service для доступа
-// к методу getService
+// сервис-интегратор, для работы которого нужны другие сервисы
+// (наследует класс Service для доступа к getService)
 class UserService extends Service {
   findUserById(id) {
     const logger = this.getService(LoggerService); // <= зависимость
