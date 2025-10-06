@@ -123,6 +123,11 @@ class App extends Service { // <= наследование Service
 // создание экземпляра из запуск приложения
 const app = new App();
 app.start();
+
+// альтернативный способ (явное определение контейнера)
+//   const sc = new ServiceContainer();
+//   const app = sc.get(App);
+//   app.start();
 ```
 
 ## Назначение
