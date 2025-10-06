@@ -6,6 +6,7 @@
 ## Оглавление
 
 - [Установка](#Установка)
+- [Базовые примеры](#базовые-примеры)
 - [Назначение](#Назначение)
 - [ServiceContainer](#ServiceContainer)
 - [Наследование](#Наследование)
@@ -32,6 +33,96 @@ import {Service} from '@e22m4u/js-service';
 
 ```js
 const {Service} = require('@e22m4u/js-service');
+```
+
+## Базовые примеры
+
+Создание контейнера и экземпляра сервиса (Singleton).
+
+```js
+import {ServiceContainer} from '@e22m4u/js-service';
+
+class LoggerService {
+  log(message) {
+    console.log(`[LOG]: ${message}`);
+  }
+}
+
+const sc = new ServiceContainer();
+
+const logger1 = sc.get(LoggerService); // создание и кэширование экземпляра
+const logger2 = sc.get(LoggerService); // возврат существующего сервиса
+
+console.log(logger1 === logger2); // true
+```
+
+Распространение контейнера между сервисами (класс `Service`).
+
+```js
+import {Service} from '@e22m4u/js-service';
+import {ServiceContainer} from '@e22m4u/js-service';
+
+class LoggerService {
+  log(message) {
+    console.log(`[LOG]: ${message}`);
+  }
+}
+
+class CalculatorService extends Service { // <= наследование Service
+  add(a, b) {
+    const logger = this.getService(LoggerService); // <= зависимость
+    const result = a + b;
+    logger.log(`${a} + ${b} = ${result}`);
+    return result;
+  }
+}
+
+const sc = new ServiceContainer();
+const calc = sc.get(CalculatorService);
+calc.add(4, 6);
+// [LOG]: 4 + 6 = 10
+```
+
+Класс `Service` как точка входа приложения.
+
+```js
+import {Service} from '@e22m4u/js-service';
+
+// сервис-зависимость
+class LoggerService {
+  log(message) {
+    console.log(`[LOG]: ${message}`);
+  }
+}
+
+// сервис, который использует LoggerService
+class UserService extends Service { // <= наследование Service
+  findUserById(id) {
+    const logger = this.getService(LoggerService); // <= зависимость
+    logger.log(`Finding user by id ${id}`);
+    
+    const user = {id, name: 'Jane Doe'};
+    logger.log(`Found user with name "${user.name}".`);
+    return user;
+  }
+}
+
+// основной сервис (точка входа)
+class App extends Service { // <= наследование Service
+  start() {
+    const logger = this.getService(LoggerService); // <= зависимость
+    logger.log('Starting App...');
+    
+    const userService = this.getService(UserService);
+    const user = userService.findUserById(123);
+    
+    logger.log('Done.');
+  }
+}
+
+// создание экземпляра из запуск приложения
+const app = new App();
+app.start();
 ```
 
 ## Назначение
