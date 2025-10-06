@@ -56,19 +56,22 @@ const logger2 = sc.get(LoggerService); // возврат существующе�
 console.log(logger1 === logger2); // true
 ```
 
-Распространение контейнера между сервисами (класс `Service`).
+Распространение контейнера между сервисами.
 
 ```js
 import {Service} from '@e22m4u/js-service';
 import {ServiceContainer} from '@e22m4u/js-service';
 
+// сервис-зависимость
 class LoggerService {
   log(message) {
     console.log(`[LOG]: ${message}`);
   }
 }
 
-class CalculatorService extends Service { // <= наследование Service
+// наследование класса Service используется, когда
+// для работы сервиса требуются другие зависимости
+class CalculatorService extends Service {
   add(a, b) {
     const logger = this.getService(LoggerService); // <= зависимость
     const result = a + b;
@@ -83,7 +86,7 @@ calc.add(4, 6);
 // [LOG]: 4 + 6 = 10
 ```
 
-Класс `Service` как точка входа приложения.
+Сервис как точка входа в приложение.
 
 ```js
 import {Service} from '@e22m4u/js-service';
@@ -95,8 +98,10 @@ class LoggerService {
   }
 }
 
-// сервис, который использует LoggerService
-class UserService extends Service { // <= наследование Service
+// сервис UserService использует LoggerService как зависимость,
+// потому нуждается в наследовании класса Service для доступа
+// к методу getService
+class UserService extends Service {
   findUserById(id) {
     const logger = this.getService(LoggerService); // <= зависимость
     logger.log(`Finding user by id ${id}`);
@@ -107,8 +112,9 @@ class UserService extends Service { // <= наследование Service
   }
 }
 
-// основной сервис (точка входа)
-class App extends Service { // <= наследование Service
+// основной сервис (точка входа) также наследует
+// класс Service для доступа к методу getService
+class App extends Service {
   start() {
     const logger = this.getService(LoggerService); // <= зависимость
     logger.log('Starting App...');
