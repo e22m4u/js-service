@@ -100,8 +100,8 @@ class LoggerService {
   }
 }
 
-// наследование класса Service используется, когда
-// для работы сервиса требуются зависимости
+// наследование класса Service используется,
+// когда для работы сервиса требуются зависимости
 class CalculatorService extends Service {
   add(a, b) {
     const logger = this.getService(LoggerService); // <= зависимость
