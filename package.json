@@ -1,6 +1,6 @@
 {
   "name": "@e22m4u/js-service",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Реализация IoC-контейнера через паттерн Сервис-локатор для JavaScript",
   "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
@@ -52,7 +52,7 @@
     "eslint": "~9.38.0",
     "eslint-config-prettier": "~10.1.8",
     "eslint-plugin-chai-expect": "~3.1.0",
-    "eslint-plugin-jsdoc": "~61.1.7",
+    "eslint-plugin-jsdoc": "~61.1.9",
     "eslint-plugin-mocha": "~11.2.0",
     "globals": "~16.4.0",
     "husky": "~9.1.7",
