@@ -105,9 +105,9 @@ var _ServiceContainer = class _ServiceContainer {
     let service = this._services.get(ctor);
     let inheritedCtor = void 0;
     if (!service) {
-      const ctors = this._services.keys();
-      const inheritedCtor2 = ctors.find((v) => v.prototype instanceof ctor);
-      if (inheritedCtor2) service = this._services.get(inheritedCtor2);
+      const ctors = Array.from(this._services.keys());
+      inheritedCtor = ctors.find((v) => v.prototype instanceof ctor);
+      if (inheritedCtor) service = this._services.get(inheritedCtor);
     }
     if (!service && !isCtorRegistered && !inheritedCtor && this._parent && this._parent.has(ctor)) {
       return this._parent.get(ctor, ...args);
@@ -148,7 +148,7 @@ var _ServiceContainer = class _ServiceContainer {
    */
   has(ctor) {
     if (this._services.has(ctor)) return true;
-    const ctors = this._services.keys();
+    const ctors = Array.from(this._services.keys());
     const inheritedCtor = ctors.find((v) => v.prototype instanceof ctor);
     if (inheritedCtor) return true;
     if (this._parent) return this._parent.has(ctor);

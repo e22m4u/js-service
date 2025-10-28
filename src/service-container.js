@@ -92,8 +92,8 @@ export class ServiceContainer {
     // если экземпляр сервиса не найден,
     // то выполняется поиск его наследника
     if (!service) {
-      const ctors = this._services.keys();
-      const inheritedCtor = ctors.find(v => v.prototype instanceof ctor);
+      const ctors = Array.from(this._services.keys());
+      inheritedCtor = ctors.find(v => v.prototype instanceof ctor);
       if (inheritedCtor) service = this._services.get(inheritedCtor);
     }
     // если
@@ -164,7 +164,7 @@ export class ServiceContainer {
     if (this._services.has(ctor)) return true;
     // если не удалось найти указанный конструктор,
     // то выполняется поиск его наследника
-    const ctors = this._services.keys();
+    const ctors = Array.from(this._services.keys());
     const inheritedCtor = ctors.find(v => v.prototype instanceof ctor);
     if (inheritedCtor) return true;
     // если определен родительский контейнер,
