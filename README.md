@@ -43,7 +43,7 @@ const {Service} = require('@e22m4u/js-service');
 
 - `ServiceContainer` *(IoC-контейнер)*  
   Реализация сервис-контейнера через паттерн «Сервис-локатор»;
-- `Service` *(абстрактный сервис)*  
+- `Service` *(базовый класс для сервисов)*  
   Позволяет скрывать работу с контейнером и внедрением зависимостей;
 
 **Инверсия управления (IoC)**
@@ -233,7 +233,7 @@ console.log(myDate1 === myDate2); // true
 ```js
 const myDate1 = container.get(Date, '2025-01-01'); // создание экземпляра
 const myDate2 = container.get(Date);               // возврат существующего
-const myDate3 = container.get(Date, '2025-05-05'); // пересоздание
+const myDate3 = container.get(Date, '2030-05-05'); // пересоздание
 console.log(myDate1); // Wed Jan 01 2025 03:00:00
 console.log(myDate2); // Wed Jan 01 2025 03:00:00
 console.log(myDate3); // Sun May 05 2030 03:00:00
@@ -317,7 +317,7 @@ const app = new App();
 
 В примере выше мы не заботились о создании сервис-контейнера
 и его передачу между сервисами, так как эта логика инкапсулирована
-в классе `Service` и его методе `getService`
+в базовом классе `Service`
 
 ### getService
 
@@ -341,7 +341,7 @@ console.log(foo3 === foo4);               // true
 
 ## DebuggableService
 
-Класс-сервис расширенный возможностями по отладке.  
+Класс-сервис, расширенный возможностями по отладке.  
 *(см. подробнее [@e22m4u/js-debug](https://www.npmjs.com/package/@e22m4u/js-debug#класс-debuggable#класс-debuggable) раздел «Класс Debuggable»)*
 
 ```js
