@@ -238,4 +238,36 @@ export class ServiceContainer {
     this._services.set(ctor, service);
     return this;
   }
+
+  /**
+   * Найти сервис удовлетворяющий условию.
+   *
+   * @param {function(Function, ServiceContainer): boolean} predicate
+   * @param {boolean} noParent
+   * @returns {*}
+   */
+  find(predicate, noParent = false) {
+    if (typeof predicate !== 'function') {
+      throw new InvalidArgumentError(
+        'The first argument of ServiceContainer.find ' +
+          'must be a function, but %v given.',
+        predicate,
+      );
+    }
+    const isRecursive = !noParent;
+    let currentContainer = this;
+    do {
+      for (const ctor of currentContainer._services.keys()) {
+        if (predicate(ctor, currentContainer) === true) {
+          return this.get(ctor);
+        }
+      }
+      if (isRecursive && currentContainer.hasParent()) {
+        currentContainer = currentContainer.getParent();
+      } else {
+        currentContainer = null;
+      }
+    } while (currentContainer);
+    return undefined;
+  }
 }

@@ -85,6 +85,15 @@ export class DebuggableService extends Debuggable {
   }
 
   /**
+   * Найти сервис удовлетворяющий условию.
+   *
+   * @type {Service['findService']}
+   */
+  get findService() {
+    return this._service.findService;
+  }
+
+  /**
    * Constructor.
    *
    * @param {ServiceContainer|undefined} container

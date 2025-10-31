@@ -2,7 +2,7 @@ import {Service} from './service.js';
 import {Constructor} from './types.js';
 import {Debuggable} from '@e22m4u/js-debug';
 import {DebuggableOptions} from '@e22m4u/js-debug';
-import {ServiceContainer} from './service-container.js';
+import {FindServicePredicate, ServiceContainer} from './service-container.js';
 
 /**
  * Debuggable service.
@@ -93,4 +93,15 @@ export class DebuggableService extends Debuggable implements Service {
     ctor: Constructor<T>,
     service: T,
   ): this;
+
+  /**
+   * Найти сервис удовлетворяющий условию.
+   *
+   * @param predicate
+   * @param noParent
+   */
+  findService<T extends object>(
+    predicate: FindServicePredicate<T>,
+    noParent?: boolean,
+  ): T | undefined;
 }

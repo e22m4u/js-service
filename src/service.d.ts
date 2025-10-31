@@ -1,5 +1,5 @@
 import {Constructor} from './types.js';
-import {ServiceContainer} from './service-container.js';
+import {FindServicePredicate, ServiceContainer} from './service-container.js';
 
 /**
  * Service class name.
@@ -91,4 +91,15 @@ export declare class Service {
     ctor: Constructor<T>,
     service: T,
   ): this;
+
+  /**
+   * Найти сервис удовлетворяющий условию.
+   *
+   * @param predicate
+   * @param noParent
+   */
+  findService<T extends object>(
+    predicate: FindServicePredicate<T>,
+    noParent?: boolean,
+  ): T | undefined;
 }

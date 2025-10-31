@@ -73,5 +73,11 @@ describe('DebuggableService', function () {
         debuggableService._service.setService,
       );
     });
+
+    it("should delegate the 'findService' getter to the internal service's findService method", function () {
+      expect(debuggableService.findService).to.eq(
+        debuggableService._service.findService,
+      );
+    });
   });
 });

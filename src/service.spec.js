@@ -90,7 +90,7 @@ describe('Service', function () {
         expect(ctor).to.be.eq(Date);
         expect(args).to.be.eql(['foo', 'bar', 'baz']);
       };
-      const res = service.addService(Date, 'foo', 'bar', 'baz');
+      const res = service.useService(Date, 'foo', 'bar', 'baz');
       expect(res).to.be.eq(service);
     });
   });
@@ -103,8 +103,23 @@ describe('Service', function () {
         expect(ctor).to.be.eq(Date);
         expect(input).to.be.eq(date);
       };
-      const res = service.addService(Date, date);
+      const res = service.setService(Date, date);
       expect(res).to.be.eq(service);
+    });
+  });
+
+  describe('findService', function () {
+    it('should call the container "find" method', function () {
+      const service = new Service();
+      const predicate = () => true;
+      const noParent = true;
+      service.container.find = function (arg1, arg2) {
+        expect(predicate).to.be.eq(arg1);
+        expect(noParent).to.be.eq(arg2);
+        return 'OK';
+      };
+      const res = service.findService(predicate, noParent);
+      expect(res).to.be.eq('OK');
     });
   });
 });

@@ -1387,4 +1387,102 @@ describe('ServiceContainer', function () {
       });
     });
   });
+
+  describe('find', function () {
+    class ServiceX {
+      static id = 'X';
+    }
+    class ServiceY {
+      static id = 'Y';
+    }
+
+    it('should throw an error if the predicate is not a function', function () {
+      const container = new ServiceContainer();
+      const throwable = v => () => container.find(v);
+      const error = v =>
+        format(
+          'The first argument of ServiceContainer.find ' +
+            'must be a function, but %s given.',
+          v,
+        );
+      expect(throwable('not a function')).to.throw(error('"not a function"'));
+      expect(throwable(123)).to.throw(error('123'));
+    });
+
+    it('should return undefined if no service matches the predicate', function () {
+      const container = new ServiceContainer();
+      container.add(ServiceX);
+      const result = container.find(() => false);
+      expect(result).to.be.undefined;
+    });
+
+    it('should find a service in the current container and return its instance', function () {
+      const container = new ServiceContainer();
+      container.use(ServiceX);
+      const result = container.find(ctor => ctor === ServiceX);
+      expect(result).to.be.instanceof(ServiceX);
+    });
+
+    it('should find a service by a static property and return its instance', function () {
+      const container = new ServiceContainer();
+      container.add(ServiceX);
+      container.add(ServiceY);
+      const result = container.find(ctor => ctor.id === 'Y');
+      expect(result).to.be.instanceof(ServiceY);
+    });
+
+    it('should search in the parent container by default (noParent=false)', function () {
+      const parent = new ServiceContainer();
+      parent.add(ServiceX);
+      const child = new ServiceContainer(parent);
+      child.add(ServiceY);
+      const result = child.find(ctor => ctor.id === 'X');
+      expect(result).to.be.instanceof(ServiceX);
+    });
+
+    it('should not search in the parent container when noParent is true', function () {
+      const parent = new ServiceContainer();
+      parent.add(ServiceX);
+      const child = new ServiceContainer(parent);
+      child.add(ServiceY);
+      const result = child.find(ctor => ctor.id === 'X', true);
+      expect(result).to.be.undefined;
+    });
+
+    it('should stop searching and return the first match (from child)', function () {
+      const parent = new ServiceContainer();
+      parent.use(ServiceX);
+      const child = new ServiceContainer(parent);
+      const childInstance = new ServiceX();
+      child.set(ServiceX, childInstance);
+      const foundContainerSpy = createSpy();
+      const result = child.find((ctor, container) => {
+        if (ctor === ServiceX) {
+          foundContainerSpy(container);
+          return true;
+        }
+        return false;
+      });
+      expect(result).to.equal(childInstance);
+      expect(foundContainerSpy.callCount).to.be.eq(1);
+      expect(foundContainerSpy.getCall(0).args[0]).to.equal(child);
+    });
+
+    it('should pass the correct constructor and container to the predicate', function () {
+      const parent = new ServiceContainer();
+      parent.add(ServiceX);
+      const child = new ServiceContainer(parent);
+      child.add(ServiceY);
+      const predicateSpy = createSpy(() => false);
+      child.find(predicateSpy);
+      const calls = predicateSpy.calls.map(c => ({
+        ctor: c.args[0],
+        container: c.args[1],
+      }));
+      expect(calls).to.have.deep.members([
+        {ctor: ServiceY, container: child},
+        {ctor: ServiceX, container: parent},
+      ]);
+    });
+  });
 });

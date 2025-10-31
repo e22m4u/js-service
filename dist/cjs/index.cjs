@@ -209,6 +209,36 @@ var _ServiceContainer = class _ServiceContainer {
     this._services.set(ctor, service);
     return this;
   }
+  /**
+   * Найти сервис удовлетворяющий условию.
+   *
+   * @param {function(Function, ServiceContainer): boolean} predicate
+   * @param {boolean} noParent
+   * @returns {*}
+   */
+  find(predicate, noParent = false) {
+    if (typeof predicate !== "function") {
+      throw new InvalidArgumentError(
+        "The first argument of ServiceContainer.find must be a function, but %v given.",
+        predicate
+      );
+    }
+    const isRecursive = !noParent;
+    let currentContainer = this;
+    do {
+      for (const ctor of currentContainer._services.keys()) {
+        if (predicate(ctor, currentContainer) === true) {
+          return this.get(ctor);
+        }
+      }
+      if (isRecursive && currentContainer.hasParent()) {
+        currentContainer = currentContainer.getParent();
+      } else {
+        currentContainer = null;
+      }
+    } while (currentContainer);
+    return void 0;
+  }
 };
 __name(_ServiceContainer, "ServiceContainer");
 /**
@@ -307,6 +337,16 @@ var _Service = class _Service {
     this.container.set(ctor, service);
     return this;
   }
+  /**
+   * Найти сервис удовлетворяющий условию.
+   *
+   * @param {function(Function, ServiceContainer): boolean} predicate
+   * @param {boolean} noParent
+   * @returns {*}
+   */
+  findService(predicate, noParent = false) {
+    return this.container.find(predicate, noParent);
+  }
 };
 __name(_Service, "Service");
 /**
@@ -382,6 +422,14 @@ var _DebuggableService = class _DebuggableService extends import_js_debug.Debugg
    */
   get setService() {
     return this._service.setService;
+  }
+  /**
+   * Найти сервис удовлетворяющий условию.
+   *
+   * @type {Service['findService']}
+   */
+  get findService() {
+    return this._service.findService;
   }
   /**
    * Constructor.
