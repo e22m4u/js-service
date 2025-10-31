@@ -6,26 +6,26 @@ import {ServiceContainer} from './service-container.js';
 import {SERVICE_CONTAINER_CLASS_NAME} from './service-container.js';
 
 describe('ServiceContainer', function () {
-  it('exposes static property "kinds"', function () {
+  it('should expose static property "kinds"', function () {
     expect(ServiceContainer.kinds).to.be.eql([SERVICE_CONTAINER_CLASS_NAME]);
     const MyContainer = class extends ServiceContainer {};
     expect(MyContainer.kinds).to.be.eql([SERVICE_CONTAINER_CLASS_NAME]);
   });
 
   describe('constructor', function () {
-    it('does not require any arguments', function () {
+    it('should not require any arguments', function () {
       const res = new ServiceContainer();
       expect(res).to.be.instanceof(ServiceContainer);
     });
 
-    it('sets the first argument as the parent container', function () {
+    it('should set the first argument as the parent container', function () {
       const parent = new ServiceContainer();
       const container = new ServiceContainer(parent);
       const res = container['_parent'];
       expect(res).to.be.eq(parent);
     });
 
-    it('requires the first argument to be an instance of ServiceContainer', function () {
+    it('should require the first argument to be an instance of ServiceContainer', function () {
       const throwable = v => () => new ServiceContainer(v);
       const error = v =>
         format(
@@ -48,13 +48,13 @@ describe('ServiceContainer', function () {
   });
 
   describe('getParent', function () {
-    it('throws an error if no parent container', function () {
+    it('should throw an error if no parent container', function () {
       const container = new ServiceContainer();
       const throwable = () => container.getParent();
       expect(throwable).to.throw('The service container has no parent.');
     });
 
-    it('returns parent container', function () {
+    it('should return parent container', function () {
       const parent = new ServiceContainer();
       const container = new ServiceContainer(parent);
       const res = container.getParent();
@@ -63,7 +63,7 @@ describe('ServiceContainer', function () {
   });
 
   describe('hasParent', function () {
-    it('returns true if a parent container exists and false otherwise', function () {
+    it('should return true if a parent container exists and false otherwise', function () {
       const container1 = new ServiceContainer();
       const parent = new ServiceContainer();
       const container2 = new ServiceContainer(parent);
@@ -73,7 +73,7 @@ describe('ServiceContainer', function () {
   });
 
   describe('get', function () {
-    it('throws an error if no constructor given', function () {
+    it('should throw an error if no constructor given', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.get(v);
       const error = v =>
@@ -93,7 +93,7 @@ describe('ServiceContainer', function () {
     });
 
     describe('Service', function () {
-      it('passes itself and given arguments to the given constructor', function () {
+      it('should pass itself and given arguments to the given constructor', function () {
         let executed = 0;
         let givenContainer;
         let givenArgs;
@@ -113,7 +113,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
 
-      it('instantiates from an existing factory function', function () {
+      it('should instantiate from an existing factory function', function () {
         let executed = 0;
         let givenContainer;
         let givenArgs;
@@ -135,7 +135,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
 
-      it('overrides an existing factory function', function () {
+      it('should override an existing factory function', function () {
         let executed = 0;
         let givenContainer;
         let givenArgs;
@@ -157,7 +157,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['baz', 'qux']);
       });
 
-      it('caches a new instance', function () {
+      it('should cache a new instance', function () {
         let executed = 0;
         class MyService extends Service {
           constructor(container) {
@@ -174,7 +174,7 @@ describe('ServiceContainer', function () {
         expect(executed).to.be.eq(1);
       });
 
-      it('overrides the cached instance when arguments provided', function () {
+      it('should override the cached instance when arguments provided', function () {
         let executed = 0;
         const givenArgs = [];
         class MyService extends Service {
@@ -345,7 +345,7 @@ describe('ServiceContainer', function () {
       });
 
       describe('in case of a parent container', function () {
-        it('instantiates in the parent container', function () {
+        it('should instantiate in the parent container', function () {
           class MyService extends Service {}
           const parent = new ServiceContainer();
           parent.add(MyService);
@@ -354,7 +354,7 @@ describe('ServiceContainer', function () {
           expect(res).to.be.instanceof(MyService);
         });
 
-        it('returns an instance from the parent container', function () {
+        it('should return an instance from the parent container', function () {
           class MyService extends Service {}
           const parent = new ServiceContainer();
           const service = parent.get(MyService);
@@ -363,7 +363,7 @@ describe('ServiceContainer', function () {
           expect(res).to.be.eq(service);
         });
 
-        it('does not adds the given constructor to the parent container', function () {
+        it('should not add the given constructor to the parent container', function () {
           class MyService extends Service {}
           const parent = new ServiceContainer();
           const child = new ServiceContainer(parent);
@@ -424,7 +424,7 @@ describe('ServiceContainer', function () {
     });
 
     describe('non-Service', function () {
-      it('passes given arguments to the given constructor', function () {
+      it('should pass given arguments to the given constructor', function () {
         let executed = 0;
         let givenArgs;
         class MyService {
@@ -440,7 +440,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
 
-      it('instantiates from an existing factory function', function () {
+      it('should instantiate from an existing factory function', function () {
         let executed = 0;
         let givenArgs;
         class MyService {
@@ -458,7 +458,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
 
-      it('overrides an existing factory function', function () {
+      it('should override an existing factory function', function () {
         let executed = 0;
         let givenArgs;
         class MyService {
@@ -476,7 +476,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['baz', 'qux']);
       });
 
-      it('caches a new instance', function () {
+      it('should cache a new instance', function () {
         let executed = 0;
         class MyService {
           constructor() {
@@ -492,7 +492,7 @@ describe('ServiceContainer', function () {
         expect(executed).to.be.eq(1);
       });
 
-      it('overrides the cached instance when arguments provided', function () {
+      it('should override the cached instance when arguments provided', function () {
         let executed = 0;
         const givenArgs = [];
         class MyService {
@@ -660,7 +660,7 @@ describe('ServiceContainer', function () {
       });
 
       describe('in case of a parent container', function () {
-        it('instantiates in the parent container', function () {
+        it('should instantiate in the parent container', function () {
           class MyService {}
           const parent = new ServiceContainer();
           parent.add(MyService);
@@ -669,7 +669,7 @@ describe('ServiceContainer', function () {
           expect(res).to.be.instanceof(MyService);
         });
 
-        it('returns an instance from the parent container', function () {
+        it('should return an instance from the parent container', function () {
           class MyService {}
           const parent = new ServiceContainer();
           const service = parent.get(MyService);
@@ -678,7 +678,7 @@ describe('ServiceContainer', function () {
           expect(res).to.be.eq(service);
         });
 
-        it('does not adds the given constructor to the parent container', function () {
+        it('should not add the given constructor to the parent container', function () {
           class MyService {}
           const parent = new ServiceContainer();
           const child = new ServiceContainer(parent);
@@ -740,7 +740,7 @@ describe('ServiceContainer', function () {
   });
 
   describe('getRegistered', function () {
-    it('throws Error if the given constructor is not registered', function () {
+    it('should throw Error if the given constructor is not registered', function () {
       const container = new ServiceContainer();
       class MyService extends Service {}
       const throwable = () => container.getRegistered(MyService);
@@ -763,7 +763,7 @@ describe('ServiceContainer', function () {
 
   describe('has', function () {
     describe('Service', function () {
-      it('returns true when a given constructor has its cached instance or false', function () {
+      it('should return true when a given constructor has its cached instance or false', function () {
         const container = new ServiceContainer();
         class MyService extends Service {}
         expect(container.has(MyService)).to.be.false;
@@ -771,7 +771,7 @@ describe('ServiceContainer', function () {
         expect(container.has(MyService)).to.be.true;
       });
 
-      it('returns true when a given constructor has its factory function or false', function () {
+      it('should return true when a given constructor has its factory function or false', function () {
         const container = new ServiceContainer();
         class MyService extends Service {}
         expect(container.has(MyService)).to.be.false;
@@ -780,7 +780,7 @@ describe('ServiceContainer', function () {
       });
 
       describe('class inheritance', function () {
-        it('returns true if the child class is registered', function () {
+        it('should return true if the child class is registered', function () {
           class ParentService extends Service {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
@@ -789,7 +789,7 @@ describe('ServiceContainer', function () {
           expect(res).to.be.true;
         });
 
-        it('returns false if the parent class is registered', function () {
+        it('should return false if the parent class is registered', function () {
           class ParentService extends Service {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
@@ -799,7 +799,7 @@ describe('ServiceContainer', function () {
         });
 
         describe('when a container has a parent', function () {
-          it('returns true for the child container if the child class is registered in the parent container', function () {
+          it('should return true for the child container if the child class is registered in the parent container', function () {
             class ParentService extends Service {}
             class ChildService extends ParentService {}
             const parentContainer = new ServiceContainer();
@@ -809,7 +809,7 @@ describe('ServiceContainer', function () {
             expect(res).to.be.true;
           });
 
-          it('returns false for the child container if the parent class is registered in the parent container', function () {
+          it('should return false for the child container if the parent class is registered in the parent container', function () {
             class ParentService extends Service {}
             class ChildService extends ParentService {}
             const parentContainer = new ServiceContainer();
@@ -819,7 +819,7 @@ describe('ServiceContainer', function () {
             expect(res).to.be.false;
           });
 
-          it('returns true for the child container if the child class is registered in the child container', function () {
+          it('should return true for the child container if the child class is registered in the child container', function () {
             class ParentService extends Service {}
             class ChildService extends ParentService {}
             const parentContainer = new ServiceContainer();
@@ -829,7 +829,7 @@ describe('ServiceContainer', function () {
             expect(res).to.be.true;
           });
 
-          it('returns false for the child container if the parent class is registered in the child container', function () {
+          it('should return false for the child container if the parent class is registered in the child container', function () {
             class ParentService extends Service {}
             class ChildService extends ParentService {}
             const parentContainer = new ServiceContainer();
@@ -842,7 +842,7 @@ describe('ServiceContainer', function () {
       });
 
       describe('in case of a parent container', function () {
-        it('returns true if the parent container has the given constructor', function () {
+        it('should return true if the parent container has the given constructor', function () {
           class MyService extends Service {}
           const parent = new ServiceContainer();
           parent.add(MyService);
@@ -854,7 +854,7 @@ describe('ServiceContainer', function () {
     });
 
     describe('non-Service', function () {
-      it('returns true when a given constructor has its cached instance or false', function () {
+      it('should return true when a given constructor has its cached instance or false', function () {
         const container = new ServiceContainer();
         class MyService {}
         expect(container.has(MyService)).to.be.false;
@@ -862,7 +862,7 @@ describe('ServiceContainer', function () {
         expect(container.has(MyService)).to.be.true;
       });
 
-      it('returns true when a given constructor has its factory function or false', function () {
+      it('should return true when a given constructor has its factory function or false', function () {
         const container = new ServiceContainer();
         class MyService {}
         expect(container.has(MyService)).to.be.false;
@@ -871,7 +871,7 @@ describe('ServiceContainer', function () {
       });
 
       describe('class inheritance', function () {
-        it('returns true if the child class is registered', function () {
+        it('should return true if the child class is registered', function () {
           class ParentService {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
@@ -880,7 +880,7 @@ describe('ServiceContainer', function () {
           expect(res).to.be.true;
         });
 
-        it('returns false if the parent class is registered', function () {
+        it('should return false if the parent class is registered', function () {
           class ParentService {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
@@ -890,7 +890,7 @@ describe('ServiceContainer', function () {
         });
 
         describe('when a container has a parent', function () {
-          it('returns true for the child container if the child class is registered in the parent container', function () {
+          it('should return true for the child container if the child class is registered in the parent container', function () {
             class ParentService {}
             class ChildService extends ParentService {}
             const parentContainer = new ServiceContainer();
@@ -900,7 +900,7 @@ describe('ServiceContainer', function () {
             expect(res).to.be.true;
           });
 
-          it('returns false for the child container if the parent class is registered in the parent container', function () {
+          it('should return false for the child container if the parent class is registered in the parent container', function () {
             class ParentService {}
             class ChildService extends ParentService {}
             const parentContainer = new ServiceContainer();
@@ -910,7 +910,7 @@ describe('ServiceContainer', function () {
             expect(res).to.be.false;
           });
 
-          it('returns true for the child container if the child class is registered in the child container', function () {
+          it('should return true for the child container if the child class is registered in the child container', function () {
             class ParentService {}
             class ChildService extends ParentService {}
             const parentContainer = new ServiceContainer();
@@ -920,7 +920,7 @@ describe('ServiceContainer', function () {
             expect(res).to.be.true;
           });
 
-          it('returns false for the child container if the parent class is registered in the child container', function () {
+          it('should return false for the child container if the parent class is registered in the child container', function () {
             class ParentService {}
             class ChildService extends ParentService {}
             const parentContainer = new ServiceContainer();
@@ -933,7 +933,7 @@ describe('ServiceContainer', function () {
       });
 
       describe('in case of a parent container', function () {
-        it('returns true if the parent container has the given constructor', function () {
+        it('should return true if the parent container has the given constructor', function () {
           class MyService {}
           const parent = new ServiceContainer();
           parent.add(MyService);
@@ -946,7 +946,7 @@ describe('ServiceContainer', function () {
   });
 
   describe('add', function () {
-    it('throws an error if no constructor given', function () {
+    it('should throw an error if no constructor given', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.add(v);
       const error = v =>
@@ -966,14 +966,14 @@ describe('ServiceContainer', function () {
     });
 
     describe('Service', function () {
-      it('returns itself', function () {
+      it('should return itself', function () {
         class MyService extends Service {}
         const container = new ServiceContainer();
         const res = container.add(MyService);
         expect(res).to.be.eq(container);
       });
 
-      it('provides given arguments to the factory function', function () {
+      it('should provide given arguments to the factory function', function () {
         let executed = 0;
         let givenContainer;
         let givenArgs;
@@ -995,7 +995,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
 
-      it('overrides a cached instance of the given constructor', function () {
+      it('should override a cached instance of the given constructor', function () {
         class MyService extends Service {}
         const container = new ServiceContainer();
         const service1 = container.get(MyService);
@@ -1008,7 +1008,7 @@ describe('ServiceContainer', function () {
         expect(service3).to.be.not.eq(service1);
       });
 
-      it('overrides constructor arguments of the factory function', function () {
+      it('should override constructor arguments of the factory function', function () {
         let executed = 0;
         let givenContainer;
         let givenArgs;
@@ -1033,14 +1033,14 @@ describe('ServiceContainer', function () {
     });
 
     describe('non-Service', function () {
-      it('returns itself', function () {
+      it('should return itself', function () {
         class MyService {}
         const container = new ServiceContainer();
         const res = container.add(MyService);
         expect(res).to.be.eq(container);
       });
 
-      it('provides given arguments to the factory function', function () {
+      it('should provide given arguments to the factory function', function () {
         let executed = 0;
         let givenArgs;
         class MyService {
@@ -1058,7 +1058,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
 
-      it('overrides a cached instance of the given constructor', function () {
+      it('should override a cached instance of the given constructor', function () {
         class MyService {}
         const container = new ServiceContainer();
         const service1 = container.get(MyService);
@@ -1071,7 +1071,7 @@ describe('ServiceContainer', function () {
         expect(service3).to.be.not.eq(service1);
       });
 
-      it('overrides constructor arguments of the factory function', function () {
+      it('should override constructor arguments of the factory function', function () {
         let executed = 0;
         let givenArgs;
         class MyService {
@@ -1093,7 +1093,7 @@ describe('ServiceContainer', function () {
   });
 
   describe('use', function () {
-    it('throws an error if no constructor given', function () {
+    it('should throw an error if no constructor given', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.use(v);
       const error = v =>
@@ -1113,14 +1113,14 @@ describe('ServiceContainer', function () {
     });
 
     describe('Service', function () {
-      it('returns itself', function () {
+      it('should return itself', function () {
         class MyService extends Service {}
         const container = new ServiceContainer();
         const res = container.use(MyService);
         expect(res).to.be.eq(container);
       });
 
-      it('passes itself and given arguments to the given constructor', function () {
+      it('should pass itself and given arguments to the given constructor', function () {
         let executed = 0;
         let givenContainer;
         let givenArgs;
@@ -1139,7 +1139,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
 
-      it('overrides an existing factory function', function () {
+      it('should override an existing factory function', function () {
         let executed = 0;
         let givenContainer;
         let givenArgs;
@@ -1160,7 +1160,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['baz', 'qux']);
       });
 
-      it('caches a new instance', function () {
+      it('should cache a new instance', function () {
         let executed = 0;
         let service;
         class MyService extends Service {
@@ -1178,7 +1178,7 @@ describe('ServiceContainer', function () {
         expect(executed).to.be.eq(1);
       });
 
-      it('overrides the cached instance', function () {
+      it('should override the cached instance', function () {
         let executed = 0;
         let service;
         let givenArgs;
@@ -1206,14 +1206,14 @@ describe('ServiceContainer', function () {
     });
 
     describe('non-Service', function () {
-      it('returns itself', function () {
+      it('should return itself', function () {
         class MyService {}
         const container = new ServiceContainer();
         const res = container.use(MyService);
         expect(res).to.be.eq(container);
       });
 
-      it('passes given arguments to the given constructor', function () {
+      it('should pass given arguments to the given constructor', function () {
         let executed = 0;
         let givenArgs;
         class MyService {
@@ -1228,7 +1228,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['foo', 'bar']);
       });
 
-      it('overrides an existing factory function', function () {
+      it('should override an existing factory function', function () {
         let executed = 0;
         let givenArgs;
         class MyService {
@@ -1245,7 +1245,7 @@ describe('ServiceContainer', function () {
         expect(givenArgs).to.be.eql(['baz', 'qux']);
       });
 
-      it('caches a new instance', function () {
+      it('should cache a new instance', function () {
         let executed = 0;
         let service;
         class MyService {
@@ -1262,7 +1262,7 @@ describe('ServiceContainer', function () {
         expect(executed).to.be.eq(1);
       });
 
-      it('overrides the cached instance', function () {
+      it('should override the cached instance', function () {
         let executed = 0;
         let service;
         let givenArgs;
@@ -1290,7 +1290,7 @@ describe('ServiceContainer', function () {
   });
 
   describe('set', function () {
-    it('requires the "ctor" argument to be a class constructor', function () {
+    it('should require the "ctor" argument to be a class constructor', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.set(v, {});
       const error = v =>
@@ -1310,7 +1310,7 @@ describe('ServiceContainer', function () {
       throwable(String)();
     });
 
-    it('requires the "service" argument to be an Object', function () {
+    it('should require the "service" argument to be an Object', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.set(String, v);
       const error = v =>
@@ -1330,14 +1330,14 @@ describe('ServiceContainer', function () {
     });
 
     describe('Service', function () {
-      it('returns itself', function () {
+      it('should return itself', function () {
         class MyService extends Service {}
         const container = new ServiceContainer();
         const res = container.set(MyService, {});
         expect(res).to.be.eq(container);
       });
 
-      it('sets the given service', function () {
+      it('should set the given service', function () {
         class MyService extends Service {}
         const container = new ServiceContainer();
         const service = {};
@@ -1346,7 +1346,7 @@ describe('ServiceContainer', function () {
         expect(res).to.be.eq(service);
       });
 
-      it('overrides by the given service', function () {
+      it('should override by the given service', function () {
         class MyService extends Service {}
         const container = new ServiceContainer();
         const service1 = {foo: 'bar'};
@@ -1359,14 +1359,14 @@ describe('ServiceContainer', function () {
     });
 
     describe('non-Service', function () {
-      it('returns itself', function () {
+      it('should return itself', function () {
         class MyService {}
         const container = new ServiceContainer();
         const res = container.set(MyService, {});
         expect(res).to.be.eq(container);
       });
 
-      it('sets the given service', function () {
+      it('should set the given service', function () {
         class MyService {}
         const container = new ServiceContainer();
         const service = {};
@@ -1375,7 +1375,7 @@ describe('ServiceContainer', function () {
         expect(res).to.be.eq(service);
       });
 
-      it('overrides by the given service', function () {
+      it('should override by the given service', function () {
         class MyService {}
         const container = new ServiceContainer();
         const service1 = {foo: 'bar'};

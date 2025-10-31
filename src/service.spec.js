@@ -5,25 +5,25 @@ import {ServiceContainer} from './service-container.js';
 import {SERVICE_CONTAINER_CLASS_NAME} from './service-container.js';
 
 describe('Service', function () {
-  it('exposes static property "kinds"', function () {
+  it('should expose static property "kinds"', function () {
     expect(Service.kinds).to.be.eql([SERVICE_CLASS_NAME]);
     const MyService = class extends Service {};
     expect(MyService.kinds).to.be.eql([SERVICE_CLASS_NAME]);
   });
 
   describe('constructor', function () {
-    it('instantiates with a services container', function () {
+    it('should instantiate with a services container', function () {
       const service = new Service();
       expect(service.container).to.be.instanceof(ServiceContainer);
     });
 
-    it('sets a given service container', function () {
+    it('should set a given service container', function () {
       const container = new ServiceContainer();
       const service = new Service(container);
       expect(service.container).to.be.eq(container);
     });
 
-    it('sets a given object as service container by the kinds property', function () {
+    it('should set a given object as service container by the kinds property', function () {
       class MyServiceContainer {
         static kinds = [SERVICE_CONTAINER_CLASS_NAME];
       }
@@ -34,7 +34,7 @@ describe('Service', function () {
   });
 
   describe('getService', function () {
-    it('calls the container "get" method', function () {
+    it('should call the container "get" method', function () {
       const service = new Service();
       service.container.get = function (ctor, ...args) {
         expect(ctor).to.be.eq(Date);
@@ -47,7 +47,7 @@ describe('Service', function () {
   });
 
   describe('getRegisteredService', function () {
-    it('calls the container "getRegisteredService" method', function () {
+    it('should call the container "getRegisteredService" method', function () {
       const service = new Service();
       service.container.getRegistered = function (ctor, ...args) {
         expect(ctor).to.be.eq(Date);
@@ -60,7 +60,7 @@ describe('Service', function () {
   });
 
   describe('hasService', function () {
-    it('calls the container "has" method', function () {
+    it('should call the container "has" method', function () {
       const service = new Service();
       service.container.has = function (ctor) {
         expect(ctor).to.be.eq(Date);
@@ -72,7 +72,7 @@ describe('Service', function () {
   });
 
   describe('addService', function () {
-    it('calls the container "add" method', function () {
+    it('should call the container "add" method', function () {
       const service = new Service();
       service.container.add = function (ctor, ...args) {
         expect(ctor).to.be.eq(Date);
@@ -84,7 +84,7 @@ describe('Service', function () {
   });
 
   describe('useService', function () {
-    it('calls the container "use" method', function () {
+    it('should call the container "use" method', function () {
       const service = new Service();
       service.container.use = function (ctor, ...args) {
         expect(ctor).to.be.eq(Date);
@@ -96,7 +96,7 @@ describe('Service', function () {
   });
 
   describe('setService', function () {
-    it('calls the container "set" method', function () {
+    it('should call the container "set" method', function () {
       const service = new Service();
       const date = new Date();
       service.container.set = function (ctor, input) {

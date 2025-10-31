@@ -4,13 +4,13 @@ import {isServiceContainer} from './is-service-container.js';
 import {SERVICE_CONTAINER_CLASS_NAME} from '../service-container.js';
 
 describe('isServiceContainer', function () {
-  it('returns true for ServiceContainer instance', function () {
+  it('should return true for ServiceContainer instance', function () {
     const container = new ServiceContainer();
     const res = isServiceContainer(container);
     expect(res).to.be.true;
   });
 
-  it('returns true if the given object has the kinds property of its constructor', function () {
+  it('should return true if the given object has the kinds property of its constructor', function () {
     class CustomContainer {
       static kinds = [SERVICE_CONTAINER_CLASS_NAME];
     }
@@ -19,7 +19,7 @@ describe('isServiceContainer', function () {
     expect(res).to.be.true;
   });
 
-  it('returns false for not-container values', function () {
+  it('should return false for not-container values', function () {
     expect(isServiceContainer('str')).to.be.false;
     expect(isServiceContainer(10)).to.be.false;
     expect(isServiceContainer(true)).to.be.false;
