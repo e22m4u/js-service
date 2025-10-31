@@ -174,7 +174,7 @@ describe('ServiceContainer', function () {
         expect(executed).to.be.eq(1);
       });
 
-      it('overrides the cached instance', function () {
+      it('overrides the cached instance when arguments provided', function () {
         let executed = 0;
         const givenArgs = [];
         class MyService extends Service {
@@ -252,6 +252,28 @@ describe('ServiceContainer', function () {
           expect(res1).to.be.instanceOf(ParentService);
           expect(res2).to.be.instanceOf(ChildService);
           expect(res1).to.be.not.eq(res2);
+        });
+
+        it('should create an instance from a registered class that inherits the given not registered class', function () {
+          class ParentService extends Service {}
+          class ChildService extends ParentService {}
+          const container = new ServiceContainer();
+          container.add(ChildService);
+          const res1 = container.get(ParentService);
+          const res2 = container.get(ChildService);
+          expect(res1).to.be.instanceOf(ParentService);
+          expect(res2).to.be.instanceOf(ChildService);
+          expect(res1).to.be.eq(res2);
+        });
+
+        it('should create an instance from a given not registered class even its parent class is registered', function () {
+          class ParentService extends Service {}
+          class ChildService extends ParentService {}
+          const container = new ServiceContainer();
+          container.add(ParentService);
+          const res = container.get(ChildService);
+          expect(res).to.be.instanceOf(ParentService);
+          expect(res).to.be.instanceOf(ChildService);
         });
 
         describe('when a container has a parent', function () {
@@ -470,7 +492,7 @@ describe('ServiceContainer', function () {
         expect(executed).to.be.eq(1);
       });
 
-      it('overrides the cached instance', function () {
+      it('overrides the cached instance when arguments provided', function () {
         let executed = 0;
         const givenArgs = [];
         class MyService {
@@ -547,6 +569,28 @@ describe('ServiceContainer', function () {
           expect(res1).to.be.instanceOf(ParentService);
           expect(res2).to.be.instanceOf(ChildService);
           expect(res1).to.be.not.eq(res2);
+        });
+
+        it('should create an instance from a registered class that inherits the given not registered class', function () {
+          class ParentService {}
+          class ChildService extends ParentService {}
+          const container = new ServiceContainer();
+          container.add(ChildService);
+          const res1 = container.get(ParentService);
+          const res2 = container.get(ChildService);
+          expect(res1).to.be.instanceOf(ParentService);
+          expect(res2).to.be.instanceOf(ChildService);
+          expect(res1).to.be.eq(res2);
+        });
+
+        it('should create an instance from a given not registered class even its parent class is registered', function () {
+          class ParentService {}
+          class ChildService extends ParentService {}
+          const container = new ServiceContainer();
+          container.add(ParentService);
+          const res = container.get(ChildService);
+          expect(res).to.be.instanceOf(ParentService);
+          expect(res).to.be.instanceOf(ChildService);
         });
 
         describe('when a container has a parent', function () {

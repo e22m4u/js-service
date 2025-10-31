@@ -112,7 +112,7 @@ var _ServiceContainer = class _ServiceContainer {
     if (!service && !isCtorRegistered && !inheritedCtor && this._parent && this._parent.has(ctor)) {
       return this._parent.get(ctor, ...args);
     }
-    if (!service && !isCtorRegistered && inheritedCtor) {
+    if (!isCtorRegistered && inheritedCtor) {
       ctor = inheritedCtor;
     }
     if (!service || args.length) {
