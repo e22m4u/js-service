@@ -660,6 +660,22 @@ console.log(service2); // undefined
 проверяет наличие родителя, а `getParent` возвращает его или выбрасывает
 ошибку, если родителя нет.
 
+Сигнатура:
+
+```ts
+/**
+ * Получить родительский сервис-контейнер или выбросить ошибку.
+ */
+getParent(): ServiceContainer;
+
+/**
+ * Проверить наличие родительского сервис-контейнера.
+ */
+hasParent(): boolean;
+```
+
+Пример:
+
 ```js
 const parentContainer = new ServiceContainer();
 const childContainer = new ServiceContainer(parentContainer);
