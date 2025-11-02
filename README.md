@@ -8,9 +8,9 @@
 - [Установка](#Установка)
 - [Зачем нужна эта библиотека?](#Зачем-нужна-эта-библиотека?)
 - [Содержание](#Содержание)
-- [Базовые примеры](#базовые-примеры)
+- [Базовые примеры](#Базовые-примеры)
 - [ServiceContainer](#ServiceContainer)
-- [Наследование](#Наследование)
+- [Иерархия контейнеров](#Иерархия-контейнеров)
 - [Service](#Service)
 - [DebuggableService](#DebuggableService)
 - [Тесты](#Тесты)
@@ -205,7 +205,7 @@ userService.findUser(456);
 Дополнительно:
 
 - `DebuggableService` *(логируемый Service)*  
-  Наследник класса `Service` с расширенными возможностями
+  Расширенная версия класса `Service` с дополнительными возможностями
   по отладке через логирование.
 
 ## Базовые примеры
@@ -351,6 +351,21 @@ const myService = container.get(MyService);
 полученного конструктора и сохраняет его для последующих
 обращений по принципу "одиночки" (Singleton).
 
+Сигнатура:
+
+```ts
+/**
+ * Получить существующий или новый экземпляр.
+ *
+ * @param ctor
+ * @param args
+ */
+get<T extends object>(
+  ctor: Constructor<T>,
+  ...args: any[],
+): T;
+```
+
 Пример:
 
 ```js
@@ -381,11 +396,94 @@ console.log(myDate2); // Wed Jan 01 2025 03:00:00
 console.log(myDate3); // Sun May 05 2030 03:00:00
 ```
 
+### getRegistered
+
+Работает аналогично `get`, но выбрасывает ошибку, если конструктор
+сервиса не был предварительно зарегистрирован через `add`, `use` или `set`.
+Это обеспечивает более строгий контроль над зависимостями.
+
+Сигнатура:
+
+```ts
+/**
+ * Получить существующий или новый экземпляр,
+ * только если конструктор зарегистрирован.
+ *
+ * @param ctor
+ * @param args
+ */
+getRegistered<T extends object>(
+  ctor: Constructor<T>,
+  ...args: any[],
+): T;
+```
+
+Пример:
+
+```js
+class RegisteredService {}
+class UnregisteredService {}
+
+const container = new ServiceContainer();
+container.add(RegisteredService);
+
+// успешное получение, так как сервис зарегистрирован
+const service = container.getRegistered(RegisteredService);
+
+// этот вызов выбросит ошибку InvalidArgumentError
+container.getRegistered(UnregisteredService);
+```
+
+### has
+
+Проверяет, зарегистрирован ли конструктор в контейнере (или в одном
+из его родительских контейнеров). Возвращает `true` или `false`.
+
+Сигнатура:
+
+```ts
+/**
+ * Проверить существование конструктора в контейнере.
+ *
+ * @param ctor
+ */
+has<T extends object>(ctor: Constructor<T>): boolean;
+```
+
+Пример:
+
+```js
+class MyService {}
+
+const container = new ServiceContainer();
+console.log(container.has(MyService)); // false
+
+container.add(MyService);
+console.log(container.has(MyService)); // true
+```
+
 ### add
 
 Метод регистрирует конструктор для ленивой инициализации. Экземпляр сервиса
 создается не в момент вызова `add`, а при первом обращении к нему через
 метод `get`.
+
+Сигнатура:
+
+```ts
+/**
+ * Добавить конструктор в контейнер.
+ *
+ * @param ctor
+ * @param args
+ */
+add<T extends object>(
+  ctor: Constructor<T>,
+  ...args: any[],
+): this;
+```
+
+Пример:
 
 ```js
 class MyService {
@@ -410,6 +508,23 @@ console.log('After get');
 В отличие от `add`, метод `use` немедленно создает и кэширует
 экземпляр сервиса (моментальная инициализация).
 
+Сигнатура:
+
+```ts
+/**
+ * Добавить конструктор и создать экземпляр.
+ *
+ * @param ctor
+ * @param args
+ */
+use<T extends object>(
+  ctor: Constructor<T>,
+  ...args: any[],
+): this;
+```
+
+Пример:
+
 ```js
 class MyService {
   constructor() {
@@ -430,6 +545,23 @@ const service = container.get(MyService); // возвращает готовый
 Метод `set` позволяет связать конструктор с уже существующим объектом.
 Это особенно полезно для подмены реализаций в тестах или для интеграции
 с объектами, созданными вне контейнера.
+
+Сигнатура:
+
+```ts
+/**
+ * Добавить конструктор и связанный экземпляр.
+ *
+ * @param ctor
+ * @param service
+ */
+set<T extends object>(
+  ctor: Constructor<T>,
+  service: T,
+): this;
+```
+
+Пример:
 
 ```js
 class ApiService {}
@@ -452,46 +584,28 @@ console.log(api.fetch()); // "mock data"
 console.log(api === mock); // true
 ```
 
-### getRegistered
-
-Работает аналогично `get`, но выбрасывает ошибку, если конструктор
-сервиса не был предварительно зарегистрирован через `add`, `use` или `set`.
-Это обеспечивает более строгий контроль над зависимостями.
-
-```js
-class RegisteredService {}
-class UnregisteredService {}
-
-const container = new ServiceContainer();
-container.add(RegisteredService);
-
-// успешное получение, так как сервис зарегистрирован
-const service = container.getRegistered(RegisteredService);
-
-// этот вызов выбросит ошибку InvalidArgumentError
-container.getRegistered(UnregisteredService);
-```
-
-### has
-
-Проверяет, зарегистрирован ли конструктор в контейнере (или в одном
-из его родительских контейнеров). Возвращает `true` или `false`.
-
-```js
-class MyService {}
-
-const container = new ServiceContainer();
-console.log(container.has(MyService)); // false
-
-container.add(MyService);
-console.log(container.has(MyService)); // true
-```
-
 ### find
 
 Позволяет найти сервис по произвольному условию, заданному в функции-предикате.
 Предикат получает конструктор и текущий контейнер в качестве аргументов.
 Поиск ведется рекурсивно вверх по иерархии контейнеров.
+
+Сигнатура:
+
+```ts
+/**
+ * Найти сервис удовлетворяющий условию.
+ *
+ * @param predicate
+ * @param noParent
+ */
+find<T extends object>(
+  predicate: FindServicePredicate<T>,
+  noParent?: boolean,
+): T | undefined;
+```
+
+Пример:
 
 ```js
 class ReportService {
@@ -552,7 +666,7 @@ const parent = childContainer.getParent();
 console.log(parent === parentContainer); // true
 ```
 
-### Наследование
+### Иерархия контейнеров
 
 Конструктор `ServiceContainer` первым параметром принимает родительский
 контейнер, который используется как альтернативный, если конструктор
@@ -657,6 +771,24 @@ console.log(foo3 === foo4);               // true
 сервиса не был предварительно зарегистрирован через `add`, `use` или `set`.
 Это обеспечивает более строгий контроль над зависимостями.
 
+Сигнатура:
+
+```ts
+/**
+ * Получить существующий или новый экземпляр,
+ * только если конструктор зарегистрирован.
+ *
+ * @param ctor
+ * @param args
+ */
+getRegisteredService<T extends object>(
+  ctor: Constructor<T>,
+  ...args: any[],
+): T;
+```
+
+Пример:
+
 ```js
 class RegisteredService {}
 class UnregisteredService {}
@@ -679,6 +811,21 @@ class MyService extends Service {
 Проверяет, зарегистрирован ли конструктор в контейнере. Возвращает
 `true` или `false`. Полезно для условного запроса зависимостей.
 
+Сигнатура:
+
+```ts
+/**
+ * Проверка существования конструктора в контейнере.
+ *
+ * @param ctor
+ */
+hasService<T extends object>(
+  ctor: Constructor<T>,
+): boolean;
+```
+
+Пример:
+
 ```js
 class OptionalLogger {}
 
@@ -698,6 +845,23 @@ class MyService extends Service {
 только при первом обращении к `getService`. Это позволяет сервисам настраивать
 или добавлять другие сервисы в контейнер.
 
+Сигнатура:
+
+```ts
+/**
+ * Добавить конструктор в контейнер.
+ *
+ * @param ctor
+ * @param args
+ */
+addService<T extends object>(
+  ctor: Constructor<T>,
+  ...args: any[],
+): this;
+```
+
+Пример:
+
 ```js
 class DatabaseService {}
 class Config {}
@@ -715,6 +879,23 @@ class App extends Service {
 
 Немедленно создает и кэширует экземпляр сервиса. Может использоваться, когда
 сервис должен быть проинициализирован сразу при настройке другого компонента.
+
+Сигнатура:
+
+```ts
+/**
+ * Добавить конструктор и создать экземпляр.
+ *
+ * @param ctor
+ * @param args
+ */
+useService<T extends object>(
+  ctor: Constructor<T>,
+  ...args: any[],
+): this;
+```
+
+Пример:
 
 ```js
 class Logger {
@@ -736,6 +917,23 @@ class App extends Service {
 Позволяет связать конструктор с уже существующим объектом. Может быть
 использован для подмены зависимостей на мок-объекты, например,
 при тестировании.
+
+Сигнатура:
+
+```ts
+/**
+ * Добавить конструктор и связанный экземпляр.
+ *
+ * @param ctor
+ * @param service
+ */
+setService<T extends object>(
+  ctor: Constructor<T>,
+  service: T,
+): this;
+```
+
+Пример:
 
 ```js
 class ApiService {}
@@ -759,6 +957,23 @@ class MyComponent extends Service {
 
 Находит сервис по заданному условию (предикату). Поиск по умолчанию
 ведется рекурсивно вверх по иерархии контейнеров.
+
+Сигнатура:
+
+```ts
+/**
+ * Найти сервис удовлетворяющий условию.
+ *
+ * @param predicate
+ * @param noParent
+ */
+findService<T extends object>(
+  predicate: FindServicePredicate<T>,
+  noParent?: boolean,
+): T | undefined;
+```
+
+Пример:
 
 ```js
 class ReportService {
@@ -787,7 +1002,8 @@ class App extends Service {
 
 ## DebuggableService
 
-Класс-сервис, расширенный возможностями по отладке.  
+Данный класс-сервис наследует `Debuggable` из встроенной отладочной библиотеки
+и использует композицию для получения функциональности `Service`.  
 *(см. подробнее [@e22m4u/js-debug](https://www.npmjs.com/package/@e22m4u/js-debug#класс-debuggable#класс-debuggable) раздел «Класс Debuggable»)*
 
 ```js

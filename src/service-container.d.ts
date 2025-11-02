@@ -35,7 +35,10 @@ export declare class ServiceContainer {
    * @param ctor
    * @param args
    */
-  get<T extends object>(ctor: Constructor<T>, ...args: any[]): T;
+  get<T extends object>(
+    ctor: Constructor<T>,
+    ...args: any[],
+  ): T;
 
   /**
    * Получить существующий или новый экземпляр,
@@ -44,7 +47,10 @@ export declare class ServiceContainer {
    * @param ctor
    * @param args
    */
-  getRegistered<T extends object>(ctor: Constructor<T>, ...args: any[]): T;
+  getRegistered<T extends object>(
+    ctor: Constructor<T>,
+    ...args: any[],
+  ): T;
 
   /**
    * Проверить существование конструктора в контейнере.
@@ -59,7 +65,10 @@ export declare class ServiceContainer {
    * @param ctor
    * @param args
    */
-  add<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
+  add<T extends object>(
+    ctor: Constructor<T>,
+    ...args: any[],
+  ): this;
 
   /**
    * Добавить конструктор и создать экземпляр.
@@ -67,7 +76,10 @@ export declare class ServiceContainer {
    * @param ctor
    * @param args
    */
-  use<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
+  use<T extends object>(
+    ctor: Constructor<T>,
+    ...args: any[],
+  ): this;
 
   /**
    * Добавить конструктор и связанный экземпляр.
@@ -75,7 +87,10 @@ export declare class ServiceContainer {
    * @param ctor
    * @param service
    */
-  set<T extends object>(ctor: Constructor<T>, service: T): this;
+  set<T extends object>(
+    ctor: Constructor<T>,
+    service: T,
+  ): this;
 
   /**
    * Найти сервис удовлетворяющий условию.
