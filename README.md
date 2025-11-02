@@ -6,7 +6,8 @@
 ## Оглавление
 
 - [Установка](#Установка)
-- [Назначение](#Назначение)
+- [Зачем нужна эта библиотека?](#Зачем-нужна-эта-библиотека?)
+- [Содержание](#Содержание)
 - [Базовые примеры](#базовые-примеры)
 - [ServiceContainer](#ServiceContainer)
 - [Наследование](#Наследование)
@@ -35,36 +36,177 @@ import {Service} from '@e22m4u/js-service';
 const {Service} = require('@e22m4u/js-service');
 ```
 
-## Назначение
+## Зачем нужна эта библиотека?
 
-Модуль предлагает два основных класса, `ServiceContainer` и `Service`,
+При росте проекта, построенного на классах, разработчики часто сталкиваются
+с проблемой управления зависимостями. Классы начинают зависеть друг от друга,
+и для их совместной работы требуется где-то создавать экземпляры и передавать
+их в конструкторы или методы других классов. Ручное внедрение зависимостей
+быстро приводит к сложному и запутанному коду.
+
+#### Проблема: Ручное управление зависимостями
+
+Представим типичную ситуацию. Есть сервис для работы с пользователями
+`UserService`, который для своей работы нуждается в логгере `Logger`
+и клиенте для доступа к базе данных `DatabaseClient`.
+
+**Без библиотеки это может выглядеть так:**
+
+```js
+// зависимости
+class Logger {
+  log(message) {
+    console.log(message);
+  }
+}
+
+class DatabaseClient {
+  query(id) {
+    return {id, name: 'John Doe'};
+  }
+}
+
+// сервис, который зависит от двух других классов
+class UserService {
+  constructor(db, logger) {
+    if (!db || !logger) {
+      throw new Error('Database and Logger are required!');
+    }
+    this.db = db;
+    this.logger = logger;
+  }
+
+  findUser(id) {
+    this.logger.log(`Searching for user with id: ${id}`);
+    return this.db.query(id);
+  }
+}
+
+// точка входа в приложение (или где-то в коде)
+// нужно вручную создать все зависимости
+const logger = new Logger();
+const dbClient = new DatabaseClient();
+
+// нужно вручную передать их в конструктор
+const userService = new UserService(dbClient, logger);
+
+userService.findUser(123);
+```
+
+**С какими проблемами мы сталкиваемся:**
+
+- **Жесткая связь и сложность**  
+  Точка входа в приложение превращается в "фабрику", которая знает,
+  как создавать и связывать все компоненты. Если `DatabaseClient` тоже
+  начнет зависеть от `Logger`, порядок создания усложнится.
+
+- **Проблемы с тестированием**  
+  Чтобы протестировать `UserService` в изоляции, нужно создать "моки"
+  для `Logger` и `DatabaseClient` и вручную передать их в конструктор.
+  Это громоздко и требует дополнительного кода в каждом тесте.
+
+- **Неявные зависимости**  
+  Конструктор `UserService` требует определенные зависимости,
+  и если их не передать, приложение упадет в рантайме.
+
+#### Решение: Инверсия управления
+
+Эта библиотека была создана для решения именно этих проблем. Она реализует
+принцип **инверсии управления (IoC)**, при котором контроль над созданием
+и предоставлением зависимостей передается от компонента к специализированному
+контейнеру.
+
+**С библиотекой код становится проще:**
+
+```js
+import {Service} from '@e22m4u/js-service';
+
+// зависимости (остаются простыми классами)
+class Logger {
+  log(message) {
+    console.log(message);
+  }
+}
+
+class DatabaseClient {
+  query(id) {
+    return {id, name: 'John Doe'};
+  }
+}
+
+// сервис наследует `Service` для доступа к `getService`
+class UserService extends Service {
+  findUser(id) {
+    // зависимости запрашиваются "по требованию" где они нужны,
+    // контейнер сам позаботится об их создании и кешировании
+    const logger = this.getService(Logger);
+    const db = this.getService(DatabaseClient);
+    
+    logger.log(`Searching for user with id: ${id}`);
+    return db.query(id);
+  }
+}
+
+// -- точка входа в приложение ---
+
+// мы просто создаем экземпляр нужного сервиса
+const userService = new UserService();
+userService.findUser(123);
+```
+
+**Преимущества этого подхода:**
+
+- **Слабая связанность**  
+  `UserService` больше не знает, как создавать `Logger` или `DatabaseClient`.
+  Он просто заявляет о своей потребности в них, вызывая `this.getService()`.
+
+- **Простота и чистота кода**  
+  Точка входа в приложение становится тривиальной. Логика сборки зависимостей
+  полностью инкапсулирована внутри контейнера, который неявно управляется
+  базовым классом `Service`
+
+- **Легкость тестирования**  
+  Подменить зависимость стало невероятно просто. Метод `setService` позволяет
+  "на лету" подставить мок-объект.
+
+Пример подмены зависимости (mocking):
+
+```js
+// в файле теста
+const userService = new UserService();
+
+// создание мок-логгера
+const mockLogger = {log: () => {}}; // не будет писать в консоль
+
+// подмена реализации Logger в контейнере этого сервиса
+userService.setService(Logger, mockLogger);
+
+// теперь при вызове findUser будет использован наш мок-объект
+userService.findUser(456);
+```
+
+Библиотека избавляет от рутины ручного управления зависимостями, делая
+архитектуру проекта гибкой, масштабируемой и легко тестируемой. Разработчик
+может сосредоточиться на бизнес-логике, а не на том, как и в каком порядке
+создавать и связывать объекты.
+
+## Содержание
+
+Модуль экспортирует два основных класса, `ServiceContainer` и `Service`,
 которые можно использовать как по отдельности, так и вместе для построения
 слабосвязанной архитектуры.
 
 - `ServiceContainer` *(IoC-контейнер)*  
-  Реализация сервис-контейнера через паттерн «Сервис-локатор»;
+  Реализация сервис-контейнера через паттерн «Сервис-локатор».
+
 - `Service` *(базовый класс для сервисов)*  
-  Позволяет скрывать работу с контейнером и внедрением зависимостей;
+  Позволяет скрывать работу с контейнером и внедрением зависимостей.
 
-**Инверсия управления (IoC)**
+Дополнительно:
 
-В основе данной архитектуры лежит принцип **Inversion of Control**.
-Вместо того, чтобы сервис сам создавал свои зависимости (например,
-`const api = new ApiClient()`), он запрашивает их у *IoC-контейнера*.
-Контроль над созданием объектов и управлением их жизненным циклом
-*инвертируется* от сервиса к контейнеру.
-
-**Ключевые преимущества**
-
-- **Слабая связанность (Loose Coupling)**  
-  Сервисы не зависят от конкретных реализаций своих зависимостей. Они просто
-  запрашивают другие сервисы по классу-конструктору.
-- **Централизованное управление**  
-  Вся конфигурация зависимостей находится в одном месте (в контейнере),
-  что делает архитектуру более прозрачной и управляемой.
-- **Упрощение тестирования**  
-  Поскольку зависимости не создаются внутри класса, их легко подменить
-  на мок-объекты в тестах.
+- `DebuggableService` *(логируемый Service)*  
+  Наследник класса `Service` с расширенными возможностями
+  по отладке через логирование.
 
 ## Базовые примеры
 
@@ -239,6 +381,177 @@ console.log(myDate2); // Wed Jan 01 2025 03:00:00
 console.log(myDate3); // Sun May 05 2030 03:00:00
 ```
 
+### add
+
+Метод регистрирует конструктор для ленивой инициализации. Экземпляр сервиса
+создается не в момент вызова `add`, а при первом обращении к нему через
+метод `get`.
+
+```js
+class MyService {
+  constructor() {
+    console.log('MyService instantiated!');
+  }
+}
+
+const container = new ServiceContainer();
+container.add(MyService); // регистрация, конструктор еще не вызван
+
+console.log('Before get');
+const service = container.get(MyService); // <- "MyService instantiated!"
+console.log('After get');
+```
+
+Аргументы, переданные в `add`, будут использованы при создании
+экземпляра, если `get` будет вызван без аргументов.
+
+### use
+
+В отличие от `add`, метод `use` немедленно создает и кэширует
+экземпляр сервиса (моментальная инициализация).
+
+```js
+class MyService {
+  constructor() {
+    console.log('MyService instantiated!');
+  }
+}
+
+const container = new ServiceContainer();
+console.log('Before use');
+container.use(MyService); // <- "MyService instantiated!"
+console.log('After use');
+
+const service = container.get(MyService); // возвращает готовый экземпляр
+```
+
+### set
+
+Метод `set` позволяет связать конструктор с уже существующим объектом.
+Это особенно полезно для подмены реализаций в тестах или для интеграции
+с объектами, созданными вне контейнера.
+
+```js
+class ApiService {}
+
+class MockApiService {
+  // имитация реального ApiService
+  fetch() {
+    return 'mock data';
+  }
+}
+
+const container = new ServiceContainer();
+const mock = new MockApiService();
+
+// теперь при запросе ApiService будет возвращаться mock
+container.set(ApiService, mock);
+
+const api = container.get(ApiService);
+console.log(api.fetch()); // "mock data"
+console.log(api === mock); // true
+```
+
+### getRegistered
+
+Работает аналогично `get`, но выбрасывает ошибку, если конструктор
+сервиса не был предварительно зарегистрирован через `add`, `use` или `set`.
+Это обеспечивает более строгий контроль над зависимостями.
+
+```js
+class RegisteredService {}
+class UnregisteredService {}
+
+const container = new ServiceContainer();
+container.add(RegisteredService);
+
+// успешное получение, так как сервис зарегистрирован
+const service = container.getRegistered(RegisteredService);
+
+// этот вызов выбросит ошибку InvalidArgumentError
+container.getRegistered(UnregisteredService);
+```
+
+### has
+
+Проверяет, зарегистрирован ли конструктор в контейнере (или в одном
+из его родительских контейнеров). Возвращает `true` или `false`.
+
+```js
+class MyService {}
+
+const container = new ServiceContainer();
+console.log(container.has(MyService)); // false
+
+container.add(MyService);
+console.log(container.has(MyService)); // true
+```
+
+### find
+
+Позволяет найти сервис по произвольному условию, заданному в функции-предикате.
+Предикат получает конструктор и текущий контейнер в качестве аргументов.
+Поиск ведется рекурсивно вверх по иерархии контейнеров.
+
+```js
+class ReportService {
+  static type = 'report';
+}
+
+class DashboardService {
+  static type = 'dashboard';
+}
+
+const container = new ServiceContainer();
+container.add(ReportService);
+container.add(DashboardService);
+
+// найти сервис, у которого есть статическое свойство type = 'dashboard'
+const dashboard = container.find((ctor) => ctor.type === 'dashboard');
+
+console.log(dashboard instanceof DashboardService); // true
+```
+
+Вторым необязательным аргументом `noParent` можно ограничить поиск только
+текущим контейнером. Если передать `true`, поиск в родительских контейнерах
+выполняться не будет.
+
+```js
+class SharedService {
+  static id = 'shared';
+}
+
+const parent = new ServiceContainer();
+parent.add(SharedService);
+
+const child = new ServiceContainer(parent);
+
+// поиск по умолчанию (рекурсивный)
+const service1 = child.find(ctor => ctor.id === 'shared');
+console.log(service1 instanceof SharedService); // true
+
+// поиск только в дочернем контейнере
+const service2 = child.find(ctor => ctor.id === 'shared', true);
+console.log(service2); // undefined
+```
+
+### getParent и hasParent
+
+Данные методы используются при работе с иерархией контейнеров. `hasParent`
+проверяет наличие родителя, а `getParent` возвращает его или выбрасывает
+ошибку, если родителя нет.
+
+```js
+const parentContainer = new ServiceContainer();
+const childContainer = new ServiceContainer(parentContainer);
+
+console.log(parentContainer.hasParent()); // false
+console.log(childContainer.hasParent());  // true
+
+const parent = childContainer.getParent();
+console.log(parent === parentContainer); // true
+```
+
 ### Наследование
 
 Конструктор `ServiceContainer` первым параметром принимает родительский
@@ -321,11 +634,10 @@ const app = new App();
 
 ### getService
 
-Метод `getService` обеспечивает существование единственного
-экземпляра запрашиваемого сервиса, а не создает каждый раз
-новый. Тем не менее при передаче дополнительных аргументов,
-сервис будет пересоздан с передачей этих аргументов
-конструктору.
+Метод `getService` обеспечивает существование единственного экземпляра
+запрашиваемого сервиса, а не создает каждый раз новый. Тем не менее при
+передаче дополнительных аргументов, сервис будет пересоздан с передачей
+этих аргументов конструктору.
 
 Пример:
 
@@ -338,6 +650,140 @@ const foo3 = this.getService(Foo, 'arg'); // пересоздание экзем
 const foo4 = this.getService(Foo);        // возврат уже пересозданного
 console.log(foo3 === foo4);               // true
 ```
+
+### getRegisteredService
+
+Работает аналогично `getService`, но выбрасывает ошибку, если конструктор
+сервиса не был предварительно зарегистрирован через `add`, `use` или `set`.
+Это обеспечивает более строгий контроль над зависимостями.
+
+```js
+class RegisteredService {}
+class UnregisteredService {}
+
+class MyService extends Service {
+  run() {
+    this.addService(RegisteredService);
+    
+    // успешное получение
+    const service = this.getRegisteredService(RegisteredService);
+    
+    // этот вызов выбросит ошибку InvalidArgumentError
+    this.getRegisteredService(UnregisteredService);
+  }
+}
+```
+
+### hasService
+
+Проверяет, зарегистрирован ли конструктор в контейнере. Возвращает
+`true` или `false`. Полезно для условного запроса зависимостей.
+
+```js
+class OptionalLogger {}
+
+class MyService extends Service {
+  log(message) {
+    if (this.hasService(OptionalLogger)) {
+      const logger = this.getService(OptionalLogger);
+      logger.log(message);
+    }
+  }
+}
+```
+
+### addService
+
+Регистрирует конструктор для ленивой инициализации. Экземпляр будет создан
+только при первом обращении к `getService`. Это позволяет сервисам настраивать
+или добавлять другие сервисы в контейнер.
+
+```js
+class DatabaseService {}
+class Config {}
+
+class App extends Service {
+  setupDatabase() {
+    const config = new Config();
+    // регистрация сервиса с аргументами для конструктора
+    this.addService(DatabaseService, config);
+  }
+}
+```
+
+### useService
+
+Немедленно создает и кэширует экземпляр сервиса. Может использоваться, когда
+сервис должен быть проинициализирован сразу при настройке другого компонента.
+
+```js
+class Logger {
+  constructor() {
+    console.log('Logger is ready.');
+  }
+}
+
+class App extends Service {
+  init() {
+    // немедленно создает и кэширует экземпляр Logger
+    this.useService(Logger); // -> "Logger is ready."
+  }
+}
+```
+
+### setService
+
+Позволяет связать конструктор с уже существующим объектом. Может быть
+использован для подмены зависимостей на мок-объекты, например,
+при тестировании.
+
+```js
+class ApiService {}
+class MockApiService {}
+
+class MyComponent extends Service {
+  setupForTest() {
+    // подменяем реальный ApiService на его мок-версию
+    this.setService(ApiService, new MockApiService());
+  }
+
+  fetchData() {
+    // этот вызов вернет экземпляр MockApiService
+    const api = this.getService(ApiService);
+    return api.fetch();
+  }
+}
+```
+
+### findService
+
+Находит сервис по заданному условию (предикату). Поиск по умолчанию
+ведется рекурсивно вверх по иерархии контейнеров.
+
+```js
+class ReportService {
+  static type = 'report';
+}
+
+class DashboardService {
+  static type = 'dashboard';
+}
+
+class App extends Service {
+  init() {
+    this.addService(ReportService);
+    this.addService(DashboardService);
+  }
+  
+  getDashboard() {
+    // найти сервис по статическому свойству
+    return this.findService(ctor => ctor.type === 'dashboard');
+  }
+}
+```
+
+Второй аргумент `noParent` позволяет ограничить поиск только
+текущим контейнером, в котором находится сервис.
 
 ## DebuggableService
 
