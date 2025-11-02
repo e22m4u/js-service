@@ -372,10 +372,7 @@ interface Constructor<T extends object = object> {
  * @param ctor
  * @param args
  */
-get<T extends object>(
-  ctor: Constructor<T>,
-  ...args: any[],
-): T;
+get<T extends object>(ctor: Constructor<T>, ...args: any[]): T;
 ```
 
 Пример:
@@ -424,10 +421,7 @@ console.log(myDate3); // Sun May 05 2030 03:00:00
  * @param ctor
  * @param args
  */
-getRegistered<T extends object>(
-  ctor: Constructor<T>,
-  ...args: any[],
-): T;
+getRegistered<T extends object>(ctor: Constructor<T>, ...args: any[]): T;
 ```
 
 Пример:
@@ -489,10 +483,7 @@ console.log(container.has(MyService)); // true
  * @param ctor
  * @param args
  */
-add<T extends object>(
-  ctor: Constructor<T>,
-  ...args: any[],
-): this;
+add<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
 ```
 
 Пример:
@@ -529,10 +520,7 @@ console.log('After get');
  * @param ctor
  * @param args
  */
-use<T extends object>(
-  ctor: Constructor<T>,
-  ...args: any[],
-): this;
+use<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
 ```
 
 Пример:
@@ -567,10 +555,7 @@ const service = container.get(MyService); // возвращает готовый
  * @param ctor
  * @param service
  */
-set<T extends object>(
-  ctor: Constructor<T>,
-  service: T,
-): this;
+set<T extends object>(ctor: Constructor<T>, service: T): this;
 ```
 
 Пример:
@@ -782,10 +767,7 @@ const app = new App();
  * @param ctor
  * @param args
  */
-getService<T extends object>(
-  ctor: Constructor<T>,
-  ...args: any[],
-): T;
+getService<T extends object>(ctor: Constructor<T>, ...args: any[]): T;
 ```
 
 Пример:
@@ -854,9 +836,7 @@ class MyService extends Service {
  *
  * @param ctor
  */
-hasService<T extends object>(
-  ctor: Constructor<T>,
-): boolean;
+hasService<T extends object>(ctor: Constructor<T>): boolean;
 ```
 
 Пример:
@@ -889,10 +869,7 @@ class MyService extends Service {
  * @param ctor
  * @param args
  */
-addService<T extends object>(
-  ctor: Constructor<T>,
-  ...args: any[],
-): this;
+addService<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
 ```
 
 Пример:
@@ -924,10 +901,7 @@ class App extends Service {
  * @param ctor
  * @param args
  */
-useService<T extends object>(
-  ctor: Constructor<T>,
-  ...args: any[],
-): this;
+useService<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
 ```
 
 Пример:
@@ -962,10 +936,7 @@ class App extends Service {
  * @param ctor
  * @param service
  */
-setService<T extends object>(
-  ctor: Constructor<T>,
-  service: T,
-): this;
+setService<T extends object>(ctor: Constructor<T>, service: T): this;
 ```
 
 Пример:
