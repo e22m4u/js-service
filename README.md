@@ -82,7 +82,8 @@ class UserService {
   }
 }
 
-// точка входа в приложение (или где-то в коде)
+// -- точка входа в приложение (или где-то в коде) ---
+
 // нужно вручную создать все зависимости
 const logger = new Logger();
 const dbClient = new DatabaseClient();
