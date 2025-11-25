@@ -756,7 +756,7 @@ describe('ServiceContainer', function () {
       container.add(MyService);
       const res = container.getRegistered(MyService, 'arg1', 'arg2');
       expect(spy.callCount).to.be.eq(1);
-      expect(spy.getCall(0).args).to.be.eql([MyService, 'arg1', 'arg2']);
+      expect(spy.calls[0].args).to.be.eql([MyService, 'arg1', 'arg2']);
       expect(res).to.be.eql('result');
     });
   });
@@ -1465,7 +1465,7 @@ describe('ServiceContainer', function () {
       });
       expect(result).to.equal(childInstance);
       expect(foundContainerSpy.callCount).to.be.eq(1);
-      expect(foundContainerSpy.getCall(0).args[0]).to.equal(child);
+      expect(foundContainerSpy.calls[0].args[0]).to.equal(child);
     });
 
     it('should pass the correct constructor and container to the predicate', function () {
