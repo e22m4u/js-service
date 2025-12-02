@@ -3,8 +3,7 @@
 ![npm version](https://badge.fury.io/js/@e22m4u%2Fjs-service.svg)
 ![license](https://img.shields.io/badge/license-mit-blue.svg)
 
-Реализация паттерна «Сервис-локатор» и принципа «Инверсия управления» (IoC)
-для JavaScript.
+Реализация принципа инверсии управления для JavaScript.
 
 ## Содержание
 

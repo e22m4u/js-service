@@ -1,7 +1,7 @@
 {
   "name": "@e22m4u/js-service",
   "version": "0.4.6",
-  "description": "Реализация IoC-контейнера через паттерн Сервис-локатор для JavaScript",
+  "description": "Реализация принципа инверсии управления для JavaScript",
   "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
   "keywords": [
