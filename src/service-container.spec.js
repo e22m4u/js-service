@@ -2,8 +2,11 @@ import {expect} from 'chai';
 import {Service} from './service.js';
 import {format} from '@e22m4u/js-format';
 import {createSpy} from '@e22m4u/js-spy';
-import {ServiceContainer} from './service-container.js';
-import {SERVICE_CONTAINER_CLASS_NAME} from './service-container.js';
+
+import {
+  ServiceContainer,
+  SERVICE_CONTAINER_CLASS_NAME,
+} from './service-container.js';
 
 describe('ServiceContainer', function () {
   it('should expose static property "kinds"', function () {

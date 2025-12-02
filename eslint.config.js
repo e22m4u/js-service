@@ -2,6 +2,7 @@ import globals from 'globals';
 import eslintJs from '@eslint/js';
 import eslintJsdocPlugin from 'eslint-plugin-jsdoc';
 import eslintMochaPlugin from 'eslint-plugin-mocha';
+import eslintImportPlugin from 'eslint-plugin-import';
 import eslintPrettierConfig from 'eslint-config-prettier';
 import eslintChaiExpectPlugin from 'eslint-plugin-chai-expect';
 
@@ -10,20 +11,22 @@ export default [{
     globals: {
       ...globals.es2021,
       ...globals.mocha,
-      ...globals.node,
     },
   },
   plugins: {
     'jsdoc': eslintJsdocPlugin,
     'mocha': eslintMochaPlugin,
+    'import': eslintImportPlugin,
     'chai-expect': eslintChaiExpectPlugin,
   },
   rules: {
     ...eslintJs.configs.recommended.rules,
     ...eslintPrettierConfig.rules,
-    ...eslintJsdocPlugin.configs['flat/recommended-error'].rules,
+    ...eslintImportPlugin.flatConfigs.recommended.rules,
     ...eslintMochaPlugin.configs.recommended.rules,
     ...eslintChaiExpectPlugin.configs['recommended-flat'].rules,
+    ...eslintJsdocPlugin.configs['flat/recommended-error'].rules,
+    'no-duplicate-imports': 'error',
     'jsdoc/reject-any-type': 0,
     'jsdoc/reject-function-type': 0,
     'jsdoc/require-param-description': 0,

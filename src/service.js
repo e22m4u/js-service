@@ -109,7 +109,7 @@ export class Service {
   /**
    * Найти сервис удовлетворяющий условию.
    *
-   * @param {function(Function, ServiceContainer): boolean} predicate
+   * @param {Function} predicate
    * @param {boolean} noParent
    * @returns {*}
    */
