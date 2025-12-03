@@ -1,10 +1,7 @@
 import {expect} from 'chai';
+import {ServiceContainer} from '../service-container.js';
 import {isServiceContainer} from './is-service-container.js';
-
-import {
-  ServiceContainer,
-  SERVICE_CONTAINER_CLASS_NAME,
-} from '../service-container.js';
+import {SERVICE_CONTAINER_CLASS_NAME} from '../service-container.js';
 
 describe('isServiceContainer', function () {
   it('should return true for ServiceContainer instance', function () {

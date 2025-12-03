@@ -44,13 +44,15 @@ var _ServiceContainer = class _ServiceContainer {
   /**
    * Services map.
    *
-   * @type {Map<*, *>}
+   * @type {Map<any, any>}
+   * @private
    */
   _services = /* @__PURE__ */ new Map();
   /**
    * Parent container.
    *
    * @type {ServiceContainer}
+   * @private
    */
   _parent;
   /**
@@ -210,7 +212,7 @@ var _ServiceContainer = class _ServiceContainer {
   /**
    * Найти сервис удовлетворяющий условию.
    *
-   * @param {Function} predicate
+   * @param {function(Function, ServiceContainer): boolean} predicate
    * @param {boolean} noParent
    * @returns {*}
    */
@@ -338,7 +340,7 @@ var _Service = class _Service {
   /**
    * Найти сервис удовлетворяющий условию.
    *
-   * @param {Function} predicate
+   * @param {function(Function, ServiceContainer): boolean} predicate
    * @param {boolean} noParent
    * @returns {*}
    */

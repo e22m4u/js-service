@@ -8,6 +8,7 @@
 ## Содержание
 
 - [Установка](#Установка)
+- [Мотивация](#Мотивация)
 - [Описание](#Описание)
 - [Базовые примеры](#Базовые-примеры)
 - [ServiceContainer](#ServiceContainer)
@@ -36,6 +37,157 @@ import {Service} from '@e22m4u/js-service';
 ```js
 const {Service} = require('@e22m4u/js-service');
 ```
+
+## Мотивация
+
+При росте проекта, построенного на классах, разработчики часто сталкиваются
+с проблемой управления зависимостями. Классы начинают зависеть друг от друга,
+и для их совместной работы требуется где-то создавать экземпляры и передавать
+их в конструкторы или методы других классов. Ручное внедрение зависимостей
+быстро приводит к сложному и запутанному коду.
+
+#### Проблема: Ручное управление зависимостями
+
+Представим типичную ситуацию - есть сервис для работы с пользователями
+`UserService`, который нуждается в логгере `Logger` и клиенте для доступа
+к базе данных `DatabaseClient`.
+
+Без библиотеки это может выглядеть так:
+
+```js
+// зависимости
+class Logger {
+  log(message) {
+    console.log(message);
+  }
+}
+
+class DatabaseClient {
+  query(id) {
+    return {id, name: 'John Doe'};
+  }
+}
+
+// сервис, который зависит от двух других классов
+class UserService {
+  constructor(db, logger) {
+    if (!db || !logger) {
+      throw new Error('Database and Logger are required!');
+    }
+    this.db = db;
+    this.logger = logger;
+  }
+
+  findUser(id) {
+    this.logger.log(`Searching for user with id: ${id}`);
+    return this.db.query(id);
+  }
+}
+
+// -- точка входа в приложение (или где-то в коде) ---
+
+// нужно вручную создать все зависимости
+const logger = new Logger();
+const dbClient = new DatabaseClient();
+
+// нужно вручную передать их в конструктор
+const userService = new UserService(dbClient, logger);
+
+userService.findUser(123);
+```
+
+Недостатки ручного управления зависимостями:
+
+- Жесткая связь и сложность.  
+  Точка входа в приложение превращается в "фабрику", которая знает,
+  как создавать и связывать все компоненты. Если `DatabaseClient` тоже
+  начнет зависеть от `Logger`, порядок создания усложнится.
+
+- Проблемы с тестированием.  
+  Чтобы протестировать `UserService` в изоляции, нужно создать "моки"
+  для `Logger` и `DatabaseClient` и вручную передать их в конструктор.
+  Это громоздко и требует дополнительного кода в каждом тесте.
+
+#### Решение: Инверсия управления
+
+Эта библиотека была создана для решения именно этих проблем. Она реализует
+принцип *инверсии управления (IoC)*, при котором контроль над созданием
+и предоставлением зависимостей передается от компонента к специализированному
+контейнеру.
+
+С библиотекой код становится проще:
+
+```js
+import {Service} from '@e22m4u/js-service';
+
+// зависимости (остаются простыми классами)
+class Logger {
+  log(message) {
+    console.log(message);
+  }
+}
+
+class DatabaseClient {
+  query(id) {
+    return {id, name: 'John Doe'};
+  }
+}
+
+// сервис наследует `Service` для доступа к `getService`
+class UserService extends Service {
+  findUser(id) {
+    // зависимости запрашиваются "по требованию" где они нужны,
+    // контейнер сам позаботится об их создании и кешировании
+    const logger = this.getService(Logger);
+    const db = this.getService(DatabaseClient);
+    
+    logger.log(`Searching for user with id: ${id}`);
+    return db.query(id);
+  }
+}
+
+// -- точка входа в приложение ---
+
+// мы просто создаем экземпляр нужного сервиса
+const userService = new UserService();
+userService.findUser(123);
+```
+
+Преимущества этого подхода:
+
+- Слабая связанность.  
+  `UserService` больше не знает, как создавать `Logger` или `DatabaseClient`.
+  Он просто заявляет о своей потребности в них, вызывая `this.getService()`.
+
+- Простота и чистота кода.  
+  Точка входа в приложение становится тривиальной. Логика сборки зависимостей
+  полностью инкапсулирована внутри контейнера, который неявно управляется
+  базовым классом `Service`
+
+- Легкость тестирования.  
+  Подменить зависимость стало невероятно просто. Метод `setService` позволяет
+  "на лету" подставить мок-объект.
+
+Пример подмены зависимости (mocking):
+
+```js
+// в файле теста
+const userService = new UserService();
+
+// создание мок-логгера
+const mockLogger = {log: () => {}}; // не будет писать в консоль
+
+// подмена реализации Logger в контейнере этого сервиса
+userService.setService(Logger, mockLogger);
+
+// теперь при вызове findUser будет использован наш мок-объект
+userService.findUser(456);
+```
+
+Библиотека избавляет от рутины ручного управления зависимостями, делая
+архитектуру проекта гибкой, масштабируемой и легко тестируемой. Разработчик
+может сосредоточиться на бизнес-логике, а не на том, как и в каком порядке
+создавать и связывать объекты.
 
 ## Описание
 
@@ -188,11 +340,20 @@ const myService = container.get(MyService);
 - [`add(ctor, ...args)`](#servicecontaineradd) добавить конструктор в контейнер (ленивая инициализация);
 - [`use(ctor, ...args)`](#servicecontaineruse) добавить конструктор и сразу создать экземпляр;
 - [`set(ctor, service)`](#servicecontainerset) добавить конструктор и связанный с ним готовый экземпляр;
-- [`find(predicate, [noParent])`](#servicecontainerfind) найти сервис удовлетворяющий условию;
+- [`find(predicate, noParent = false)`](#servicecontainerfind) найти сервис удовлетворяющий условию;
 - [`getParent()`](#servicecontainergetparent-и-servicecontainerhasparent) получить родительский сервис-контейнер;
 - [`hasParent()`](#servicecontainergetparent-и-servicecontainerhasparent) проверить наличие родительского сервис-контейнера;
 
 В сигнатурах методов используется вспомогательный тип конструктора:
+
+```ts
+/**
+ * Конструктор класса.
+ */
+interface Constructor<T extends object = object> {
+  new (...args: any[]): T;
+}
+```
 
 ### serviceContainer.get
 
@@ -202,10 +363,15 @@ const myService = container.get(MyService);
 
 Сигнатура:
 
-- `get(ctor, ...args)`
-  - `ctor: Function`: класс сервиса;
-  - `...args: *[]`: аргументы конструктора;
-  - возвращает новый или существующий экземпляр сервиса;
+```ts
+/**
+ * Получить существующий или новый экземпляр.
+ *
+ * @param ctor
+ * @param args
+ */
+get<T extends object>(ctor: Constructor<T>, ...args: any[]): T;
+```
 
 Пример:
 
@@ -245,10 +411,16 @@ console.log(myDate3); // Sun May 05 2030 03:00:00
 
 Сигнатура:
 
-- `getRegistered(ctor, ...args)`
-  - `ctor: Function`: класс сервиса;
-  - `...args: *[]`: аргументы конструктора;
-  - возвращает новый или существующий экземпляр сервиса;
+```ts
+/**
+ * Получить существующий или новый экземпляр,
+ * только если конструктор зарегистрирован.
+ *
+ * @param ctor
+ * @param args
+ */
+getRegistered<T extends object>(ctor: Constructor<T>, ...args: any[]): T;
+```
 
 Пример:
 
@@ -273,9 +445,14 @@ container.getRegistered(UnregisteredService);
 
 Сигнатура:
 
-- `has(ctor)`
-  - `ctor: Function`: класс сервиса;
-  - возвращает `true` если класс зарегистрирован;
+```ts
+/**
+ * Проверить существование конструктора в контейнере.
+ *
+ * @param ctor
+ */
+has<T extends object>(ctor: Constructor<T>): boolean;
+```
 
 Пример:
 
@@ -297,10 +474,15 @@ console.log(container.has(MyService)); // true
 
 Сигнатура:
 
-- `add(ctor, ...args)`
-  - `ctor: Function`: класс сервиса;
-  - `...args: *[]`: аргументы конструктора;
-  - возвращает экземпляр сервис-контейнера;
+```ts
+/**
+ * Добавить конструктор в контейнер.
+ *
+ * @param ctor
+ * @param args
+ */
+add<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
+```
 
 Пример:
 
@@ -329,10 +511,15 @@ console.log('After get');
 
 Сигнатура:
 
-- `use(ctor, ...args)`
-  - `ctor: Function`: класс сервиса;
-  - `...args: *[]`: аргументы конструктора;
-  - возвращает новый экземпляр сервиса;
+```ts
+/**
+ * Добавить конструктор и создать экземпляр.
+ *
+ * @param ctor
+ * @param args
+ */
+use<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
+```
 
 Пример:
 
@@ -359,10 +546,15 @@ const service = container.get(MyService); // возвращает готовый
 
 Сигнатура:
 
-- `set(ctor, service)`
-  - `ctor: Function`: класс сервиса;
-  - `service: object`: экземпляр сервиса;
-  - возвращает экземпляр сервис-контейнера;
+```ts
+/**
+ * Добавить конструктор и связанный экземпляр.
+ *
+ * @param ctor
+ * @param service
+ */
+set<T extends object>(ctor: Constructor<T>, service: T): this;
+```
 
 Пример:
 
@@ -395,10 +587,26 @@ console.log(api === mock); // true
 
 Сигнатура:
 
-- `find(predicate, [noParent])`
-  - `predicate: Function`: функция-предикат для проверки конструктора;
-  - `noParent?: boolean`: отключить поиск в родительских контейнерах;
-  - возвращает найденный экземпляр или `undefined`;
+```ts
+/**
+ * Найти сервис удовлетворяющий условию.
+ *
+ * @param predicate
+ * @param noParent
+ */
+find<T extends object>(
+  predicate: FindServicePredicate<T>,
+  noParent?: boolean,
+): T | undefined;
+
+/**
+ * Определение функции-предиката.
+ */
+type FindServicePredicate<T extends object> = (
+  ctor: Constructor<T>,
+  container: ServiceContainer,
+) => boolean;
+```
 
 Пример:
 
@@ -450,6 +658,20 @@ console.log(service2); // undefined
 проверяет наличие родителя, а `getParent` возвращает его или выбрасывает
 ошибку, если родителя нет.
 
+Сигнатура:
+
+```ts
+/**
+ * Получить родительский сервис-контейнер или выбросить ошибку.
+ */
+getParent(): ServiceContainer;
+
+/**
+ * Проверить наличие родительского сервис-контейнера.
+ */
+hasParent(): boolean;
+```
+
 Пример:
 
 ```js
@@ -497,7 +719,7 @@ console.log(hasService); // true
 - [`addService(ctor, ...args)`](#serviceaddservice) добавить конструктор в контейнер;
 - [`useService(ctor, ...args)`](#serviceuseservice) добавить конструктор и создать экземпляр;
 - [`setService(ctor, service)`](#servicesetservice) добавить конструктор и его экземпляр;
-- [`findService(predicate, [noParent])`](#servicefindservice) найти сервис удовлетворяющий условию;
+- [`findService(predicate, noParent = false)`](#servicefindservice) найти сервис удовлетворяющий условию;
 
 Сервисом может являться совершенно любой класс. Однако, если это
 наследник класса `Service`, то такой сервис позволяет инкапсулировать
@@ -552,10 +774,15 @@ const app = new App();
 
 Сигнатура:
 
-- `getService(ctor, ...args)`
-  - `ctor: Function`: класс сервиса;
-  - `...args: *[]`: аргументы конструктора;
-  - возвращает новый или существующий экземпляр сервиса;
+```ts
+/**
+ * Получить существующий или новый экземпляр.
+ *
+ * @param ctor
+ * @param args
+ */
+getService<T extends object>(ctor: Constructor<T>, ...args: any[]): T;
+```
 
 Пример:
 
@@ -577,10 +804,19 @@ console.log(foo3 === foo4);               // true
 
 Сигнатура:
 
-- `getRegisteredService(ctor, ...args)`
-  - `ctor: Function`: класс сервиса;
-  - `...args: *[]`: аргументы конструктора;
-  - возвращает новый или существующий экземпляр сервиса;
+```ts
+/**
+ * Получить существующий или новый экземпляр,
+ * только если конструктор зарегистрирован.
+ *
+ * @param ctor
+ * @param args
+ */
+getRegisteredService<T extends object>(
+  ctor: Constructor<T>,
+  ...args: any[],
+): T;
+```
 
 Пример:
 
@@ -608,9 +844,14 @@ class MyService extends Service {
 
 Сигнатура:
 
-- `hasService(ctor)`
-  - `ctor: Function`: класс сервиса;
-  - возвращает `true` если класс зарегистрирован;
+```ts
+/**
+ * Проверка существования конструктора в контейнере.
+ *
+ * @param ctor
+ */
+hasService<T extends object>(ctor: Constructor<T>): boolean;
+```
 
 Пример:
 
@@ -635,10 +876,15 @@ class MyService extends Service {
 
 Сигнатура:
 
-- `addService(ctor, ...args)`
-  - `ctor: Function`: класс сервиса;
-  - `...args: *[]`: аргументы конструктора;
-  - возвращает экземпляр сервис-контейнера;
+```ts
+/**
+ * Добавить конструктор в контейнер.
+ *
+ * @param ctor
+ * @param args
+ */
+addService<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
+```
 
 Пример:
 
@@ -662,10 +908,15 @@ class App extends Service {
 
 Сигнатура:
 
-- `useService(ctor, ...args)`
-  - `ctor: Function`: класс сервиса;
-  - `...args: *[]`: аргументы конструктора;
-  - возвращает новый экземпляр сервиса;
+```ts
+/**
+ * Добавить конструктор и создать экземпляр.
+ *
+ * @param ctor
+ * @param args
+ */
+useService<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
+```
 
 Пример:
 
@@ -692,10 +943,15 @@ class App extends Service {
 
 Сигнатура:
 
-- `setService(ctor, service)`
-  - `ctor: Function`: класс сервиса;
-  - `service: object`: экземпляр сервиса;
-  - возвращает экземпляр сервис-контейнера;
+```ts
+/**
+ * Добавить конструктор и связанный экземпляр.
+ *
+ * @param ctor
+ * @param service
+ */
+setService<T extends object>(ctor: Constructor<T>, service: T): this;
+```
 
 Пример:
 
@@ -724,10 +980,26 @@ class MyComponent extends Service {
 
 Сигнатура:
 
-- `findService(predicate, [noParent])`
-  - `predicate: Function`: функция-предикат для проверки конструктора;
-  - `noParent?: boolean`: отключить поиск в родительских контейнерах;
-  - возвращает найденный экземпляр или `undefined`;
+```ts
+/**
+ * Найти сервис удовлетворяющий условию.
+ *
+ * @param predicate
+ * @param noParent
+ */
+findService<T extends object>(
+  predicate: FindServicePredicate<T>,
+  noParent?: boolean,
+): T | undefined;
+
+/**
+ * Определение функции-предиката.
+ */
+type FindServicePredicate<T extends object> = (
+  ctor: Constructor<T>,
+  container: ServiceContainer,
+) => boolean;
+```
 
 Пример:
 

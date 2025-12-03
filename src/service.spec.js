@@ -1,10 +1,8 @@
 import {expect} from 'chai';
-import {Service, SERVICE_CLASS_NAME} from './service.js';
-
-import {
-  ServiceContainer,
-  SERVICE_CONTAINER_CLASS_NAME,
-} from './service-container.js';
+import {Service} from './service.js';
+import {SERVICE_CLASS_NAME} from './service.js';
+import {ServiceContainer} from './service-container.js';
+import {SERVICE_CONTAINER_CLASS_NAME} from './service-container.js';
 
 describe('Service', function () {
   it('should expose static property "kinds"', function () {

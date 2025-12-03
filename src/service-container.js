@@ -22,7 +22,8 @@ export class ServiceContainer {
   /**
    * Services map.
    *
-   * @type {Map<*, *>}
+   * @type {Map<any, any>}
+   * @private
    */
   _services = new Map();
 
@@ -30,6 +31,7 @@ export class ServiceContainer {
    * Parent container.
    *
    * @type {ServiceContainer}
+   * @private
    */
   _parent;
 
@@ -240,7 +242,7 @@ export class ServiceContainer {
   /**
    * Найти сервис удовлетворяющий условию.
    *
-   * @param {Function} predicate
+   * @param {function(Function, ServiceContainer): boolean} predicate
    * @param {boolean} noParent
    * @returns {*}
    */
