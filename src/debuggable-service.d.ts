@@ -1,7 +1,6 @@
 import {Service} from './service.js';
 import {Constructor} from './types.js';
-import {Debuggable} from '@e22m4u/js-debug';
-import {DebuggableOptions} from '@e22m4u/js-debug';
+import {Debuggable, DebuggableOptions} from '@e22m4u/js-debug';
 import {FindServicePredicate, ServiceContainer} from './service-container.js';
 
 /**
