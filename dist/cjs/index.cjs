@@ -63,11 +63,12 @@ var _ServiceContainer = class _ServiceContainer {
    */
   constructor(parent = void 0) {
     if (parent != null) {
-      if (!(parent instanceof _ServiceContainer))
+      if (!(parent instanceof _ServiceContainer)) {
         throw new InvalidArgumentError(
           'The provided parameter "parent" of ServicesContainer.constructor must be an instance ServiceContainer, but %v given.',
           parent
         );
+      }
       this._parent = parent;
     }
   }
@@ -77,8 +78,9 @@ var _ServiceContainer = class _ServiceContainer {
    * @returns {ServiceContainer}
    */
   getParent() {
-    if (!this._parent)
+    if (!this._parent) {
       throw new InvalidArgumentError("The service container has no parent.");
+    }
     return this._parent;
   }
   /**
@@ -97,18 +99,21 @@ var _ServiceContainer = class _ServiceContainer {
    * @returns {*}
    */
   get(ctor, ...args) {
-    if (!ctor || typeof ctor !== "function")
+    if (!ctor || typeof ctor !== "function") {
       throw new InvalidArgumentError(
         "The first argument of ServicesContainer.get must be a class constructor, but %v given.",
         ctor
       );
+    }
     const isCtorRegistered = this._services.has(ctor);
     let service = this._services.get(ctor);
     let inheritedCtor = void 0;
     if (!service) {
       const ctors = Array.from(this._services.keys());
       inheritedCtor = ctors.find((v) => v.prototype instanceof ctor);
-      if (inheritedCtor) service = this._services.get(inheritedCtor);
+      if (inheritedCtor) {
+        service = this._services.get(inheritedCtor);
+      }
     }
     if (!service && !isCtorRegistered && !inheritedCtor && this._parent && this._parent.has(ctor)) {
       return this._parent.get(ctor, ...args);
@@ -134,11 +139,12 @@ var _ServiceContainer = class _ServiceContainer {
    * @returns {*}
    */
   getRegistered(ctor, ...args) {
-    if (!this.has(ctor))
+    if (!this.has(ctor)) {
       throw new InvalidArgumentError(
         "The constructor %v is not registered.",
         ctor
       );
+    }
     return this.get(ctor, ...args);
   }
   /**
@@ -148,11 +154,17 @@ var _ServiceContainer = class _ServiceContainer {
    * @returns {boolean}
    */
   has(ctor) {
-    if (this._services.has(ctor)) return true;
+    if (this._services.has(ctor)) {
+      return true;
+    }
     const ctors = Array.from(this._services.keys());
     const inheritedCtor = ctors.find((v) => v.prototype instanceof ctor);
-    if (inheritedCtor) return true;
-    if (this._parent) return this._parent.has(ctor);
+    if (inheritedCtor) {
+      return true;
+    }
+    if (this._parent) {
+      return this._parent.has(ctor);
+    }
     return false;
   }
   /**
@@ -163,11 +175,12 @@ var _ServiceContainer = class _ServiceContainer {
    * @returns {this}
    */
   add(ctor, ...args) {
-    if (!ctor || typeof ctor !== "function")
+    if (!ctor || typeof ctor !== "function") {
       throw new InvalidArgumentError(
         "The first argument of ServicesContainer.add must be a class constructor, but %v given.",
         ctor
       );
+    }
     const factory = /* @__PURE__ */ __name(() => Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args), "factory");
     this._services.set(ctor, factory);
     return this;
@@ -180,11 +193,12 @@ var _ServiceContainer = class _ServiceContainer {
    * @returns {this}
    */
   use(ctor, ...args) {
-    if (!ctor || typeof ctor !== "function")
+    if (!ctor || typeof ctor !== "function") {
       throw new InvalidArgumentError(
         "The first argument of ServicesContainer.use must be a class constructor, but %v given.",
         ctor
       );
+    }
     const service = Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args);
     this._services.set(ctor, service);
     return this;
@@ -197,16 +211,18 @@ var _ServiceContainer = class _ServiceContainer {
    * @returns {this}
    */
   set(ctor, service) {
-    if (!ctor || typeof ctor !== "function")
+    if (!ctor || typeof ctor !== "function") {
       throw new InvalidArgumentError(
         "The first argument of ServicesContainer.set must be a class constructor, but %v given.",
         ctor
       );
-    if (!service || typeof service !== "object" || Array.isArray(service))
+    }
+    if (!service || typeof service !== "object" || Array.isArray(service)) {
       throw new InvalidArgumentError(
         "The second argument of ServicesContainer.set must be an Object, but %v given.",
         service
       );
+    }
     this._services.set(ctor, service);
     return this;
   }
