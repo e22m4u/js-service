@@ -11,10 +11,10 @@
     "Locator",
     "Container"
   ],
-  "homepage": "https://gitrepos.ru/e22m4u/js-service",
+  "homepage": "https://gitverse.ru/e22m4u/js-service",
   "repository": {
     "type": "git",
-    "url": "git+https://gitrepos.ru/e22m4u/js-service.git"
+    "url": "git+https://gitverse.ru/e22m4u/js-service.git"
   },
   "type": "module",
   "types": "./src/index.d.ts",
