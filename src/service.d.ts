@@ -4,7 +4,7 @@ import {FindServicePredicate, ServiceContainer} from './service-container.js';
 /**
  * Service class name.
  */
-export const SERVICE_CLASS_NAME: 'Service';
+export declare const SERVICE_CLASS_NAME: string;
 
 /**
  * Service.

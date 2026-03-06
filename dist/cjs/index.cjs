@@ -452,7 +452,8 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
    * @type {Service['addService']}
    */
   addService(ctor, ...args) {
-    return this._service.addService(ctor, ...args);
+    this._service.addService(ctor, ...args);
+    return this;
   }
   /**
    * Добавить конструктор и создать экземпляр.
@@ -460,7 +461,8 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
    * @type {Service['useService']}
    */
   useService(ctor, ...args) {
-    return this._service.useService(ctor, ...args);
+    this._service.useService(ctor, ...args);
+    return this;
   }
   /**
    * Добавить конструктор и связанный экземпляр.
@@ -468,7 +470,8 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
    * @type {Service['setService']}
    */
   setService(ctor, service) {
-    return this._service.setService(ctor, service);
+    this._service.setService(ctor, service);
+    return this;
   }
   /**
    * Найти сервис удовлетворяющий условию.

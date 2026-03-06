@@ -128,7 +128,8 @@ describe('DebuggableService', function () {
         invoked = true;
         return result;
       };
-      S[methodName](...testArgs);
+      const res = S[methodName](...testArgs);
+      expect(res).to.be.eq(result);
       expect(invoked).to.be.true;
     });
 
@@ -144,7 +145,8 @@ describe('DebuggableService', function () {
         invoked = true;
         return result;
       };
-      S[methodName](...testArgs);
+      const res = S[methodName](...testArgs);
+      expect(res).to.be.eq(result);
       expect(invoked).to.be.true;
     });
 
@@ -160,55 +162,56 @@ describe('DebuggableService', function () {
         invoked = true;
         return result;
       };
-      S[methodName](...testArgs);
+      const res = S[methodName](...testArgs);
+      expect(res).to.be.eq(result);
       expect(invoked).to.be.true;
     });
 
     it('should delegate the "addService" method to the internal service', function () {
       const S = new DebuggableService();
       const methodName = 'addService';
-      const result = 'OK';
       const testArgs = [1, 2, 3, 4, 5];
       let invoked = false;
       S._service[methodName] = function (...args) {
         expect(args).to.be.eql(testArgs);
         expect(this).to.be.eq(S._service);
         invoked = true;
-        return result;
+        return 'OK';
       };
-      S[methodName](...testArgs);
+      const res = S[methodName](...testArgs);
+      expect(res).to.be.eq(S);
       expect(invoked).to.be.true;
     });
 
     it('should delegate the "useService" method to the internal service', function () {
       const S = new DebuggableService();
       const methodName = 'useService';
-      const result = 'OK';
       const testArgs = [1, 2, 3, 4, 5];
       let invoked = false;
       S._service[methodName] = function (...args) {
         expect(args).to.be.eql(testArgs);
         expect(this).to.be.eq(S._service);
         invoked = true;
-        return result;
+        return 'OK';
       };
-      S[methodName](...testArgs);
+      const res = S[methodName](...testArgs);
+      expect(res).to.be.eq(S);
       expect(invoked).to.be.true;
     });
 
     it('should delegate the "setService" method to the internal service', function () {
       const S = new DebuggableService();
       const methodName = 'setService';
-      const result = 'OK';
       const testArgs = [1, 2];
       let invoked = false;
       S._service[methodName] = function (...args) {
         expect(args).to.be.eql(testArgs);
         expect(this).to.be.eq(S._service);
         invoked = true;
-        return result;
+        return 'OK';
       };
-      S[methodName](...testArgs);
+      const res = S[methodName](...testArgs);
+      expect(res).to.be.eq(S);
       expect(invoked).to.be.true;
     });
 
@@ -224,7 +227,8 @@ describe('DebuggableService', function () {
         invoked = true;
         return result;
       };
-      S[methodName](...testArgs);
+      const res = S[methodName](...testArgs);
+      expect(res).to.be.eq(result);
       expect(invoked).to.be.true;
     });
   });

@@ -66,7 +66,8 @@ export class DebuggableService extends Debuggable {
    * @type {Service['addService']}
    */
   addService(ctor, ...args) {
-    return this._service.addService(ctor, ...args);
+    this._service.addService(ctor, ...args);
+    return this;
   }
 
   /**
@@ -75,7 +76,8 @@ export class DebuggableService extends Debuggable {
    * @type {Service['useService']}
    */
   useService(ctor, ...args) {
-    return this._service.useService(ctor, ...args);
+    this._service.useService(ctor, ...args);
+    return this;
   }
 
   /**
@@ -84,7 +86,8 @@ export class DebuggableService extends Debuggable {
    * @type {Service['setService']}
    */
   setService(ctor, service) {
-    return this._service.setService(ctor, service);
+    this._service.setService(ctor, service);
+    return this;
   }
 
   /**

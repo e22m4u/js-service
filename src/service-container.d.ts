@@ -1,6 +1,11 @@
 import {Constructor} from './types.js';
 
 /**
+ * Service container class name.
+ */
+export declare const SERVICE_CONTAINER_CLASS_NAME: string;
+
+/**
  * Find service predicate.
  */
 export type FindServicePredicate<T extends object> = (

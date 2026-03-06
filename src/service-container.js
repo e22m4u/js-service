@@ -2,7 +2,7 @@ import {SERVICE_CLASS_NAME} from './service.js';
 import {InvalidArgumentError} from '@e22m4u/js-format';
 
 /**
- * Service class name.
+ * Service container class name.
  *
  * @type {string}
  */
@@ -272,6 +272,10 @@ export class ServiceContainer {
     do {
       for (const ctor of currentContainer._services.keys()) {
         if (predicate(ctor, currentContainer) === true) {
+          // операция доступа к найденному сервису из текущего
+          // контейнера является семантически более правильной,
+          // нежели доступ из родителя, так как текущий контейнер
+          // может обработать эту операцию по своему усмотрению
           return this.get(ctor);
         }
       }
