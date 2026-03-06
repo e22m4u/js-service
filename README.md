@@ -8,7 +8,6 @@
 ## Содержание
 
 - [Установка](#установка)
-- [Мотивация](#мотивация)
 - [Описание](#описание)
 - [Базовые примеры](#базовые-примеры)
 - [ServiceContainer](#servicecontainer)
@@ -38,165 +37,14 @@ import {Service} from '@e22m4u/js-service';
 const {Service} = require('@e22m4u/js-service');
 ```
 
-## Мотивация
-
-При росте проекта, построенного на классах, разработчики часто сталкиваются
-с проблемой управления зависимостями. Классы начинают зависеть друг от друга,
-и для их совместной работы требуется где-то создавать экземпляры и передавать
-их в конструкторы или методы других классов. Ручное внедрение зависимостей
-быстро приводит к сложному и запутанному коду.
-
-#### Проблема: Ручное управление зависимостями
-
-Представим типичную ситуацию - есть сервис для работы с пользователями
-`UserService`, который нуждается в логгере `Logger` и клиенте для доступа
-к базе данных `DatabaseClient`.
-
-Без библиотеки это может выглядеть так:
-
-```js
-// зависимости
-class Logger {
-  log(message) {
-    console.log(message);
-  }
-}
-
-class DatabaseClient {
-  query(id) {
-    return {id, name: 'John Doe'};
-  }
-}
-
-// сервис, который зависит от двух других классов
-class UserService {
-  constructor(db, logger) {
-    if (!db || !logger) {
-      throw new Error('Database and Logger are required!');
-    }
-    this.db = db;
-    this.logger = logger;
-  }
-
-  findUser(id) {
-    this.logger.log(`Searching for user with id: ${id}`);
-    return this.db.query(id);
-  }
-}
-
-// -- точка входа в приложение (или где-то в коде) ---
-
-// нужно вручную создать все зависимости
-const logger = new Logger();
-const dbClient = new DatabaseClient();
-
-// нужно вручную передать их в конструктор
-const userService = new UserService(dbClient, logger);
-
-userService.findUser(123);
-```
-
-Недостатки ручного управления зависимостями:
-
-- Жесткая связь и сложность.  
-  Точка входа в приложение превращается в "фабрику", которая знает,
-  как создавать и связывать все компоненты. Если `DatabaseClient` тоже
-  начнет зависеть от `Logger`, порядок создания усложнится.
-
-- Проблемы с тестированием.  
-  Чтобы протестировать `UserService` в изоляции, нужно создать "моки"
-  для `Logger` и `DatabaseClient` и вручную передать их в конструктор.
-  Это громоздко и требует дополнительного кода в каждом тесте.
-
-#### Решение: Инверсия управления
-
-Эта библиотека была создана для решения именно этих проблем. Она реализует
-принцип *инверсии управления (IoC)*, при котором контроль над созданием
-и предоставлением зависимостей передается от компонента к специализированному
-контейнеру.
-
-С библиотекой код становится проще:
-
-```js
-import {Service} from '@e22m4u/js-service';
-
-// зависимости (остаются простыми классами)
-class Logger {
-  log(message) {
-    console.log(message);
-  }
-}
-
-class DatabaseClient {
-  query(id) {
-    return {id, name: 'John Doe'};
-  }
-}
-
-// сервис наследует `Service` для доступа к `getService`
-class UserService extends Service {
-  findUser(id) {
-    // зависимости запрашиваются "по требованию" где они нужны,
-    // контейнер сам позаботится об их создании и кешировании
-    const logger = this.getService(Logger);
-    const db = this.getService(DatabaseClient);
-    
-    logger.log(`Searching for user with id: ${id}`);
-    return db.query(id);
-  }
-}
-
-// -- точка входа в приложение ---
-
-// мы просто создаем экземпляр нужного сервиса
-const userService = new UserService();
-userService.findUser(123);
-```
-
-Преимущества этого подхода:
-
-- Слабая связанность.  
-  `UserService` больше не знает, как создавать `Logger` или `DatabaseClient`.
-  Он просто заявляет о своей потребности в них, вызывая `this.getService()`.
-
-- Простота и чистота кода.  
-  Точка входа в приложение становится тривиальной. Логика сборки зависимостей
-  полностью инкапсулирована внутри контейнера, который неявно управляется
-  базовым классом `Service`
-
-- Легкость тестирования.  
-  Подменить зависимость стало невероятно просто. Метод `setService` позволяет
-  "на лету" подставить мок-объект.
-
-Пример подмены зависимости (mocking):
-
-```js
-// в файле теста
-const userService = new UserService();
-
-// создание мок-логгера
-const mockLogger = {log: () => {}}; // не будет писать в консоль
-
-// подмена реализации Logger в контейнере этого сервиса
-userService.setService(Logger, mockLogger);
-
-// теперь при вызове findUser будет использован наш мок-объект
-userService.findUser(456);
-```
-
-Библиотека избавляет от рутины ручного управления зависимостями, делая
-архитектуру проекта гибкой, масштабируемой и легко тестируемой. Разработчик
-может сосредоточиться на бизнес-логике, а не на том, как и в каком порядке
-создавать и связывать объекты.
-
 ## Описание
 
-Модуль экспортирует два основных класса, `ServiceContainer` и `Service`,
+Модуль экспортирует два основных класса `ServiceContainer` и `Service`,
 которые можно использовать как по отдельности, так и вместе для построения
 слабосвязанной архитектуры.
 
 - `ServiceContainer` *(IoC-контейнер)*  
-  Реализация сервис-контейнера через паттерн «Сервис-локатор».
+  Реализация сервис-контейнера для хранения и разрешения зависимостей.
 
 - `Service` *(базовый класс для сервисов)*  
   Позволяет скрывать работу с контейнером и внедрением зависимостей.
@@ -205,11 +53,11 @@ userService.findUser(456);
 
 - `DebuggableService` *(логируемый Service)*  
   Расширенная версия класса `Service` с дополнительными возможностями
-  по отладке через логирование.
+  логирования.
 
 ## Базовые примеры
 
-Создание контейнера и экземпляра сервиса (Singleton).
+Создание контейнера и экземпляра сервиса по принципу *одиночки*.
 
 ```js
 import {ServiceContainer} from '@e22m4u/js-service';
@@ -220,10 +68,10 @@ class LoggerService {
   }
 }
 
-const sc = new ServiceContainer();
+const container = new ServiceContainer();
 
-const logger1 = sc.get(LoggerService); // создание и кэширование экземпляра
-const logger2 = sc.get(LoggerService); // возврат существующего экземпляра
+const logger1 = container.get(LoggerService); // создание и кэширование экземпляра
+const logger2 = container.get(LoggerService); // возврат существующего экземпляра
 
 console.log(logger1 === logger2); // true
 ```
@@ -234,45 +82,53 @@ console.log(logger1 === logger2); // true
 import {Service} from '@e22m4u/js-service';
 import {ServiceContainer} from '@e22m4u/js-service';
 
-// сервис-зависимость
+// сервис логирования
 class LoggerService {
   log(message) {
     console.log(`[LOG]: ${message}`);
   }
 }
 
-// наследование класса Service используется,
-// когда для работы сервиса требуются зависимости
+// сервис калькуляции
 class CalculatorService extends Service {
+  // так как для работы данного сервиса требуются зависимости,
+  // выполняется наследование класса Service, чтобы иметь доступ
+  // к методу getService, через который запрашиваются зависимости
   add(a, b) {
     const logger = this.getService(LoggerService); // <= зависимость
+    // при первом обращении к сервису LoggerService создается
+    // новый экземпляр, который возвращается при повторном доступе
     const result = a + b;
     logger.log(`${a} + ${b} = ${result}`);
     return result;
   }
 }
 
-const sc = new ServiceContainer();
-const calc = sc.get(CalculatorService);
-calc.add(4, 6);
+// создание экземпляра и вызов метода
+const calculator = new CalculatorService();
+calculator.add(4, 6);
 // [LOG]: 4 + 6 = 10
+
+// альтернативный способ (явное создание контейнера)
+//   const container = new ServiceContainer();
+//   const calculator = container.get(CalculatorService);
+//   calculator.add(4, 6);
 ```
 
-Сервис как точка входа в приложение.
+Сервис как точка входа приложения.
 
 ```js
 import {Service} from '@e22m4u/js-service';
 
-// сервис-зависимость
+// сервис логирования
 class LoggerService {
   log(message) {
     console.log(`[LOG]: ${message}`);
   }
 }
 
-// сервис, для работы которого нужны другие сервисы
-// (наследует класс Service для доступа к getService)
-class UserService extends Service {
+// сервис пользователей
+class UserService extends Service { // наследование метода getService
   findUserById(id) {
     const logger = this.getService(LoggerService); // <= зависимость
     logger.log(`Finding user by id ${id}`);
@@ -283,9 +139,8 @@ class UserService extends Service {
   }
 }
 
-// основной сервис (точка входа) также наследует
-// класс Service для доступа к методу getService
-class App extends Service {
+// приложение (точка входа)
+class App extends Service { // наследование метода getService
   start() {
     const logger = this.getService(LoggerService); // <= зависимость
     logger.log('Starting App...');
@@ -302,8 +157,8 @@ const app = new App();
 app.start();
 
 // альтернативный способ (явное создание контейнера)
-//   const sc = new ServiceContainer();
-//   const app = sc.get(App);
+//   const container = new ServiceContainer();
+//   const app = container.get(App);
 //   app.start();
 ```
 
