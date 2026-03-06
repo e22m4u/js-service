@@ -140,7 +140,7 @@ export class Service {
   /**
    * Найти сервис удовлетворяющий условию.
    *
-   * @param {function(Function, ServiceContainer): boolean} predicate
+   * @param {import('./service-container.js').FindServicePredicate} predicate
    * @param {boolean} noParent
    * @returns {*}
    */

@@ -384,7 +384,7 @@ var Service = class _Service {
   /**
    * Найти сервис удовлетворяющий условию.
    *
-   * @param {function(Function, ServiceContainer): boolean} predicate
+   * @param {import('./service-container.js').FindServicePredicate} predicate
    * @param {boolean} noParent
    * @returns {*}
    */
@@ -424,7 +424,9 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
   /**
    * Получить существующий или новый экземпляр.
    *
-   * @type {Service['getService']}
+   * @param {*} ctor
+   * @param {*} args
+   * @returns {*}
    */
   getService(ctor, ...args) {
     return this._service.getService(ctor, ...args);
@@ -433,7 +435,9 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
    * Получить существующий или новый экземпляр,
    * только если конструктор зарегистрирован.
    *
-   * @type {Service['getRegisteredService']}
+   * @param {*} ctor
+   * @param {*} args
+   * @returns {*}
    */
   getRegisteredService(ctor, ...args) {
     return this._service.getRegisteredService(ctor, ...args);
@@ -441,7 +445,8 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
   /**
    * Проверка существования конструктора в контейнере.
    *
-   * @type {Service['hasService']}
+   * @param {*} ctor
+   * @returns {boolean}
    */
   hasService(ctor) {
     return this._service.hasService(ctor);
@@ -449,7 +454,9 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
   /**
    * Добавить конструктор в контейнер.
    *
-   * @type {Service['addService']}
+   * @param {*} ctor
+   * @param {*} args
+   * @returns {this}
    */
   addService(ctor, ...args) {
     this._service.addService(ctor, ...args);
@@ -458,7 +465,9 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
   /**
    * Добавить конструктор и создать экземпляр.
    *
-   * @type {Service['useService']}
+   * @param {*} ctor
+   * @param {*} args
+   * @returns {this}
    */
   useService(ctor, ...args) {
     this._service.useService(ctor, ...args);
@@ -467,7 +476,9 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
   /**
    * Добавить конструктор и связанный экземпляр.
    *
-   * @type {Service['setService']}
+   * @param {*} ctor
+   * @param {*} service
+   * @returns {this}
    */
   setService(ctor, service) {
     this._service.setService(ctor, service);
@@ -476,7 +487,9 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
   /**
    * Найти сервис удовлетворяющий условию.
    *
-   * @type {Service['findService']}
+   * @param {import('./service-container.js').FindServicePredicate} predicate
+   * @param {boolean} noParent
+   * @returns {*}
    */
   findService(predicate, noParent = false) {
     return this._service.findService(predicate, noParent);
