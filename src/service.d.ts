@@ -18,7 +18,7 @@ export declare class Service {
   /**
    * Container.
    */
-  container: ServiceContainer;
+  get container(): ServiceContainer;
 
   /**
    * Constructor.

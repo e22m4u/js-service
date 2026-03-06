@@ -1,6 +1,8 @@
 import {Service} from './service.js';
 import {Debuggable} from '@e22m4u/js-debug';
+import {InvalidArgumentError} from '@e22m4u/js-format';
 import {ServiceContainer} from './service-container.js';
+import {isServiceContainer} from './utils/is-service-container.js';
 
 /**
  * Debuggable service.
@@ -11,11 +13,12 @@ export class DebuggableService extends Debuggable {
    *
    * @type {string[]}
    */
-  static kinds = Service.kinds;
+  static kinds = [...Service.kinds];
 
   /**
    * Service.
    *
+   * @protected
    * @type {Service}
    */
   _service;
@@ -34,8 +37,8 @@ export class DebuggableService extends Debuggable {
    *
    * @type {Service['getService']}
    */
-  get getService() {
-    return this._service.getService;
+  getService(ctor, ...args) {
+    return this._service.getService(ctor, ...args);
   }
 
   /**
@@ -44,8 +47,8 @@ export class DebuggableService extends Debuggable {
    *
    * @type {Service['getRegisteredService']}
    */
-  get getRegisteredService() {
-    return this._service.getRegisteredService;
+  getRegisteredService(ctor, ...args) {
+    return this._service.getRegisteredService(ctor, ...args);
   }
 
   /**
@@ -53,8 +56,8 @@ export class DebuggableService extends Debuggable {
    *
    * @type {Service['hasService']}
    */
-  get hasService() {
-    return this._service.hasService;
+  hasService(ctor) {
+    return this._service.hasService(ctor);
   }
 
   /**
@@ -62,8 +65,8 @@ export class DebuggableService extends Debuggable {
    *
    * @type {Service['addService']}
    */
-  get addService() {
-    return this._service.addService;
+  addService(ctor, ...args) {
+    return this._service.addService(ctor, ...args);
   }
 
   /**
@@ -71,8 +74,8 @@ export class DebuggableService extends Debuggable {
    *
    * @type {Service['useService']}
    */
-  get useService() {
-    return this._service.useService;
+  useService(ctor, ...args) {
+    return this._service.useService(ctor, ...args);
   }
 
   /**
@@ -80,8 +83,8 @@ export class DebuggableService extends Debuggable {
    *
    * @type {Service['setService']}
    */
-  get setService() {
-    return this._service.setService;
+  setService(ctor, service) {
+    return this._service.setService(ctor, service);
   }
 
   /**
@@ -89,18 +92,84 @@ export class DebuggableService extends Debuggable {
    *
    * @type {Service['findService']}
    */
-  get findService() {
-    return this._service.findService;
+  findService(predicate, noParent = false) {
+    return this._service.findService(predicate, noParent);
   }
 
   /**
    * Constructor.
    *
-   * @param {ServiceContainer|undefined} container
-   * @param {import('@e22m4u/js-debug').DebuggableOptions|undefined} options
+   * @param {ServiceContainer|import('@e22m4u/js-debug').DebuggableOptions} [containerOrOptions]
+   * @param {import('@e22m4u/js-debug').DebuggableOptions} [options]
    */
-  constructor(container = undefined, options = undefined) {
+  constructor(containerOrOptions, options) {
+    let container;
+    // если первый аргумент является контейнером,
+    // то второй аргумент остается без изменений
+    if (isServiceContainer(containerOrOptions)) {
+      container = containerOrOptions;
+    }
+    // если первый аргумент не является контейнером,
+    // то он может содержать объект настроек
+    else if (containerOrOptions !== undefined) {
+      // если первый аргумент определен, но не является
+      // объектом, то выбрасывается ошибка
+      if (
+        !containerOrOptions ||
+        typeof containerOrOptions !== 'object' ||
+        Array.isArray(containerOrOptions)
+      ) {
+        throw new InvalidArgumentError(
+          'First parameter must be an Object or an instance ' +
+            'of ServiceContainer, but %v was given.',
+          containerOrOptions,
+        );
+      }
+      // если второй аргумент не определен, то первый
+      // аргумент воспринимается как объект настроек
+      if (options === undefined) {
+        options = containerOrOptions;
+        container = new ServiceContainer();
+      }
+      // если оба аргумента определены, когда первый
+      // не является контейнером, то выбрасывается ошибка
+      else {
+        throw new InvalidArgumentError('Constructor signature mismatch.');
+      }
+    }
+    // если второй аргумент определен, когда первый оказался
+    // undefined, то выполняется проверка типа аргумента
+    else if (options !== undefined) {
+      if (!options || typeof options !== 'object' || Array.isArray(options)) {
+        throw new InvalidArgumentError(
+          'Second parameter must be an Object, but %v was given.',
+          options,
+        );
+      }
+    }
     super(options);
-    this._service = new Service(container);
+    // если пользовательский контейнер не определен, то важно
+    // явно передать контейнер во внутренний сервис, чтобы тот
+    // не регистрировал собственный экземпляр в контейнере,
+    // который создается автоматически
+    if (container === undefined) {
+      container = new ServiceContainer();
+      this._service = new Service(container);
+      // так как данный класс использует композицию, контейнер
+      // внутреннего сервиса ничего не знает о данном экземпляре,
+      // поэтому требуется выполнить его регистрацию, но только
+      // в том случае, если данный класс является наследником
+      if (this.constructor !== DebuggableService) {
+        // проблемой дублирования пакетов (когда npm устанавливает
+        // несколько версий одной библиотеки в разные папки node_modules)
+        // можно пренебречь, так как в данном конкретном случае ссылка
+        // на класс DebuggableService замкнута внутри лексической области
+        // одного файла и проверяется относительно самой себя,
+        // а не пришедшего извне объекта
+        container.set(this.constructor, this);
+      }
+    } else {
+      this._service = new Service(container);
+    }
   }
 }

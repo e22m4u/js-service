@@ -15,7 +15,7 @@ export class DebuggableService extends Debuggable implements Service {
   /**
    * Container.
    */
-  container: ServiceContainer;
+  get container(): ServiceContainer;
 
   /**
    * Constructor.

@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import {format} from '@e22m4u/js-format';
 import {Service, SERVICE_CLASS_NAME} from './service.js';
 
 import {
@@ -14,6 +15,29 @@ describe('Service', function () {
   });
 
   describe('constructor', function () {
+    it('should require the parameter "container" to be an instance of ServiceContainer', function () {
+      const throwable = v => () => {
+        new Service(v);
+      };
+      const error = s =>
+        format(
+          'Parameter "container" must be an instance ' +
+            'of ServiceContainer, but %s was given.',
+          s,
+        );
+      expect(throwable('str')).to.throw(error('"str"'));
+      expect(throwable('')).to.throw(error('""'));
+      expect(throwable(10)).to.throw(error('10'));
+      expect(throwable(0)).to.throw(error('0'));
+      expect(throwable(true)).to.throw(error('true'));
+      expect(throwable(false)).to.throw(error('false'));
+      expect(throwable([])).to.throw(error('Array'));
+      expect(throwable({})).to.throw(error('Object'));
+      expect(throwable(null)).to.throw(error('null'));
+      throwable(new ServiceContainer())();
+      throwable(undefined)();
+    });
+
     it('should instantiate with a services container', function () {
       const service = new Service();
       expect(service.container).to.be.instanceof(ServiceContainer);
@@ -32,6 +56,31 @@ describe('Service', function () {
       const container = new MyServiceContainer();
       const service = new Service(container);
       expect(service.container).to.be.eq(container);
+    });
+
+    it('should not register the current instance in the internal container', function () {
+      const service = new Service();
+      expect(service.container.has(Service)).to.be.false;
+    });
+
+    describe('for an extended classes', function () {
+      it('should register the current instance in the internal container', function () {
+        class ServiceA extends Service {}
+        class ServiceB extends Service {}
+        const serviceA = new ServiceA();
+        expect(serviceA.container.has(ServiceA)).to.be.true;
+        expect(serviceA.container.has(ServiceB)).to.be.false;
+      });
+
+      it('should not register the current instance in a custom container', function () {
+        class ServiceA extends Service {}
+        class ServiceB extends Service {}
+        const container = new ServiceContainer();
+        const serviceA = new ServiceA(container);
+        expect(serviceA).to.be.instanceOf(ServiceA);
+        expect(container.has(ServiceA)).to.be.false;
+        expect(container.has(ServiceB)).to.be.false;
+      });
     });
   });
 

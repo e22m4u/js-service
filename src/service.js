@@ -1,4 +1,5 @@
 import {isServiceContainer} from './utils/index.js';
+import {InvalidArgumentError} from '@e22m4u/js-format';
 import {ServiceContainer} from './service-container.js';
 
 /**
@@ -22,19 +23,49 @@ export class Service {
   /**
    * Container.
    *
+   * @protected
    * @type {ServiceContainer}
    */
-  container;
+  _container;
+
+  /**
+   * Container.
+   *
+   * @type {ServiceContainer}
+   */
+  get container() {
+    return this._container;
+  }
 
   /**
    * Constructor.
    *
-   * @param {ServiceContainer|undefined} container
+   * @param {ServiceContainer} [container]
    */
   constructor(container = undefined) {
-    this.container = isServiceContainer(container)
-      ? container
-      : new ServiceContainer();
+    if (isServiceContainer(container)) {
+      this._container = container;
+    } else if (container !== undefined) {
+      throw new InvalidArgumentError(
+        'Parameter "container" must be an instance ' +
+          'of ServiceContainer, but %v was given.',
+        container,
+      );
+    } else {
+      this._container = new ServiceContainer();
+      // если класс данного экземпляра наследуется от базового,
+      // то при создании внутреннего контейнера, текущий экземпляр
+      // будет зарегистрирован внутри своего же контейнера
+      if (this.constructor !== Service) {
+        // проблемой дублирования пакетов (когда npm устанавливает
+        // несколько версий одной библиотеки в разные папки node_modules)
+        // можно пренебречь, так как в данном конкретном случае ссылка
+        // на класс Service замкнута внутри лексической области одного
+        // файла и проверяется относительно самой себя, а не пришедшего
+        // извне объекта
+        this._container.set(this.constructor, this);
+      }
+    }
   }
 
   /**
@@ -45,7 +76,7 @@ export class Service {
    * @returns {*}
    */
   getService(ctor, ...args) {
-    return this.container.get(ctor, ...args);
+    return this._container.get(ctor, ...args);
   }
 
   /**
@@ -57,7 +88,7 @@ export class Service {
    * @returns {*}
    */
   getRegisteredService(ctor, ...args) {
-    return this.container.getRegistered(ctor, ...args);
+    return this._container.getRegistered(ctor, ...args);
   }
 
   /**
@@ -67,7 +98,7 @@ export class Service {
    * @returns {boolean}
    */
   hasService(ctor) {
-    return this.container.has(ctor);
+    return this._container.has(ctor);
   }
 
   /**
@@ -78,7 +109,7 @@ export class Service {
    * @returns {this}
    */
   addService(ctor, ...args) {
-    this.container.add(ctor, ...args);
+    this._container.add(ctor, ...args);
     return this;
   }
 
@@ -90,7 +121,7 @@ export class Service {
    * @returns {this}
    */
   useService(ctor, ...args) {
-    this.container.use(ctor, ...args);
+    this._container.use(ctor, ...args);
     return this;
   }
 
@@ -102,7 +133,7 @@ export class Service {
    * @returns {this}
    */
   setService(ctor, service) {
-    this.container.set(ctor, service);
+    this._container.set(ctor, service);
     return this;
   }
 
@@ -114,6 +145,6 @@ export class Service {
    * @returns {*}
    */
   findService(predicate, noParent = false) {
-    return this.container.find(predicate, noParent);
+    return this._container.find(predicate, noParent);
   }
 }

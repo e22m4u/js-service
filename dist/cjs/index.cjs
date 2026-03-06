@@ -275,21 +275,43 @@ function isServiceContainer(container) {
 __name(isServiceContainer, "isServiceContainer");
 
 // src/service.js
+var import_js_format2 = require("@e22m4u/js-format");
 var SERVICE_CLASS_NAME = "Service";
 var _Service = class _Service {
   /**
    * Container.
    *
+   * @protected
    * @type {ServiceContainer}
    */
-  container;
+  _container;
+  /**
+   * Container.
+   *
+   * @type {ServiceContainer}
+   */
+  get container() {
+    return this._container;
+  }
   /**
    * Constructor.
    *
-   * @param {ServiceContainer|undefined} container
+   * @param {ServiceContainer} [container]
    */
   constructor(container = void 0) {
-    this.container = isServiceContainer(container) ? container : new ServiceContainer();
+    if (isServiceContainer(container)) {
+      this._container = container;
+    } else if (container !== void 0) {
+      throw new import_js_format2.InvalidArgumentError(
+        'Parameter "container" must be an instance of ServiceContainer, but %v was given.',
+        container
+      );
+    } else {
+      this._container = new ServiceContainer();
+      if (this.constructor !== _Service) {
+        this._container.set(this.constructor, this);
+      }
+    }
   }
   /**
    * Получить существующий или новый экземпляр.
@@ -299,7 +321,7 @@ var _Service = class _Service {
    * @returns {*}
    */
   getService(ctor, ...args) {
-    return this.container.get(ctor, ...args);
+    return this._container.get(ctor, ...args);
   }
   /**
    * Получить существующий или новый экземпляр,
@@ -310,7 +332,7 @@ var _Service = class _Service {
    * @returns {*}
    */
   getRegisteredService(ctor, ...args) {
-    return this.container.getRegistered(ctor, ...args);
+    return this._container.getRegistered(ctor, ...args);
   }
   /**
    * Проверка существования конструктора в контейнере.
@@ -319,7 +341,7 @@ var _Service = class _Service {
    * @returns {boolean}
    */
   hasService(ctor) {
-    return this.container.has(ctor);
+    return this._container.has(ctor);
   }
   /**
    * Добавить конструктор в контейнер.
@@ -329,7 +351,7 @@ var _Service = class _Service {
    * @returns {this}
    */
   addService(ctor, ...args) {
-    this.container.add(ctor, ...args);
+    this._container.add(ctor, ...args);
     return this;
   }
   /**
@@ -340,7 +362,7 @@ var _Service = class _Service {
    * @returns {this}
    */
   useService(ctor, ...args) {
-    this.container.use(ctor, ...args);
+    this._container.use(ctor, ...args);
     return this;
   }
   /**
@@ -351,7 +373,7 @@ var _Service = class _Service {
    * @returns {this}
    */
   setService(ctor, service) {
-    this.container.set(ctor, service);
+    this._container.set(ctor, service);
     return this;
   }
   /**
@@ -362,7 +384,7 @@ var _Service = class _Service {
    * @returns {*}
    */
   findService(predicate, noParent = false) {
-    return this.container.find(predicate, noParent);
+    return this._container.find(predicate, noParent);
   }
 };
 __name(_Service, "Service");
@@ -376,10 +398,12 @@ var Service = _Service;
 
 // src/debuggable-service.js
 var import_js_debug = require("@e22m4u/js-debug");
+var import_js_format3 = require("@e22m4u/js-format");
 var _DebuggableService = class _DebuggableService extends import_js_debug.Debuggable {
   /**
    * Service.
    *
+   * @protected
    * @type {Service}
    */
   _service;
@@ -396,8 +420,8 @@ var _DebuggableService = class _DebuggableService extends import_js_debug.Debugg
    *
    * @type {Service['getService']}
    */
-  get getService() {
-    return this._service.getService;
+  getService(ctor, ...args) {
+    return this._service.getService(ctor, ...args);
   }
   /**
    * Получить существующий или новый экземпляр,
@@ -405,58 +429,90 @@ var _DebuggableService = class _DebuggableService extends import_js_debug.Debugg
    *
    * @type {Service['getRegisteredService']}
    */
-  get getRegisteredService() {
-    return this._service.getRegisteredService;
+  getRegisteredService(ctor, ...args) {
+    return this._service.getRegisteredService(ctor, ...args);
   }
   /**
    * Проверка существования конструктора в контейнере.
    *
    * @type {Service['hasService']}
    */
-  get hasService() {
-    return this._service.hasService;
+  hasService(ctor) {
+    return this._service.hasService(ctor);
   }
   /**
    * Добавить конструктор в контейнер.
    *
    * @type {Service['addService']}
    */
-  get addService() {
-    return this._service.addService;
+  addService(ctor, ...args) {
+    return this._service.addService(ctor, ...args);
   }
   /**
    * Добавить конструктор и создать экземпляр.
    *
    * @type {Service['useService']}
    */
-  get useService() {
-    return this._service.useService;
+  useService(ctor, ...args) {
+    return this._service.useService(ctor, ...args);
   }
   /**
    * Добавить конструктор и связанный экземпляр.
    *
    * @type {Service['setService']}
    */
-  get setService() {
-    return this._service.setService;
+  setService(ctor, service) {
+    return this._service.setService(ctor, service);
   }
   /**
    * Найти сервис удовлетворяющий условию.
    *
    * @type {Service['findService']}
    */
-  get findService() {
-    return this._service.findService;
+  findService(predicate, noParent = false) {
+    return this._service.findService(predicate, noParent);
   }
   /**
    * Constructor.
    *
-   * @param {ServiceContainer|undefined} container
-   * @param {import('@e22m4u/js-debug').DebuggableOptions|undefined} options
+   * @param {ServiceContainer|import('@e22m4u/js-debug').DebuggableOptions} [containerOrOptions]
+   * @param {import('@e22m4u/js-debug').DebuggableOptions} [options]
    */
-  constructor(container = void 0, options = void 0) {
+  constructor(containerOrOptions, options) {
+    let container;
+    if (isServiceContainer(containerOrOptions)) {
+      container = containerOrOptions;
+    } else if (containerOrOptions !== void 0) {
+      if (!containerOrOptions || typeof containerOrOptions !== "object" || Array.isArray(containerOrOptions)) {
+        throw new import_js_format3.InvalidArgumentError(
+          "First parameter must be an Object or an instance of ServiceContainer, but %v was given.",
+          containerOrOptions
+        );
+      }
+      if (options === void 0) {
+        options = containerOrOptions;
+        container = new ServiceContainer();
+      } else {
+        throw new import_js_format3.InvalidArgumentError("Constructor signature mismatch.");
+      }
+    } else if (options !== void 0) {
+      if (!options || typeof options !== "object" || Array.isArray(options)) {
+        throw new import_js_format3.InvalidArgumentError(
+          "Second parameter must be an Object, but %v was given.",
+          options
+        );
+      }
+    }
     super(options);
-    this._service = new Service(container);
+    if (container === void 0) {
+      container = new ServiceContainer();
+      this._service = new Service(container);
+      if (this.constructor !== _DebuggableService) {
+        container.set(this.constructor, this);
+      }
+    } else {
+      this._service = new Service(container);
+    }
   }
 };
 __name(_DebuggableService, "DebuggableService");
@@ -465,7 +521,7 @@ __name(_DebuggableService, "DebuggableService");
  *
  * @type {string[]}
  */
-__publicField(_DebuggableService, "kinds", Service.kinds);
+__publicField(_DebuggableService, "kinds", [...Service.kinds]);
 var DebuggableService = _DebuggableService;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
