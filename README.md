@@ -286,11 +286,13 @@ class UnregisteredService {}
 const container = new ServiceContainer();
 container.add(RegisteredService);
 
-// успешное получение, так как сервис зарегистрирован
+// успешный доступ к зарегистрированному сервису
 const service = container.getRegistered(RegisteredService);
-
-// этот вызов выбросит ошибку InvalidArgumentError
+// следующий вызов выбросит ошибку,
+// так как сервис не зарегистрирован
 container.getRegistered(UnregisteredService);
+// InvalidArgumentError:
+// Constructor UnregisteredService is not registered.
 ```
 
 ### serviceContainer.has
@@ -323,9 +325,10 @@ console.log(container.has(MyService)); // true
 
 ### serviceContainer.add
 
-Метод регистрирует конструктор для ленивой инициализации. Экземпляр сервиса
-создается не в момент вызова `add`, а при первом обращении к нему через
-метод `get`.
+Регистрирует конструктор в контейнере, но не создает экземпляр в момент
+вызова. Экземпляр будет создан только при первом доступе к сервису. Метод
+позволяет указать аргументы, которые будут использованы для создания
+экземпляра.
 
 Сигнатура:
 
@@ -343,17 +346,23 @@ add<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
 
 ```js
 class MyService {
-  constructor() {
+  constructor(name) {
     console.log('MyService instantiated!');
+    console.log(`Hello ${name}!`);
   }
 }
 
 const container = new ServiceContainer();
-container.add(MyService); // регистрация, конструктор еще не вызван
 
+console.log('Before add');
+container.add(MyService, 'World'); // регистрация, конструктор еще не вызван
 console.log('Before get');
-const service = container.get(MyService); // <- "MyService instantiated!"
-console.log('After get');
+const service = container.get(MyService); // создание экземпляра
+
+// Before add
+// Before get
+// MyService instantiated!
+// Hello World!
 ```
 
 Аргументы, переданные в `add`, будут использованы при создании
@@ -361,8 +370,8 @@ console.log('After get');
 
 ### serviceContainer.use
 
-В отличие от `add`, метод `use` немедленно создает и кэширует
-экземпляр сервиса (моментальная инициализация).
+Немедленно создает и кэширует экземпляр сервиса. Может использоваться, когда
+сервис должен быть проинициализирован сразу при настройке другого компонента.
 
 Сигнатура:
 
@@ -380,24 +389,30 @@ use<T extends object>(ctor: Constructor<T>, ...args: any[]): this;
 
 ```js
 class MyService {
-  constructor() {
+  constructor(name) {
     console.log('MyService instantiated!');
+    console.log(`Hello ${name}!`);
   }
 }
 
 const container = new ServiceContainer();
-console.log('Before use');
-container.use(MyService); // <- "MyService instantiated!"
-console.log('After use');
 
-const service = container.get(MyService); // возвращает готовый экземпляр
+console.log('Before use');
+container.use(MyService, 'World'); // создание экземпляра
+console.log('Before get');
+const service = container.get(MyService); // извлечение экземпляр
+
+// Before use
+// MyService instantiated!
+// Hello World!
+// Before get
 ```
 
 ### serviceContainer.set
 
-Метод `set` позволяет связать конструктор с уже существующим объектом.
-Это особенно полезно для подмены реализаций в тестах или для интеграции
-с объектами, созданными вне контейнера.
+Метод позволяет связать конструктор с уже существующим экземпляром.
+Может быть использован для подмены зависимостей в тестах или для внедрения
+экземпляров, созданных вне контейнера.
 
 Сигнатура:
 
@@ -426,7 +441,7 @@ class MockApiService {
 const container = new ServiceContainer();
 const mock = new MockApiService();
 
-// теперь при запросе ApiService будет возвращаться mock
+// установка экземпляра для ApiService
 container.set(ApiService, mock);
 
 const api = container.get(ApiService);
@@ -478,9 +493,8 @@ const container = new ServiceContainer();
 container.add(ReportService);
 container.add(DashboardService);
 
-// найти сервис, у которого есть статическое свойство type = 'dashboard'
+// поиск сервиса по статическому свойству
 const dashboard = container.find((ctor) => ctor.type === 'dashboard');
-
 console.log(dashboard instanceof DashboardService); // true
 ```
 
@@ -576,19 +590,17 @@ if (childContainer.hasParent()) {
 
 Конструктор `ServiceContainer` первым параметром принимает родительский
 контейнер, который используется как альтернативный, если конструктор
-запрашиваемого сервиса не зарегистрирован в текущем. Это позволяет
-создавать иерархические области видимости для зависимостей.
+запрашиваемого сервиса не зарегистрирован в текущем.
 
 ```js
 class MyService {}
 
-// создание контейнера и регистрация
-// в нем сервиса MyService
+// создание контейнера и регистрация сервиса MyService
 const parentContainer = new ServiceContainer();
 parentContainer.add(MyService);
 
-// использование предыдущего контейнера в качестве родителя,
-// и проверка доступности сервиса MyService
+// использование созданного ранее контейнера в качестве
+// родителя, и проверка наличия сервиса MyService
 const childContainer = new ServiceContainer(parentContainer);
 const hasService = childContainer.has(MyService);
 console.log(hasService); // true
@@ -648,16 +660,16 @@ class App extends Service {
 const app = new App();
 ```
 
-В примере выше мы не заботились о создании сервис-контейнера
-и его передачу между сервисами, так как эта логика инкапсулирована
-в базовом классе `Service`
+В примере выше мы не заботились о создании контейнера и его передачу
+между сервисами, так как эта логика инкапсулирована в базовом
+классе `Service`.
 
 ### service.getService
 
 Метод `getService` обеспечивает существование единственного экземпляра
-запрашиваемого сервиса, а не создает каждый раз новый. Тем не менее при
-передаче дополнительных аргументов, сервис будет пересоздан с передачей
-этих аргументов конструктору.
+запрашиваемого сервиса, и не создает новый экземпляр при повторных
+обращениях. Однако, при передаче дополнительных аргументов, сервис
+будет переопределен с новыми аргументами конструктора.
 
 Сигнатура:
 
@@ -686,8 +698,8 @@ console.log(foo3 === foo4);               // true
 ### service.getRegisteredService
 
 Работает аналогично `getService`, но выбрасывает ошибку, если конструктор
-сервиса не был предварительно зарегистрирован через `add`, `use` или `set`.
-Это обеспечивает более строгий контроль над зависимостями.
+сервиса не был предварительно зарегистрирован, что обеспечивает более
+строгий контроль над зависимостями.
 
 Сигнатура:
 
@@ -714,12 +726,13 @@ class UnregisteredService {}
 class MyService extends Service {
   run() {
     this.addService(RegisteredService);
-    
-    // успешное получение
+    // успешный доступ к зарегистрированному сервису
     const service = this.getRegisteredService(RegisteredService);
-    
-    // этот вызов выбросит ошибку InvalidArgumentError
+    // следующий вызов выбросит ошибку,
+    // так как сервис не зарегистрирован
     this.getRegisteredService(UnregisteredService);
+    // InvalidArgumentError:
+    // Constructor UnregisteredService is not registered.
   }
 }
 ```
@@ -757,9 +770,10 @@ class MyService extends Service {
 
 ### service.addService
 
-Регистрирует конструктор для ленивой инициализации. Экземпляр будет создан
-только при первом обращении к `getService`. Это позволяет сервисам настраивать
-или добавлять другие сервисы в контейнер.
+Регистрирует конструктор в контейнере, но не создает экземпляр в момент
+вызова. Экземпляр будет создан только при первом доступе к сервису. Метод
+позволяет указать аргументы, которые будут использованы для создания
+экземпляра.
 
 Сигнатура:
 
@@ -824,9 +838,9 @@ class App extends Service {
 
 ### service.setService
 
-Позволяет связать конструктор с уже существующим объектом. Может быть
-использован для подмены зависимостей на мок-объекты, например,
-при тестировании.
+Метод позволяет связать конструктор с уже существующим экземпляром.
+Может быть использован для подмены зависимостей в тестах или для внедрения
+экземпляров, созданных вне контейнера.
 
 Сигнатура:
 
@@ -848,12 +862,12 @@ class MockApiService {}
 
 class MyComponent extends Service {
   setupForTest() {
-    // подменяем реальный ApiService на его мок-версию
+    // подмена реального ApiService на его мок-версию
     this.setService(ApiService, new MockApiService());
   }
 
   fetchData() {
-    // этот вызов вернет экземпляр MockApiService
+    // следующий вызов вернет экземпляр MockApiService
     const api = this.getService(ApiService);
     return api.fetch();
   }
@@ -862,8 +876,9 @@ class MyComponent extends Service {
 
 ### service.findService
 
-Находит сервис по заданному условию (предикату). Поиск по умолчанию
-ведется рекурсивно вверх по иерархии контейнеров.
+Позволяет найти сервис по произвольному условию, заданному в функции-предикате.
+Предикат получает конструктор и текущий контейнер в качестве аргументов.
+Поиск ведется рекурсивно вверх по иерархии контейнеров.
 
 Сигнатура:
 
@@ -906,19 +921,19 @@ class App extends Service {
   }
   
   getDashboard() {
-    // найти сервис по статическому свойству
+    // поиск сервиса по статическому свойству
     return this.findService(ctor => ctor.type === 'dashboard');
   }
 }
 ```
 
-Второй аргумент `noParent` позволяет ограничить поиск только
-текущим контейнером, в котором находится сервис.
+Второй опциональный аргумент `noParent` позволяет ограничить поиск только
+текущим контейнером, игнорируя иерархию родителей.
 
 ## DebuggableService
 
-Данный класс-сервис наследует `Debuggable` из встроенной отладочной библиотеки
-и использует композицию для получения функциональности `Service`.  
+Данный сервис наследует класс `Debuggable` и использует композицию
+для получения функциональности базового класса `Service`.  
 *(см. подробнее [@e22m4u/js-debug](https://www.npmjs.com/package/@e22m4u/js-debug#класс-debuggable#класс-debuggable) раздел «Класс Debuggable»)*
 
 ```js
