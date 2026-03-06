@@ -196,8 +196,8 @@ const myService = container.get(MyService);
 - [`use(ctor, ...args)`](#servicecontaineruse) добавить конструктор и сразу создать экземпляр;
 - [`set(ctor, service)`](#servicecontainerset) добавить конструктор и связанный с ним готовый экземпляр;
 - [`find(predicate, noParent = false)`](#servicecontainerfind) найти сервис удовлетворяющий условию;
-- [`getParent()`](#servicecontainergetparent-и-servicecontainerhasparent) получить родительский сервис-контейнер;
-- [`hasParent()`](#servicecontainergetparent-и-servicecontainerhasparent) проверить наличие родительского сервис-контейнера;
+- [`getParent()`](#servicecontainergetparent) получить родительский сервис-контейнер;
+- [`hasParent()`](#servicecontainerhasparent) проверить наличие родительского сервис-контейнера;
 
 В сигнатурах методов используется вспомогательный тип конструктора:
 
@@ -507,11 +507,12 @@ const service2 = child.find(ctor => ctor.id === 'shared', true);
 console.log(service2); // undefined
 ```
 
-### serviceContainer.getParent и serviceContainer.hasParent
+### serviceContainer.getParent
 
-Данные методы используются при работе с иерархией контейнеров. `hasParent`
-проверяет наличие родителя, а `getParent` возвращает его или выбрасывает
-ошибку, если родителя нет.
+Метод возвращает родительский контейнер. Если у текущего контейнера
+нет родителя, метод выбрасывает ошибку. Метод позволяет безопасно
+перемещаться вверх по иерархии, когда наличие родителя гарантировано
+логикой приложения.
 
 Сигнатура:
 
@@ -520,7 +521,38 @@ console.log(service2); // undefined
  * Получить родительский сервис-контейнер или выбросить ошибку.
  */
 getParent(): ServiceContainer;
+```
 
+Пример:
+
+```js
+const parentContainer = new ServiceContainer();
+const childContainer = new ServiceContainer(parentContainer);
+
+// получение ссылки на родительский контейнер
+const parent = childContainer.getParent();
+console.log(parent === parentContainer); // true
+
+// попытка получить родителя у корневого
+// контейнера вызовет ошибку
+try {
+  parentContainer.getParent();
+} catch (error) {
+  console.log(error.message);
+  // InvalidArgumentError:
+  // Service container has no parent.
+}
+```
+
+### serviceContainer.hasParent
+
+Метод проверяет наличие родительского контейнера и возвращает логическое
+значение. Данный метод полезен перед вызовом метода `getParent`, который
+выбрасывает ошибку при отсутствии родителя.
+
+Сигнатура:
+
+```ts
 /**
  * Проверить наличие родительского сервис-контейнера.
  */
@@ -536,8 +568,10 @@ const childContainer = new ServiceContainer(parentContainer);
 console.log(parentContainer.hasParent()); // false
 console.log(childContainer.hasParent());  // true
 
-const parent = childContainer.getParent();
-console.log(parent === parentContainer); // true
+if (childContainer.hasParent()) {
+  const parent = childContainer.getParent();
+  // логика работы с родителем
+}
 ```
 
 ### Иерархия контейнеров
