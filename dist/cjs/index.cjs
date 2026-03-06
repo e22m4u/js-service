@@ -3,7 +3,6 @@ var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 var __export = (target, all) => {
   for (var name in all)
@@ -18,7 +17,6 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // src/index.js
 var index_exports = {};
@@ -35,7 +33,16 @@ module.exports = __toCommonJS(index_exports);
 // src/service-container.js
 var import_js_format = require("@e22m4u/js-format");
 var SERVICE_CONTAINER_CLASS_NAME = "ServiceContainer";
-var _ServiceContainer = class _ServiceContainer {
+var ServiceContainer = class _ServiceContainer {
+  static {
+    __name(this, "ServiceContainer");
+  }
+  /**
+   * Kinds.
+   *
+   * @type {string[]}
+   */
+  static kinds = [SERVICE_CONTAINER_CLASS_NAME];
   /**
    * Services map.
    *
@@ -251,14 +258,6 @@ var _ServiceContainer = class _ServiceContainer {
     return void 0;
   }
 };
-__name(_ServiceContainer, "ServiceContainer");
-/**
- * Kinds.
- *
- * @type {string[]}
- */
-__publicField(_ServiceContainer, "kinds", [SERVICE_CONTAINER_CLASS_NAME]);
-var ServiceContainer = _ServiceContainer;
 
 // src/utils/is-service-container.js
 function isServiceContainer(container) {
@@ -271,7 +270,16 @@ __name(isServiceContainer, "isServiceContainer");
 // src/service.js
 var import_js_format2 = require("@e22m4u/js-format");
 var SERVICE_CLASS_NAME = "Service";
-var _Service = class _Service {
+var Service = class _Service {
+  static {
+    __name(this, "Service");
+  }
+  /**
+   * Kinds.
+   *
+   * @type {string[]}
+   */
+  static kinds = [SERVICE_CLASS_NAME];
   /**
    * Container.
    *
@@ -381,19 +389,20 @@ var _Service = class _Service {
     return this._container.find(predicate, noParent);
   }
 };
-__name(_Service, "Service");
-/**
- * Kinds.
- *
- * @type {string[]}
- */
-__publicField(_Service, "kinds", [SERVICE_CLASS_NAME]);
-var Service = _Service;
 
 // src/debuggable-service.js
 var import_js_debug = require("@e22m4u/js-debug");
 var import_js_format3 = require("@e22m4u/js-format");
-var _DebuggableService = class _DebuggableService extends import_js_debug.Debuggable {
+var DebuggableService = class _DebuggableService extends import_js_debug.Debuggable {
+  static {
+    __name(this, "DebuggableService");
+  }
+  /**
+   * Kinds.
+   *
+   * @type {string[]}
+   */
+  static kinds = [...Service.kinds];
   /**
    * Service.
    *
@@ -509,14 +518,6 @@ var _DebuggableService = class _DebuggableService extends import_js_debug.Debugg
     }
   }
 };
-__name(_DebuggableService, "DebuggableService");
-/**
- * Kinds.
- *
- * @type {string[]}
- */
-__publicField(_DebuggableService, "kinds", [...Service.kinds]);
-var DebuggableService = _DebuggableService;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   DebuggableService,

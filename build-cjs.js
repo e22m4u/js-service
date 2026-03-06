@@ -6,7 +6,7 @@ await esbuild.build({
   outfile: 'dist/cjs/index.cjs',
   format: 'cjs',
   platform: 'node',
-  target: ['node12'],
+  target: ['node18'],
   bundle: true,
   keepNames: true,
   external: [
