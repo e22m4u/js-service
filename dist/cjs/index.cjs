@@ -66,7 +66,7 @@ var ServiceContainer = class _ServiceContainer {
     if (parent != null) {
       if (!(parent instanceof _ServiceContainer)) {
         throw new import_js_format.InvalidArgumentError(
-          'The provided parameter "parent" of ServicesContainer.constructor must be an instance ServiceContainer, but %v given.',
+          'Parameter "parent" must be an instance of ServiceContainer, but %v given.',
           parent
         );
       }
@@ -80,7 +80,7 @@ var ServiceContainer = class _ServiceContainer {
    */
   getParent() {
     if (!this._parent) {
-      throw new import_js_format.InvalidArgumentError("The service container has no parent.");
+      throw new import_js_format.InvalidArgumentError("Service container has no parent.");
     }
     return this._parent;
   }
@@ -102,7 +102,7 @@ var ServiceContainer = class _ServiceContainer {
   get(ctor, ...args) {
     if (!ctor || typeof ctor !== "function") {
       throw new import_js_format.InvalidArgumentError(
-        "The first argument of ServicesContainer.get must be a class constructor, but %v given.",
+        'Parameter "ctor" must be a class constructor, but %v given.',
         ctor
       );
     }
@@ -141,10 +141,7 @@ var ServiceContainer = class _ServiceContainer {
    */
   getRegistered(ctor, ...args) {
     if (!this.has(ctor)) {
-      throw new import_js_format.InvalidArgumentError(
-        "The constructor %v is not registered.",
-        ctor
-      );
+      throw new import_js_format.InvalidArgumentError("Constructor %v is not registered.", ctor);
     }
     return this.get(ctor, ...args);
   }
@@ -178,7 +175,7 @@ var ServiceContainer = class _ServiceContainer {
   add(ctor, ...args) {
     if (!ctor || typeof ctor !== "function") {
       throw new import_js_format.InvalidArgumentError(
-        "The first argument of ServicesContainer.add must be a class constructor, but %v given.",
+        'Parameter "ctor" must be a class constructor, but %v given.',
         ctor
       );
     }
@@ -196,7 +193,7 @@ var ServiceContainer = class _ServiceContainer {
   use(ctor, ...args) {
     if (!ctor || typeof ctor !== "function") {
       throw new import_js_format.InvalidArgumentError(
-        "The first argument of ServicesContainer.use must be a class constructor, but %v given.",
+        'Parameter "ctor" must be a class constructor, but %v given.',
         ctor
       );
     }
@@ -214,13 +211,13 @@ var ServiceContainer = class _ServiceContainer {
   set(ctor, service) {
     if (!ctor || typeof ctor !== "function") {
       throw new import_js_format.InvalidArgumentError(
-        "The first argument of ServicesContainer.set must be a class constructor, but %v given.",
+        'Parameter "ctor" must be a class constructor, but %v given.',
         ctor
       );
     }
     if (!service || typeof service !== "object" || Array.isArray(service)) {
       throw new import_js_format.InvalidArgumentError(
-        "The second argument of ServicesContainer.set must be an Object, but %v given.",
+        'Parameter "service" must be an Object, but %v given.',
         service
       );
     }
@@ -230,15 +227,21 @@ var ServiceContainer = class _ServiceContainer {
   /**
    * Найти сервис удовлетворяющий условию.
    *
-   * @param {function(Function, ServiceContainer): boolean} predicate
-   * @param {boolean} noParent
+   * @param {import('./service-container.js').FindServicePredicate} [predicate]
+   * @param {boolean} [noParent]
    * @returns {*}
    */
   find(predicate, noParent = false) {
     if (typeof predicate !== "function") {
       throw new import_js_format.InvalidArgumentError(
-        "The first argument of ServiceContainer.find must be a function, but %v given.",
+        'Parameter "predicate" must be a Function, but %v given.',
         predicate
+      );
+    }
+    if (typeof noParent !== "boolean") {
+      throw new import_js_format.InvalidArgumentError(
+        'Parameter "noParent" must be a Boolean, but %v given.',
+        noParent
       );
     }
     const isRecursive = !noParent;

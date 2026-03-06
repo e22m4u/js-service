@@ -28,12 +28,12 @@ describe('ServiceContainer', function () {
       expect(res).to.be.eq(parent);
     });
 
-    it('should require the first argument to be an instance of ServiceContainer', function () {
+    it('should require the parameter "parent" to be an instance of ServiceContainer', function () {
       const throwable = v => () => new ServiceContainer(v);
       const error = v =>
         format(
-          'The provided parameter "parent" of ServicesContainer.constructor ' +
-            'must be an instance ServiceContainer, but %s given.',
+          'Parameter "parent" must be an instance ' +
+            'of ServiceContainer, but %s given.',
           v,
         );
       expect(throwable('str')).to.throw(error('"str"'));
@@ -54,7 +54,7 @@ describe('ServiceContainer', function () {
     it('should throw an error if no parent container', function () {
       const container = new ServiceContainer();
       const throwable = () => container.getParent();
-      expect(throwable).to.throw('The service container has no parent.');
+      expect(throwable).to.throw('Service container has no parent.');
     });
 
     it('should return parent container', function () {
@@ -76,13 +76,12 @@ describe('ServiceContainer', function () {
   });
 
   describe('get', function () {
-    it('should throw an error if no constructor given', function () {
+    it('should require the parameter "ctor" to be a Function', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.get(v);
       const error = v =>
         format(
-          'The first argument of ServicesContainer.get must be ' +
-            'a class constructor, but %s given.',
+          'Parameter "ctor" must be a class constructor, but %s given.',
           v,
         );
       expect(throwable('str')).to.throw(error('"str"'));
@@ -747,9 +746,7 @@ describe('ServiceContainer', function () {
       const container = new ServiceContainer();
       class MyService extends Service {}
       const throwable = () => container.getRegistered(MyService);
-      expect(throwable).to.throw(
-        'The constructor MyService is not registered.',
-      );
+      expect(throwable).to.throw('Constructor MyService is not registered.');
     });
 
     it('should pass arguments to the "get" method and return a result', function () {
@@ -949,13 +946,12 @@ describe('ServiceContainer', function () {
   });
 
   describe('add', function () {
-    it('should throw an error if no constructor given', function () {
+    it('should require the parameter "ctor" to be a Function', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.add(v);
       const error = v =>
         format(
-          'The first argument of ServicesContainer.add must be ' +
-            'a class constructor, but %s given.',
+          'Parameter "ctor" must be a class constructor, but %s given.',
           v,
         );
       expect(throwable()).to.throw(error('undefined'));
@@ -1096,13 +1092,12 @@ describe('ServiceContainer', function () {
   });
 
   describe('use', function () {
-    it('should throw an error if no constructor given', function () {
+    it('should require the parameter "ctor" to be a Function', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.use(v);
       const error = v =>
         format(
-          'The first argument of ServicesContainer.use must be ' +
-            'a class constructor, but %s given.',
+          'Parameter "ctor" must be a class constructor, but %s given.',
           v,
         );
       expect(throwable()).to.throw(error('undefined'));
@@ -1293,13 +1288,12 @@ describe('ServiceContainer', function () {
   });
 
   describe('set', function () {
-    it('should require the "ctor" argument to be a class constructor', function () {
+    it('should require the parameter "ctor" to be a Function', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.set(v, {});
       const error = v =>
         format(
-          'The first argument of ServicesContainer.set must be ' +
-            'a class constructor, but %s given.',
+          'Parameter "ctor" must be a class constructor, but %s given.',
           v,
         );
       expect(throwable()).to.throw(error('undefined'));
@@ -1313,15 +1307,11 @@ describe('ServiceContainer', function () {
       throwable(String)();
     });
 
-    it('should require the "service" argument to be an Object', function () {
+    it('should require the parameter "service" to be an Object', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.set(String, v);
       const error = v =>
-        format(
-          'The second argument of ServicesContainer.set must be ' +
-            'an Object, but %s given.',
-          v,
-        );
+        format('Parameter "service" must be an Object, but %s given.', v);
       expect(throwable()).to.throw(error('undefined'));
       expect(throwable('str')).to.throw(error('"str"'));
       expect(throwable(10)).to.throw(error('10'));
@@ -1399,17 +1389,39 @@ describe('ServiceContainer', function () {
       static id = 'Y';
     }
 
-    it('should throw an error if the predicate is not a function', function () {
+    it('should require the parameter "predicate" to be a Function', function () {
       const container = new ServiceContainer();
       const throwable = v => () => container.find(v);
       const error = v =>
-        format(
-          'The first argument of ServiceContainer.find ' +
-            'must be a function, but %s given.',
-          v,
-        );
-      expect(throwable('not a function')).to.throw(error('"not a function"'));
-      expect(throwable(123)).to.throw(error('123'));
+        format('Parameter "predicate" must be a Function, but %s given.', v);
+      expect(throwable('str')).to.throw(error('"str"'));
+      expect(throwable('')).to.throw(error('""'));
+      expect(throwable(10)).to.throw(error('10'));
+      expect(throwable(0)).to.throw(error('0'));
+      expect(throwable(true)).to.throw(error('true'));
+      expect(throwable(false)).to.throw(error('false'));
+      expect(throwable([])).to.throw(error('Array'));
+      expect(throwable({})).to.throw(error('Object'));
+      expect(throwable(undefined)).to.throw(error('undefined'));
+      expect(throwable(null)).to.throw(error('null'));
+      throwable(() => false)();
+    });
+
+    it('should require the parameter "noParent" to be a Boolean', function () {
+      const container = new ServiceContainer();
+      const throwable = v => () => container.find(() => false, v);
+      const error = v =>
+        format('Parameter "noParent" must be a Boolean, but %s given.', v);
+      expect(throwable('str')).to.throw(error('"str"'));
+      expect(throwable('')).to.throw(error('""'));
+      expect(throwable(10)).to.throw(error('10'));
+      expect(throwable(0)).to.throw(error('0'));
+      expect(throwable([])).to.throw(error('Array'));
+      expect(throwable({})).to.throw(error('Object'));
+      expect(throwable(null)).to.throw(error('null'));
+      throwable(true)();
+      throwable(false)();
+      throwable(undefined)();
     });
 
     it('should return undefined if no service matches the predicate', function () {
