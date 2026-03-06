@@ -1,5 +1,5 @@
 import {SERVICE_CLASS_NAME} from './service.js';
-import {InvalidArgumentError} from './errors/index.js';
+import {InvalidArgumentError} from '@e22m4u/js-format';
 
 /**
  * Service class name.

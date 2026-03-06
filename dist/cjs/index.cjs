@@ -32,14 +32,8 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/errors/invalid-argument-error.js
-var import_js_format = require("@e22m4u/js-format");
-var _InvalidArgumentError = class _InvalidArgumentError extends import_js_format.Errorf {
-};
-__name(_InvalidArgumentError, "InvalidArgumentError");
-var InvalidArgumentError = _InvalidArgumentError;
-
 // src/service-container.js
+var import_js_format = require("@e22m4u/js-format");
 var SERVICE_CONTAINER_CLASS_NAME = "ServiceContainer";
 var _ServiceContainer = class _ServiceContainer {
   /**
@@ -64,7 +58,7 @@ var _ServiceContainer = class _ServiceContainer {
   constructor(parent = void 0) {
     if (parent != null) {
       if (!(parent instanceof _ServiceContainer)) {
-        throw new InvalidArgumentError(
+        throw new import_js_format.InvalidArgumentError(
           'The provided parameter "parent" of ServicesContainer.constructor must be an instance ServiceContainer, but %v given.',
           parent
         );
@@ -79,7 +73,7 @@ var _ServiceContainer = class _ServiceContainer {
    */
   getParent() {
     if (!this._parent) {
-      throw new InvalidArgumentError("The service container has no parent.");
+      throw new import_js_format.InvalidArgumentError("The service container has no parent.");
     }
     return this._parent;
   }
@@ -100,7 +94,7 @@ var _ServiceContainer = class _ServiceContainer {
    */
   get(ctor, ...args) {
     if (!ctor || typeof ctor !== "function") {
-      throw new InvalidArgumentError(
+      throw new import_js_format.InvalidArgumentError(
         "The first argument of ServicesContainer.get must be a class constructor, but %v given.",
         ctor
       );
@@ -140,7 +134,7 @@ var _ServiceContainer = class _ServiceContainer {
    */
   getRegistered(ctor, ...args) {
     if (!this.has(ctor)) {
-      throw new InvalidArgumentError(
+      throw new import_js_format.InvalidArgumentError(
         "The constructor %v is not registered.",
         ctor
       );
@@ -176,7 +170,7 @@ var _ServiceContainer = class _ServiceContainer {
    */
   add(ctor, ...args) {
     if (!ctor || typeof ctor !== "function") {
-      throw new InvalidArgumentError(
+      throw new import_js_format.InvalidArgumentError(
         "The first argument of ServicesContainer.add must be a class constructor, but %v given.",
         ctor
       );
@@ -194,7 +188,7 @@ var _ServiceContainer = class _ServiceContainer {
    */
   use(ctor, ...args) {
     if (!ctor || typeof ctor !== "function") {
-      throw new InvalidArgumentError(
+      throw new import_js_format.InvalidArgumentError(
         "The first argument of ServicesContainer.use must be a class constructor, but %v given.",
         ctor
       );
@@ -212,13 +206,13 @@ var _ServiceContainer = class _ServiceContainer {
    */
   set(ctor, service) {
     if (!ctor || typeof ctor !== "function") {
-      throw new InvalidArgumentError(
+      throw new import_js_format.InvalidArgumentError(
         "The first argument of ServicesContainer.set must be a class constructor, but %v given.",
         ctor
       );
     }
     if (!service || typeof service !== "object" || Array.isArray(service)) {
-      throw new InvalidArgumentError(
+      throw new import_js_format.InvalidArgumentError(
         "The second argument of ServicesContainer.set must be an Object, but %v given.",
         service
       );
@@ -235,7 +229,7 @@ var _ServiceContainer = class _ServiceContainer {
    */
   find(predicate, noParent = false) {
     if (typeof predicate !== "function") {
-      throw new InvalidArgumentError(
+      throw new import_js_format.InvalidArgumentError(
         "The first argument of ServiceContainer.find must be a function, but %v given.",
         predicate
       );
