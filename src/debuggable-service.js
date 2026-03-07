@@ -134,7 +134,6 @@ export class DebuggableService extends Debuggable {
       // аргумент воспринимается как объект настроек
       if (options === undefined) {
         options = containerOrOptions;
-        container = new ServiceContainer();
       }
       // если оба аргумента определены, когда первый
       // не является контейнером, то выбрасывается ошибка

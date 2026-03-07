@@ -98,6 +98,14 @@ describe('DebuggableService', function () {
         expect(serviceA.container.has(ServiceB)).to.be.false;
       });
 
+      it('should register the current instance even when the options is provided to the first argument', function () {
+        class ServiceA extends DebuggableService {}
+        class ServiceB extends DebuggableService {}
+        const serviceA = new ServiceA({namespace: 'app'});
+        expect(serviceA.container.has(ServiceA)).to.be.true;
+        expect(serviceA.container.has(ServiceB)).to.be.false;
+      });
+
       it('should not register the current instance in a custom container', function () {
         class ServiceA extends DebuggableService {}
         class ServiceB extends DebuggableService {}

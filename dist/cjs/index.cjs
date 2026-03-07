@@ -441,7 +441,6 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
       }
       if (options === void 0) {
         options = containerOrOptions;
-        container = new ServiceContainer();
       } else {
         throw new import_js_format3.InvalidArgumentError("Constructor signature mismatch.");
       }
