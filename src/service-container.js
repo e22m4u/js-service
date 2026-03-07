@@ -90,49 +90,34 @@ export class ServiceContainer {
     }
     const isCtorRegistered = this._services.has(ctor);
     let service = this._services.get(ctor);
-    let inheritedCtor = undefined;
-    // если экземпляр сервиса не найден,
-    // то выполняется поиск его наследника
-    if (!service) {
-      const ctors = Array.from(this._services.keys());
-      inheritedCtor = ctors.find(v => v.prototype instanceof ctor);
-      if (inheritedCtor) {
-        service = this._services.get(inheritedCtor);
-      }
-    }
     // если
-    //   ни экземпляр сервиса (или экземпляр наследника),
+    //   ни экземпляр сервиса,
     //   ни указанный конструктор,
-    //   ни конструктор наследника
     // не зарегистрированы в текущем контейнере, но определен родительский
     // контейнер, где зарегистрирован конструктор запрашиваемого сервиса,
     // то поиск передается родителю
     if (
       !service &&
       !isCtorRegistered &&
-      !inheritedCtor &&
       this._parent &&
       this._parent.has(ctor)
     ) {
       return this._parent.get(ctor, ...args);
     }
-    // если указанный конструктор не зарегистрирован,
-    // но найден конструктор наследника, то для создания
-    // экземпляра будет использован данный конструктор
-    // наследника
-    if (!isCtorRegistered && inheritedCtor) {
-      ctor = inheritedCtor;
-    }
-    // если экземпляр сервиса не найден или переданы
-    // аргументы, то создается новый экземпляр
+    // если экземпляр сервиса или фабрика не найдены
+    // или переданы аргументы для конструктора,
+    // то создается новый экземпляр
     if (!service || args.length) {
       service =
         Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME)
           ? new ctor(this, ...args)
           : new ctor(...args);
       this._services.set(ctor, service);
-      // instantiates from a factory function
-    } else if (typeof service === 'function') {
+    }
+    // если найдена фабрика, то извлекается фабричное
+    // значение и сохраняется в качестве экземпляра
+    // для данного конструктора
+    else if (typeof service === 'function') {
       service = service();
       this._services.set(ctor, service);
     }
@@ -162,13 +147,6 @@ export class ServiceContainer {
    */
   has(ctor) {
     if (this._services.has(ctor)) {
-      return true;
-    }
-    // если не удалось найти указанный конструктор,
-    // то выполняется поиск его наследника
-    const ctors = Array.from(this._services.keys());
-    const inheritedCtor = ctors.find(v => v.prototype instanceof ctor);
-    if (inheritedCtor) {
       return true;
     }
     // если определен родительский контейнер,

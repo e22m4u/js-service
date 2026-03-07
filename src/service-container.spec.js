@@ -203,47 +203,36 @@ describe('ServiceContainer', function () {
       });
 
       describe('class inheritance', function () {
-        it('should create an instance of the child class when the parent class is requested', function () {
+        it('should create an instance of the requested parent class even when its child class is registered', function () {
           class ParentService extends Service {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
           container.add(ChildService);
-          const childService = container.get(ParentService);
-          expect(childService).to.be.instanceof(ChildService);
+          const service = container.get(ParentService);
+          expect(service).to.be.instanceof(ParentService);
         });
 
-        it('should return the existing instance of the child class when the parent class is requested', function () {
-          class ParentService extends Service {}
-          class ChildService extends ParentService {}
-          const container = new ServiceContainer();
-          const childService1 = container.get(ChildService);
-          expect(childService1).to.be.instanceof(ChildService);
-          const childService2 = container.get(ParentService);
-          expect(childService1).to.be.instanceof(ChildService);
-          expect(childService2).to.be.eq(childService1);
-        });
-
-        it('should create an instance of the requested child class, even if its parent class is registered', function () {
+        it('should create an instance of the requested child class even when its parent class is registered', function () {
           class ParentService extends Service {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
           container.add(ParentService);
-          const childService = container.get(ChildService);
-          expect(childService).to.be.instanceof(ChildService);
+          const service = container.get(ChildService);
+          expect(service).to.be.instanceof(ChildService);
         });
 
-        it('should return an instance of the requested child class, not the existing instance of its parent class', function () {
+        it('should return an instance of the requested child class instead of an existing instance of its parent class', function () {
           class ParentService extends Service {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
-          const parentService = container.get(ParentService);
-          expect(parentService).to.be.instanceof(ParentService);
-          const childService = container.get(ChildService);
-          expect(childService).to.be.instanceof(ChildService);
-          expect(childService).to.be.not.eq(parentService);
+          const service1 = container.get(ParentService);
+          expect(service1).to.be.instanceof(ParentService);
+          const service2 = container.get(ChildService);
+          expect(service2).to.be.instanceof(ChildService);
+          expect(service2).to.be.not.eq(service1);
         });
 
-        it('should prioritize the given registered constructor even its inherited class is registered too', function () {
+        it('should prioritize the given registered constructor even its child class is registered too', function () {
           class ParentService extends Service {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
@@ -256,93 +245,17 @@ describe('ServiceContainer', function () {
           expect(res1).to.be.not.eq(res2);
         });
 
-        it('should create an instance from a registered class that inherits the given not registered class', function () {
-          class ParentService extends Service {}
-          class ChildService extends ParentService {}
-          const container = new ServiceContainer();
-          container.add(ChildService);
-          const res1 = container.get(ParentService);
-          const res2 = container.get(ChildService);
-          expect(res1).to.be.instanceOf(ParentService);
-          expect(res2).to.be.instanceOf(ChildService);
-          expect(res1).to.be.eq(res2);
-        });
-
-        it('should create an instance from a given not registered class even its parent class is registered', function () {
+        it('should prioritize the given registered constructor even its parent class is registered too', function () {
           class ParentService extends Service {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
           container.add(ParentService);
-          const res = container.get(ChildService);
-          expect(res).to.be.instanceOf(ParentService);
-          expect(res).to.be.instanceOf(ChildService);
-        });
-
-        describe('when a container has a parent', function () {
-          describe('when a parent container has a registered constructor', function () {
-            it('should prioritize its own existing instance when available', function () {
-              class ParentService extends Service {}
-              class ChildService extends ParentService {}
-              const parentContainer = new ServiceContainer();
-              const childContainer = new ServiceContainer(parentContainer);
-              parentContainer.add(ChildService);
-              const inst = new ChildService();
-              childContainer.set(ChildService, inst);
-              const res = childContainer.get(ParentService);
-              expect(res).to.be.eq(inst);
-            });
-
-            it('should create its own instance when the service constructor is registered', function () {
-              class ParentService extends Service {
-                constructor(container, value) {
-                  super(container);
-                  this.value = value;
-                }
-              }
-              class ChildService extends ParentService {}
-              const parentContainer = new ServiceContainer();
-              const childContainer = new ServiceContainer(parentContainer);
-              parentContainer.add(ChildService, 1);
-              childContainer.add(ChildService, 2);
-              const res = childContainer.get(ParentService);
-              expect(res.value).to.be.eq(2);
-            });
-          });
-
-          describe('when a parent container has an existing instance', function () {
-            it('should prioritize its own existing instance when available', function () {
-              class ParentService extends Service {}
-              class ChildService extends ParentService {}
-              const parentContainer = new ServiceContainer();
-              const childContainer = new ServiceContainer(parentContainer);
-              const inst1 = new ChildService();
-              const inst2 = new ChildService();
-              parentContainer.set(ChildService, inst1);
-              const res1 = childContainer.get(ParentService);
-              expect(res1).to.be.eq(inst1);
-              childContainer.set(ChildService, inst2);
-              const res2 = childContainer.get(ParentService);
-              expect(res2).to.be.eq(inst2);
-            });
-
-            it('should create its own instance when the service constructor is registered', function () {
-              class ParentService extends Service {
-                constructor(container, value) {
-                  super(container);
-                  this.value = value;
-                }
-              }
-              class ChildService extends ParentService {}
-              const parentContainer = new ServiceContainer();
-              const childContainer = new ServiceContainer(parentContainer);
-              parentContainer.use(ChildService, 1);
-              const res1 = childContainer.get(ParentService);
-              expect(res1.value).to.be.eq(1);
-              childContainer.add(ChildService, 2);
-              const res2 = childContainer.get(ParentService);
-              expect(res2.value).to.be.eq(2);
-            });
-          });
+          container.add(ChildService);
+          const res1 = container.get(ChildService);
+          const res2 = container.get(ParentService);
+          expect(res1).to.be.instanceOf(ChildService);
+          expect(res2).to.be.instanceOf(ParentService);
+          expect(res1).to.be.not.eq(res2);
         });
       });
 
@@ -375,52 +288,6 @@ describe('ServiceContainer', function () {
           const res2 = parent.has(MyService);
           expect(res1).to.be.true;
           expect(res2).to.be.false;
-        });
-
-        describe('class inheritance', function () {
-          it('should resolve a parent class to an instance of its child class registered in a parent container', function () {
-            class ParentService extends Service {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const container = new ServiceContainer(parentContainer);
-            parentContainer.add(ChildService);
-            const childService = container.get(ParentService);
-            expect(childService).to.be.instanceof(ChildService);
-          });
-
-          it('should return the existing instance of the child class from a parent container when the parent class is requested', function () {
-            class ParentService extends Service {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const container = new ServiceContainer(parentContainer);
-            const childService1 = parentContainer.get(ChildService);
-            expect(childService1).to.be.instanceof(ChildService);
-            const childService2 = container.get(ParentService);
-            expect(childService1).to.be.instanceof(ChildService);
-            expect(childService2).to.be.eq(childService1);
-          });
-
-          it('should create an instance of the requested child class, even if its parent class is registered in a parent container', function () {
-            class ParentService extends Service {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const container = new ServiceContainer(parentContainer);
-            parentContainer.add(ParentService);
-            const childService = container.get(ChildService);
-            expect(childService).to.be.instanceof(ChildService);
-          });
-
-          it('should create an instance of the requested child class, even if a parent container has an instance of its parent class', function () {
-            class ParentService extends Service {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const container = new ServiceContainer(parentContainer);
-            const parentService = parentContainer.get(ParentService);
-            expect(parentService).to.be.instanceof(ParentService);
-            const childService = container.get(ChildService);
-            expect(childService).to.be.instanceof(ChildService);
-            expect(childService).to.be.not.eq(parentService);
-          });
         });
       });
     });
@@ -520,47 +387,36 @@ describe('ServiceContainer', function () {
       });
 
       describe('class inheritance', function () {
-        it('should create an instance of the child class when the parent class is requested', function () {
+        it('should create an instance of the requested parent class even when its child class is registered', function () {
           class ParentService {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
           container.add(ChildService);
-          const childService = container.get(ParentService);
-          expect(childService).to.be.instanceof(ChildService);
+          const service = container.get(ParentService);
+          expect(service).to.be.instanceof(ParentService);
         });
 
-        it('should return the existing instance of the child class when the parent class is requested', function () {
-          class ParentService {}
-          class ChildService extends ParentService {}
-          const container = new ServiceContainer();
-          const childService1 = container.get(ChildService);
-          expect(childService1).to.be.instanceof(ChildService);
-          const childService2 = container.get(ParentService);
-          expect(childService1).to.be.instanceof(ChildService);
-          expect(childService2).to.be.eq(childService1);
-        });
-
-        it('should create an instance of the requested child class, even if its parent class is registered', function () {
+        it('should create an instance of the requested child class even when its parent class is registered', function () {
           class ParentService {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
           container.add(ParentService);
-          const childService = container.get(ChildService);
-          expect(childService).to.be.instanceof(ChildService);
+          const service = container.get(ChildService);
+          expect(service).to.be.instanceof(ChildService);
         });
 
-        it('should return an instance of the requested child class, not the existing instance of its parent class', function () {
+        it('should return an instance of the requested child class instead of an existing instance of its parent class', function () {
           class ParentService {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
-          const parentService = container.get(ParentService);
-          expect(parentService).to.be.instanceof(ParentService);
-          const childService = container.get(ChildService);
-          expect(childService).to.be.instanceof(ChildService);
-          expect(childService).to.be.not.eq(parentService);
+          const service1 = container.get(ParentService);
+          expect(service1).to.be.instanceof(ParentService);
+          const service2 = container.get(ChildService);
+          expect(service2).to.be.instanceof(ChildService);
+          expect(service2).to.be.not.eq(service1);
         });
 
-        it('should prioritize the given registered constructor even its inherited class is registered too', function () {
+        it('should prioritize the given registered constructor even its child class is registered too', function () {
           class ParentService {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
@@ -573,91 +429,17 @@ describe('ServiceContainer', function () {
           expect(res1).to.be.not.eq(res2);
         });
 
-        it('should create an instance from a registered class that inherits the given not registered class', function () {
-          class ParentService {}
-          class ChildService extends ParentService {}
-          const container = new ServiceContainer();
-          container.add(ChildService);
-          const res1 = container.get(ParentService);
-          const res2 = container.get(ChildService);
-          expect(res1).to.be.instanceOf(ParentService);
-          expect(res2).to.be.instanceOf(ChildService);
-          expect(res1).to.be.eq(res2);
-        });
-
-        it('should create an instance from a given not registered class even its parent class is registered', function () {
+        it('should prioritize the given registered constructor even its parent class is registered too', function () {
           class ParentService {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
           container.add(ParentService);
-          const res = container.get(ChildService);
-          expect(res).to.be.instanceOf(ParentService);
-          expect(res).to.be.instanceOf(ChildService);
-        });
-
-        describe('when a container has a parent', function () {
-          describe('when a parent container has a registered constructor', function () {
-            it('should prioritize its own existing instance when available', function () {
-              class ParentService {}
-              class ChildService extends ParentService {}
-              const parentContainer = new ServiceContainer();
-              const childContainer = new ServiceContainer(parentContainer);
-              parentContainer.add(ChildService);
-              const inst = new ChildService();
-              childContainer.set(ChildService, inst);
-              const res = childContainer.get(ParentService);
-              expect(res).to.be.eq(inst);
-            });
-
-            it('should create its own instance when the service constructor is registered', function () {
-              class ParentService {
-                constructor(value) {
-                  this.value = value;
-                }
-              }
-              class ChildService extends ParentService {}
-              const parentContainer = new ServiceContainer();
-              const childContainer = new ServiceContainer(parentContainer);
-              parentContainer.add(ChildService, 1);
-              childContainer.add(ChildService, 2);
-              const res = childContainer.get(ParentService);
-              expect(res.value).to.be.eq(2);
-            });
-          });
-
-          describe('when a parent container has an existing instance', function () {
-            it('should prioritize its own existing instance when available', function () {
-              class ParentService {}
-              class ChildService extends ParentService {}
-              const parentContainer = new ServiceContainer();
-              const childContainer = new ServiceContainer(parentContainer);
-              const inst1 = new ChildService();
-              const inst2 = new ChildService();
-              parentContainer.set(ChildService, inst1);
-              const res1 = childContainer.get(ParentService);
-              expect(res1).to.be.eq(inst1);
-              childContainer.set(ChildService, inst2);
-              const res2 = childContainer.get(ParentService);
-              expect(res2).to.be.eq(inst2);
-            });
-
-            it('should create its own instance when the service constructor is registered', function () {
-              class ParentService {
-                constructor(value) {
-                  this.value = value;
-                }
-              }
-              class ChildService extends ParentService {}
-              const parentContainer = new ServiceContainer();
-              const childContainer = new ServiceContainer(parentContainer);
-              parentContainer.use(ChildService, 1);
-              const res1 = childContainer.get(ParentService);
-              expect(res1.value).to.be.eq(1);
-              childContainer.add(ChildService, 2);
-              const res2 = childContainer.get(ParentService);
-              expect(res2.value).to.be.eq(2);
-            });
-          });
+          container.add(ChildService);
+          const res1 = container.get(ChildService);
+          const res2 = container.get(ParentService);
+          expect(res1).to.be.instanceOf(ChildService);
+          expect(res2).to.be.instanceOf(ParentService);
+          expect(res1).to.be.not.eq(res2);
         });
       });
 
@@ -690,52 +472,6 @@ describe('ServiceContainer', function () {
           const res2 = parent.has(MyService);
           expect(res1).to.be.true;
           expect(res2).to.be.false;
-        });
-
-        describe('class inheritance', function () {
-          it('should resolve a parent class to an instance of its child class registered in a parent container', function () {
-            class ParentService {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const container = new ServiceContainer(parentContainer);
-            parentContainer.add(ChildService);
-            const childService = container.get(ParentService);
-            expect(childService).to.be.instanceof(ChildService);
-          });
-
-          it('should return the existing instance of the child class from a parent container when the parent class is requested', function () {
-            class ParentService {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const container = new ServiceContainer(parentContainer);
-            const childService1 = parentContainer.get(ChildService);
-            expect(childService1).to.be.instanceof(ChildService);
-            const childService2 = container.get(ParentService);
-            expect(childService1).to.be.instanceof(ChildService);
-            expect(childService2).to.be.eq(childService1);
-          });
-
-          it('should create an instance of the requested child class, even if its parent class is registered in a parent container', function () {
-            class ParentService {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const container = new ServiceContainer(parentContainer);
-            parentContainer.add(ParentService);
-            const childService = container.get(ChildService);
-            expect(childService).to.be.instanceof(ChildService);
-          });
-
-          it('should create an instance of the requested child class, even if a parent container has an instance of its parent class', function () {
-            class ParentService {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const container = new ServiceContainer(parentContainer);
-            const parentService = parentContainer.get(ParentService);
-            expect(parentService).to.be.instanceof(ParentService);
-            const childService = container.get(ChildService);
-            expect(childService).to.be.instanceof(ChildService);
-            expect(childService).to.be.not.eq(parentService);
-          });
         });
       });
     });
@@ -780,64 +516,22 @@ describe('ServiceContainer', function () {
       });
 
       describe('class inheritance', function () {
-        it('should return true if the child class is registered', function () {
+        it('should return false for the parent class even when its child class is registered', function () {
           class ParentService extends Service {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
           container.add(ChildService);
           const res = container.has(ParentService);
-          expect(res).to.be.true;
+          expect(res).to.be.false;
         });
 
-        it('should return false if the parent class is registered', function () {
+        it('should return false for the child class even when its parent class is registered', function () {
           class ParentService extends Service {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
           container.add(ParentService);
           const res = container.has(ChildService);
           expect(res).to.be.false;
-        });
-
-        describe('when a container has a parent', function () {
-          it('should return true for the child container if the child class is registered in the parent container', function () {
-            class ParentService extends Service {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const childContainer = new ServiceContainer(parentContainer);
-            parentContainer.add(ChildService);
-            const res = childContainer.has(ParentService);
-            expect(res).to.be.true;
-          });
-
-          it('should return false for the child container if the parent class is registered in the parent container', function () {
-            class ParentService extends Service {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const childContainer = new ServiceContainer(parentContainer);
-            parentContainer.add(ParentService);
-            const res = childContainer.has(ChildService);
-            expect(res).to.be.false;
-          });
-
-          it('should return true for the child container if the child class is registered in the child container', function () {
-            class ParentService extends Service {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const childContainer = new ServiceContainer(parentContainer);
-            childContainer.add(ChildService);
-            const res = childContainer.has(ParentService);
-            expect(res).to.be.true;
-          });
-
-          it('should return false for the child container if the parent class is registered in the child container', function () {
-            class ParentService extends Service {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const childContainer = new ServiceContainer(parentContainer);
-            childContainer.add(ParentService);
-            const res = childContainer.has(ChildService);
-            expect(res).to.be.false;
-          });
         });
       });
 
@@ -871,64 +565,22 @@ describe('ServiceContainer', function () {
       });
 
       describe('class inheritance', function () {
-        it('should return true if the child class is registered', function () {
+        it('should return false for the parent class even when its child class is registered', function () {
           class ParentService {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
           container.add(ChildService);
           const res = container.has(ParentService);
-          expect(res).to.be.true;
+          expect(res).to.be.false;
         });
 
-        it('should return false if the parent class is registered', function () {
+        it('should return false for the child class even when its parent class is registered', function () {
           class ParentService {}
           class ChildService extends ParentService {}
           const container = new ServiceContainer();
           container.add(ParentService);
           const res = container.has(ChildService);
           expect(res).to.be.false;
-        });
-
-        describe('when a container has a parent', function () {
-          it('should return true for the child container if the child class is registered in the parent container', function () {
-            class ParentService {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const childContainer = new ServiceContainer(parentContainer);
-            parentContainer.add(ChildService);
-            const res = childContainer.has(ParentService);
-            expect(res).to.be.true;
-          });
-
-          it('should return false for the child container if the parent class is registered in the parent container', function () {
-            class ParentService {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const childContainer = new ServiceContainer(parentContainer);
-            parentContainer.add(ParentService);
-            const res = childContainer.has(ChildService);
-            expect(res).to.be.false;
-          });
-
-          it('should return true for the child container if the child class is registered in the child container', function () {
-            class ParentService {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const childContainer = new ServiceContainer(parentContainer);
-            childContainer.add(ChildService);
-            const res = childContainer.has(ParentService);
-            expect(res).to.be.true;
-          });
-
-          it('should return false for the child container if the parent class is registered in the child container', function () {
-            class ParentService {}
-            class ChildService extends ParentService {}
-            const parentContainer = new ServiceContainer();
-            const childContainer = new ServiceContainer(parentContainer);
-            childContainer.add(ParentService);
-            const res = childContainer.has(ChildService);
-            expect(res).to.be.false;
-          });
         });
       });
 

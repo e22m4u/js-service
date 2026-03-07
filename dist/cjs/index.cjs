@@ -108,19 +108,8 @@ var ServiceContainer = class _ServiceContainer {
     }
     const isCtorRegistered = this._services.has(ctor);
     let service = this._services.get(ctor);
-    let inheritedCtor = void 0;
-    if (!service) {
-      const ctors = Array.from(this._services.keys());
-      inheritedCtor = ctors.find((v) => v.prototype instanceof ctor);
-      if (inheritedCtor) {
-        service = this._services.get(inheritedCtor);
-      }
-    }
-    if (!service && !isCtorRegistered && !inheritedCtor && this._parent && this._parent.has(ctor)) {
+    if (!service && !isCtorRegistered && this._parent && this._parent.has(ctor)) {
       return this._parent.get(ctor, ...args);
-    }
-    if (!isCtorRegistered && inheritedCtor) {
-      ctor = inheritedCtor;
     }
     if (!service || args.length) {
       service = Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args);
@@ -153,11 +142,6 @@ var ServiceContainer = class _ServiceContainer {
    */
   has(ctor) {
     if (this._services.has(ctor)) {
-      return true;
-    }
-    const ctors = Array.from(this._services.keys());
-    const inheritedCtor = ctors.find((v) => v.prototype instanceof ctor);
-    if (inheritedCtor) {
       return true;
     }
     if (this._parent) {
