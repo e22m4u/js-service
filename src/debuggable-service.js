@@ -102,17 +102,6 @@ export class DebuggableService extends Debuggable {
   }
 
   /**
-   * Найти сервис удовлетворяющий условию.
-   *
-   * @param {import('./service-container.js').FindServicePredicate} predicate
-   * @param {boolean} noParent
-   * @returns {*}
-   */
-  findService(predicate, noParent = false) {
-    return this._service.findService(predicate, noParent);
-  }
-
-  /**
    * Constructor.
    *
    * @param {ServiceContainer|import('@e22m4u/js-debug').DebuggableOptions} [containerOrOptions]

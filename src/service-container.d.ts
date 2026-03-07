@@ -6,14 +6,6 @@ import {Constructor} from './types.js';
 export declare const SERVICE_CONTAINER_CLASS_NAME: string;
 
 /**
- * Find service predicate.
- */
-export type FindServicePredicate<T extends object> = (
-  ctor: Constructor<T>,
-  container: ServiceContainer,
-) => boolean;
-
-/**
  * Service container.
  */
 export declare class ServiceContainer {
@@ -96,15 +88,4 @@ export declare class ServiceContainer {
     ctor: Constructor<T>,
     service: T,
   ): this;
-
-  /**
-   * Найти сервис удовлетворяющий условию.
-   *
-   * @param predicate
-   * @param noParent
-   */
-  find<T extends object>(
-    predicate: FindServicePredicate<T>,
-    noParent?: boolean,
-  ): T | undefined;
 }

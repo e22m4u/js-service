@@ -136,15 +136,4 @@ export class Service {
     this._container.set(ctor, service);
     return this;
   }
-
-  /**
-   * Найти сервис удовлетворяющий условию.
-   *
-   * @param {import('./service-container.js').FindServicePredicate} predicate
-   * @param {boolean} noParent
-   * @returns {*}
-   */
-  findService(predicate, noParent = false) {
-    return this._container.find(predicate, noParent);
-  }
 }

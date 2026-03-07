@@ -246,45 +246,4 @@ export class ServiceContainer {
     this._services.set(ctor, service);
     return this;
   }
-
-  /**
-   * Найти сервис удовлетворяющий условию.
-   *
-   * @param {import('./service-container.js').FindServicePredicate} [predicate]
-   * @param {boolean} [noParent]
-   * @returns {*}
-   */
-  find(predicate, noParent = false) {
-    if (typeof predicate !== 'function') {
-      throw new InvalidArgumentError(
-        'Parameter "predicate" must be a Function, but %v given.',
-        predicate,
-      );
-    }
-    if (typeof noParent !== 'boolean') {
-      throw new InvalidArgumentError(
-        'Parameter "noParent" must be a Boolean, but %v given.',
-        noParent,
-      );
-    }
-    const isRecursive = !noParent;
-    let currentContainer = this;
-    do {
-      for (const ctor of currentContainer._services.keys()) {
-        if (predicate(ctor, currentContainer) === true) {
-          // операция доступа к найденному сервису из текущего
-          // контейнера является семантически более правильной,
-          // нежели доступ из родителя, так как текущий контейнер
-          // может обработать эту операцию по своему усмотрению
-          return this.get(ctor);
-        }
-      }
-      if (isRecursive && currentContainer.hasParent()) {
-        currentContainer = currentContainer.getParent();
-      } else {
-        currentContainer = null;
-      }
-    } while (currentContainer);
-    return undefined;
-  }
 }

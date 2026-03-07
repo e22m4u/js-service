@@ -224,42 +224,6 @@ var ServiceContainer = class _ServiceContainer {
     this._services.set(ctor, service);
     return this;
   }
-  /**
-   * Найти сервис удовлетворяющий условию.
-   *
-   * @param {import('./service-container.js').FindServicePredicate} [predicate]
-   * @param {boolean} [noParent]
-   * @returns {*}
-   */
-  find(predicate, noParent = false) {
-    if (typeof predicate !== "function") {
-      throw new import_js_format.InvalidArgumentError(
-        'Parameter "predicate" must be a Function, but %v given.',
-        predicate
-      );
-    }
-    if (typeof noParent !== "boolean") {
-      throw new import_js_format.InvalidArgumentError(
-        'Parameter "noParent" must be a Boolean, but %v given.',
-        noParent
-      );
-    }
-    const isRecursive = !noParent;
-    let currentContainer = this;
-    do {
-      for (const ctor of currentContainer._services.keys()) {
-        if (predicate(ctor, currentContainer) === true) {
-          return this.get(ctor);
-        }
-      }
-      if (isRecursive && currentContainer.hasParent()) {
-        currentContainer = currentContainer.getParent();
-      } else {
-        currentContainer = null;
-      }
-    } while (currentContainer);
-    return void 0;
-  }
 };
 
 // src/utils/is-service-container.js
@@ -381,16 +345,6 @@ var Service = class _Service {
     this._container.set(ctor, service);
     return this;
   }
-  /**
-   * Найти сервис удовлетворяющий условию.
-   *
-   * @param {import('./service-container.js').FindServicePredicate} predicate
-   * @param {boolean} noParent
-   * @returns {*}
-   */
-  findService(predicate, noParent = false) {
-    return this._container.find(predicate, noParent);
-  }
 };
 
 // src/debuggable-service.js
@@ -483,16 +437,6 @@ var DebuggableService = class _DebuggableService extends import_js_debug.Debugga
   setService(ctor, service) {
     this._service.setService(ctor, service);
     return this;
-  }
-  /**
-   * Найти сервис удовлетворяющий условию.
-   *
-   * @param {import('./service-container.js').FindServicePredicate} predicate
-   * @param {boolean} noParent
-   * @returns {*}
-   */
-  findService(predicate, noParent = false) {
-    return this._service.findService(predicate, noParent);
   }
   /**
    * Constructor.

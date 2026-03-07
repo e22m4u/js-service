@@ -51,9 +51,9 @@ const {Service} = require('@e22m4u/js-service');
 
 Дополнительно:
 
-- `DebuggableService` *(логируемый Service)*  
-  Расширенная версия класса `Service` с дополнительными возможностями
-  логирования.
+- `DebuggableService` *(базовый Service + инструменты логирования)*  
+  Расширенная версия класса `Service` с дополнительным функционалом
+  для логирования.
 
 ## Базовые примеры
 
@@ -195,7 +195,6 @@ const myService = container.get(MyService);
 - [`add(ctor, ...args)`](#servicecontaineradd) добавить конструктор в контейнер (ленивая инициализация);
 - [`use(ctor, ...args)`](#servicecontaineruse) добавить конструктор и сразу создать экземпляр;
 - [`set(ctor, service)`](#servicecontainerset) добавить конструктор и связанный с ним готовый экземпляр;
-- [`find(predicate, noParent = false)`](#servicecontainerfind) найти сервис удовлетворяющий условию;
 - [`getParent()`](#servicecontainergetparent) получить родительский сервис-контейнер;
 - [`hasParent()`](#servicecontainerhasparent) проверить наличие родительского сервис-контейнера;
 
@@ -449,78 +448,6 @@ console.log(api.fetch()); // "mock data"
 console.log(api === mock); // true
 ```
 
-### serviceContainer.find
-
-Позволяет найти сервис по произвольному условию, заданному в функции-предикате.
-Предикат получает конструктор и текущий контейнер в качестве аргументов.
-Поиск ведется рекурсивно вверх по иерархии контейнеров.
-
-Сигнатура:
-
-```ts
-/**
- * Найти сервис удовлетворяющий условию.
- *
- * @param predicate
- * @param noParent
- */
-find<T extends object>(
-  predicate: FindServicePredicate<T>,
-  noParent?: boolean,
-): T | undefined;
-
-/**
- * Определение функции-предиката.
- */
-type FindServicePredicate<T extends object> = (
-  ctor: Constructor<T>,
-  container: ServiceContainer,
-) => boolean;
-```
-
-Пример:
-
-```js
-class ReportService {
-  static type = 'report';
-}
-
-class DashboardService {
-  static type = 'dashboard';
-}
-
-const container = new ServiceContainer();
-container.add(ReportService);
-container.add(DashboardService);
-
-// поиск сервиса по статическому свойству
-const dashboard = container.find((ctor) => ctor.type === 'dashboard');
-console.log(dashboard instanceof DashboardService); // true
-```
-
-Вторым необязательным аргументом `noParent` можно ограничить поиск только
-текущим контейнером. Если передать `true`, поиск в родительских контейнерах
-выполняться не будет.
-
-```js
-class SharedService {
-  static id = 'shared';
-}
-
-const parent = new ServiceContainer();
-parent.add(SharedService);
-
-const child = new ServiceContainer(parent);
-
-// поиск по умолчанию (рекурсивный)
-const service1 = child.find(ctor => ctor.id === 'shared');
-console.log(service1 instanceof SharedService); // true
-
-// поиск только в дочернем контейнере
-const service2 = child.find(ctor => ctor.id === 'shared', true);
-console.log(service2); // undefined
-```
-
 ### serviceContainer.getParent
 
 Метод возвращает родительский контейнер. Если у текущего контейнера
@@ -618,7 +545,6 @@ console.log(hasService); // true
 - [`addService(ctor, ...args)`](#serviceaddservice) добавить конструктор в контейнер;
 - [`useService(ctor, ...args)`](#serviceuseservice) добавить конструктор и создать экземпляр;
 - [`setService(ctor, service)`](#servicesetservice) добавить конструктор и его экземпляр;
-- [`findService(predicate, noParent = false)`](#servicefindservice) найти сервис удовлетворяющий условию;
 
 Сервисом может являться совершенно любой класс. Однако, если это
 наследник класса `Service`, то такой сервис позволяет инкапсулировать
@@ -874,73 +800,23 @@ class MyComponent extends Service {
 }
 ```
 
-### service.findService
-
-Позволяет найти сервис по произвольному условию, заданному в функции-предикате.
-Предикат получает конструктор и текущий контейнер в качестве аргументов.
-Поиск ведется рекурсивно вверх по иерархии контейнеров.
-
-Сигнатура:
-
-```ts
-/**
- * Найти сервис удовлетворяющий условию.
- *
- * @param predicate
- * @param noParent
- */
-findService<T extends object>(
-  predicate: FindServicePredicate<T>,
-  noParent?: boolean,
-): T | undefined;
-
-/**
- * Определение функции-предиката.
- */
-type FindServicePredicate<T extends object> = (
-  ctor: Constructor<T>,
-  container: ServiceContainer,
-) => boolean;
-```
-
-Пример:
-
-```js
-class ReportService {
-  static type = 'report';
-}
-
-class DashboardService {
-  static type = 'dashboard';
-}
-
-class App extends Service {
-  init() {
-    this.addService(ReportService);
-    this.addService(DashboardService);
-  }
-  
-  getDashboard() {
-    // поиск сервиса по статическому свойству
-    return this.findService(ctor => ctor.type === 'dashboard');
-  }
-}
-```
-
-Второй опциональный аргумент `noParent` позволяет ограничить поиск только
-текущим контейнером, игнорируя иерархию родителей.
-
 ## DebuggableService
 
 Данный сервис наследует класс `Debuggable` и использует композицию
-для получения функциональности базового класса `Service`.  
+для получения функциональности класса `Service`.  
 *(см. подробнее [@e22m4u/js-debug](https://www.npmjs.com/package/@e22m4u/js-debug#класс-debuggable#класс-debuggable) раздел «Класс Debuggable»)*
 
 ```js
 import {apiClient} from './path/to/apiClient';
 import {DebuggableService} from '@e22m4u/js-service';
 
+// определение глобального префикса (область имен)
+// для отладочных сообщений текущего приложения
 process.env['DEBUGGER_NAMESPACE'] = 'myApp';
+
+// переменная DEBUG обычно устанавливается перед
+// запуском Node.js процесса, и указывает на область
+// имен для логирования, пример: DEBUG=myApp* node .
 process.env['DEBUG'] = 'myApp*';
 
 class UserService extends DebuggableService {

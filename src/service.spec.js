@@ -158,19 +158,4 @@ describe('Service', function () {
       expect(res).to.be.eq(service);
     });
   });
-
-  describe('findService', function () {
-    it('should call the container "find" method', function () {
-      const service = new Service();
-      const predicate = () => true;
-      const noParent = true;
-      service.container.find = function (arg1, arg2) {
-        expect(predicate).to.be.eq(arg1);
-        expect(noParent).to.be.eq(arg2);
-        return 'OK';
-      };
-      const res = service.findService(predicate, noParent);
-      expect(res).to.be.eq('OK');
-    });
-  });
 });

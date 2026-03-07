@@ -214,22 +214,5 @@ describe('DebuggableService', function () {
       expect(res).to.be.eq(S);
       expect(invoked).to.be.true;
     });
-
-    it('should delegate the "findService" method to the internal service', function () {
-      const S = new DebuggableService();
-      const methodName = 'findService';
-      const result = 'OK';
-      const testArgs = [1, 2];
-      let invoked = false;
-      S._service[methodName] = function (...args) {
-        expect(args).to.be.eql(testArgs);
-        expect(this).to.be.eq(S._service);
-        invoked = true;
-        return result;
-      };
-      const res = S[methodName](...testArgs);
-      expect(res).to.be.eq(result);
-      expect(invoked).to.be.true;
-    });
   });
 });
