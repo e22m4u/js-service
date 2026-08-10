@@ -5,11 +5,13 @@
   "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
   "keywords": [
-    "DI",
-    "IoC",
-    "Service",
-    "Locator",
-    "Container"
+    "di",
+    "dependency-injection",
+    "ioc",
+    "inversion-of-control",
+    "service",
+    "service-container",
+    "service-locator"
   ],
   "homepage": "https://github.com/e22m4u/js-service",
   "repository": {
